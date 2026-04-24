@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function NavBar() {
     return <header className='h-16 bg-black p-4 flex justify-between'>
@@ -15,9 +16,24 @@ export default function NavBar() {
 
         <nav>
             <ul className='flex justify-between'>
-                <li className='pr-8'><span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>HOME</li>
-                <li className='pr-8'><span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>RACES</li>
-                <li className='pr-8'><span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>PILOTS</li>
+                <li className='pr-8'>
+                    <Link href='/' className='flex'>
+                        <span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>
+                        <p>HOME</p>
+                    </Link>
+                </li>
+                <li className='pr-8'>
+                    <Link href='/races' className='flex'>
+                        <span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>
+                        <p>RACES</p>
+                    </Link>
+                </li>
+                <li className='pr-8'>
+                    <Link href='/pilots' className='flex'>
+                        <span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>
+                        <p>PILOTS</p>
+                    </Link>
+                </li>
             </ul>
         </nav>
     </header>
