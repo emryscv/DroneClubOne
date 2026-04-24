@@ -4,7 +4,9 @@ export default function Home() {
   return (
     <div className="flex flex-col flex-1 bg-white">
       <main className="">
-        
+        <table>
+          <p>un texto aqui</p>
+        </table>
       </main>
     </div>
   );
