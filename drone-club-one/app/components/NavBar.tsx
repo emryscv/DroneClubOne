@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function NavBar() {
-    return <header className='h-16 bg-black p-4 flex justify-between'>
+    return <header className='h-16 bg-black text-white p-4 flex justify-between'>
         <div className='flex'>
             <Image
                 src="/droneClubLogo.png"
