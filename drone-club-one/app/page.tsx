@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { getAllRaces } from "./data/queries";
+import TableRow from "./components/TableRow";
+
 
 export default async function Home() {
   const leaderboard = await getAllRaces();
@@ -20,18 +22,7 @@ export default async function Home() {
           </thead>
           <tbody className="text-black">
             {
-              leaderboard.map((position, i) => {
-                return <tr key={i}>
-                  <td>{position.position}</td>
-                  <td>{position.nickname}</td>
-                  <td>{position.firstname + (
-                    position.middlename ? " " + position.middlename : "")
-                    + " " + position.lastname
-                  }</td>
-                  <td>{position.time}</td>
-                  <td>{position.crashes}</td>
-                </tr>
-              })
+              leaderboard.map((row, i) => <TableRow key={i} data={row} />)
             }
           </tbody>
         </table>

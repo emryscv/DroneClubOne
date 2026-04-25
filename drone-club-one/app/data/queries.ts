@@ -1,11 +1,12 @@
 import postgres from 'postgres';
-import { LeaderbaordEntryType, RaceTableType } from './types';
+import { LeaderbaordEntryType, PilotTableType, RaceTableType } from './types';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-export async function getAllRaces(){
+export async function getAllRaces() {
     const data = await sql<LeaderbaordEntryType[]>`
-        SELECT 
+        SELECT
+            p.id, 
             position, 
             nickname, 
             firstname, 
@@ -19,5 +20,20 @@ export async function getAllRaces(){
         WHERE r.id = 1
         ORDER BY position
         ;`;
+    return data;
+}
+
+export async function getPilot(pilotId: number) {
+    const data = await sql<PilotTableType[]>`
+        SELECT 
+            id, 
+            firstname, 
+            middlename,    
+            lastname,  
+            nickname, 
+            picture, 
+            status
+        FROM pilots WHERE id = ${pilotId};`
+
     return data;
 }

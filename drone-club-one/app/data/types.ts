@@ -5,6 +5,7 @@ export type RaceTableType = {
 }
 
 export type LeaderbaordEntryType = {
+    id: number,
     position: number,
     nickname: string,
     firstname: string,
@@ -12,4 +13,15 @@ export type LeaderbaordEntryType = {
     lastname: string,
     time: number,
     crashes: number
+}
+
+export type PilotTableType = {
+    id: number,
+    firstname: string,
+    middlename: string,
+    lastname: string,
+    nickname: string,
+    status: ["active", "inactive"]
+    picture: string,
+
 }
