@@ -5,8 +5,8 @@ export default async function Pilot({ params }: { params: { id: string } }) {
     const data = await getPilot(parseInt(id));
 
     return <div>
-        <h1>{data[0].nickname}</h1>
-        <p>{data[0].firstname} {data[0].middlename} {data[0].lastname}</p>
-        <p>{data[0].status}</p>
+        <h1>{data.nickname}</h1>
+        <p>{data.firstname} {data.middlename} {data.lastname}</p>
+        <p>{data.status}</p>
     </div>
 }

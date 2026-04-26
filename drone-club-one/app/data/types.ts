@@ -21,7 +21,7 @@ export type PilotTableType = {
     middlename: string,
     lastname: string,
     nickname: string,
-    status: ["active", "inactive"]
+    status: "active" | "inactive",
     picture: string,
 
 }
