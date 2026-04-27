@@ -49,7 +49,8 @@ export async function getPilots() {
             nickname, 
             picture, 
             status
-        FROM pilots;`
+        FROM pilots 
+        ORDER BY id;`
 
     return data;
 }
@@ -66,4 +67,9 @@ export async function insertPilot(formData: FormData) {
     const data = await sql<PilotTableType[]>`
         INSERT INTO pilots (firstname, middlename, lastname, nickname)
         VALUES (${pilot.firstname}, ${pilot.middlename}, ${pilot.lastname}, ${pilot.nickname});`;
+}
+
+export async function uploadAvatar(pilotId: number, fileUrl: string) {
+    const data = await sql<PilotTableType[]>`
+        UPDATE pilots SET picture = ${fileUrl} WHERE id = ${pilotId};`;
 }
