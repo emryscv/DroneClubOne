@@ -29,13 +29,13 @@ export default function NavBar() {
     return <header className='bg-black border-b border-border'>
         <div className='px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16'>
             <Link href="/" className="flex items-center gap-2">
-                <Image
-                    src="/droneClubLogo.png"
-                    width="32"
-                    height="32"
-                    alt="Drone Club Logo"
-                    style={{ filter: "invert(74%) sepia(68%) saturate(2283%) hue-rotate(1deg) brightness(104%) contrast(98%)" }}
-                />
+                    <Image
+                        src="/droneClubLogo.png"
+                        width="40"
+                        height="40"
+                        alt="Drone Club Logo"
+                        style={{ filter: "invert(100%)" }}
+                    />
 
                 <h1 className="text-xl tracking-wide text-accent">DRONE CLUB ONE</h1>
             </Link>
