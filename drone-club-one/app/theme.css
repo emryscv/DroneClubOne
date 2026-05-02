@@ -1,0 +1,13 @@
+:root {
+    --accent: #f4c430;
+    --border: #d0d0d0;
+    --foreground: #1a1a1a;
+    --muted-foreground: #666666;
+}
+
+@theme inline {
+    --color-accent: var(--accent);
+    --color-border: var(--border);
+    --color-foreground: var(--foreground);
+    --color-muted-foreground: var(--muted-foreground);
+}

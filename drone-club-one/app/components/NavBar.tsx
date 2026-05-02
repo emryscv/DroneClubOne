@@ -1,10 +1,34 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { Menu, X } from "lucide-react";
 
 export default function NavBar() {
-    return <header className='h-16 bg-black text-white p-4 flex justify-between'>
-        <Link href='/'>
-            <div className='flex'>
+    const location = usePathname();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const isActive = (path: string) => {
+        if (path === "/") {
+            return location === "/";
+        }
+        return location.startsWith(path);
+    };
+    const navLinks = [
+        { path: "/", label: "HOME" },
+        { path: "/races", label: "RACES" },
+        { path: "/pilots", label: "PILOTS" },
+    ];
+
+    const handleLinkClick = () => {
+        setIsMobileMenuOpen(false);
+    };
+
+    return <header className='bg-black border-b border-border'>
+        <div className='px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16'>
+            <Link href="/" className="flex items-center gap-2">
                 <Image
                     src="/droneClubLogo.png"
                     width="32"
@@ -12,36 +36,56 @@ export default function NavBar() {
                     alt="Drone Club Logo"
                     style={{ filter: "invert(74%) sepia(68%) saturate(2283%) hue-rotate(1deg) brightness(104%) contrast(98%)" }}
                 />
-                <h1 className='text-2xl'>DRONE CLUB ONE</h1>
-            </div>
-        </Link>
-        <nav>
-            <ul className='flex justify-between'>
-                <li className='pr-8'>
-                    <Link href='/' className='flex'>
-                        <span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>
-                        <p>HOME</p>
+
+                <h1 className="text-xl tracking-wide text-accent">DRONE CLUB ONE</h1>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex gap-8">
+                {navLinks.map((link) => (
+                    <Link
+                        key={link.path}
+                        href={link.path}
+                        className="tracking-wide transition-colors flex items-center gap-2"
+                    >
+                        <span className={isActive(link.path) ? "text-accent" : "opacity-0"}>&gt;</span>
+                        <span className={isActive(link.path) ? "text-white" : "text-muted-foreground hover:text-foreground"}>
+                            {link.label}
+                        </span>
                     </Link>
-                </li>
-                <li className='pr-8'>
-                    <Link href='/races' className='flex'>
-                        <span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>
-                        <p>RACES</p>
-                    </Link>
-                </li>
-                <li className='pr-8'>
-                    <Link href='/pilots' className='flex'>
-                        <span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>
-                        <p>PILOTS</p>
-                    </Link>
-                </li>
-                <li className='pr-8'>
-                    <Link href='/dashboard' className='flex'>
-                        <span className='text-[#fcba03] pr-1 font-bold'>{'>'}</span>
-                        <p>DASHBOARD</p>
-                    </Link>
-                </li>
-            </ul>
-        </nav>
-    </header>
+                ))}
+            </nav>
+            {/* Mobile Menu Button */}
+            <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden w-10 h-10 flex items-center justify-center text-accent hover:bg-secondary rounded transition-colors"
+            >
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        {
+            isMobileMenuOpen && (
+                <div className="md:hidden bg-black border-t border-border">
+                    <nav className="px-4 py-4 space-y-3">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.path}
+                                href={link.path}
+                                onClick={handleLinkClick}
+                                className="block tracking-wide transition-colors flex items-center gap-2 py-2"
+                            >
+                                <span className={isActive(link.path) ? "text-accent" : "opacity-0"}>&gt;</span>
+                                <span className={isActive(link.path) ? "text-white" : "text-muted-foreground hover:text-foreground"}>
+                                    {link.label}
+                                </span>
+                            </Link>
+                        ))}
+                    </nav>
+                </div>
+            )
+        }
+
+    </header >
 }
