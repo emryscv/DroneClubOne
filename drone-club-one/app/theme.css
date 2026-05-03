@@ -1,13 +1,17 @@
 :root {
     --accent: #f4c430;
     --border: #d0d0d0;
+    --card: #ffffff;
     --foreground: #1a1a1a;
     --muted-foreground: #666666;
+    --secondary: #e8e8e8;
 }
 
 @theme inline {
     --color-accent: var(--accent);
     --color-border: var(--border);
+    --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-muted-foreground: var(--muted-foreground);
+    --color-secondary: var(--secondary);
 }

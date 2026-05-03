@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { getAllRaces } from "./data/queries";
-import TableRow from "./components/TableRow";
+import Link from "next/link";
+import Leaderboard from "./components/Leaderboard";
 
 
 export default async function Home() {
@@ -8,25 +8,18 @@ export default async function Home() {
   console.log(leaderboard);
 
   return (
-    <div className="flex flex-col flex-1 bg-white">
-      <main className="">
-        <table>
-          <thead>
-            <tr>
-              <th>Pos</th>
-              <th>Nickname</th>
-              <th>Fullname</th>
-              <th>Time</th>
-              <th>Crashes</th>
-            </tr>
-          </thead>
-          <tbody className="text-black">
-            {
-              leaderboard.map((row, i) => <TableRow key={i} data={row} />)
-            }
-          </tbody>
-        </table>
-      </main>
-    </div>
+    <main className="mx-auto px-4 sm:px-12 lg:px-24 py-12">
+      
+      <Leaderboard leaderboard={leaderboard} />
+
+      <div className="mt-8 text-center">
+        <Link
+          href="/races/3"
+          className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
+        >
+          View Full Race Details
+        </Link>
+      </div>
+    </main>
   );
 }
