@@ -4,6 +4,15 @@ import { LeaderbaordEntryType, PilotTableType, RaceTableType } from './types';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+export async function getLatestRace() {
+    const data = await sql<RaceTableType[]>`
+        SELECT *
+        FROM races
+        WHERE date <= CURRENT_DATE
+        ORDER BY date DESC
+        LIMIT 1;`;
+    return data[0];
+}
 export async function getAllRaces() {
     const data = await sql<LeaderbaordEntryType[]>`
         SELECT
@@ -19,8 +28,7 @@ export async function getAllRaces() {
         JOIN pilot_race pr ON r.id = pr.raceid
         JOIN pilots p ON pr.pilotid = p.id
         WHERE r.id = 1
-        ORDER BY position
-        ;`;
+        ORDER BY position;`;
     return data;
 }
 
@@ -34,8 +42,8 @@ export async function getPilot(pilotId: number) {
             nickname, 
             picture, 
             status
-        FROM pilots WHERE id = ${pilotId};`
-
+        FROM pilots 
+        WHERE id = ${pilotId};`;
     return data[0];
 }
 

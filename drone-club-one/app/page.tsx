@@ -1,19 +1,19 @@
-import { getAllRaces } from "./data/queries";
+import { getLatestRace } from "./data/queries";
 import Link from "next/link";
 import Leaderboard from "./components/Leaderboard";
-import HUDTitle from "./components/TitleBorder";
 import TitleBorder from "./components/TitleBorder";
+import { LeaderbaordEntryType } from "./data/types";
 
 
 export default async function Home() {
-  const leaderboard = await getAllRaces();
-  console.log(leaderboard);
+  const raceData = await getLatestRace();
+  const leaderboard: LeaderbaordEntryType[] = [];
 
   return (
     <main className="mx-auto px-4 sm:px-12 lg:px-24 py-12">
       <div className="mb-8 mt-16">
         <TitleBorder>Current Race Leaderboard</TitleBorder>
-        <p className="text-muted-foreground mt-4">Spring Championship 2026 - Round 3</p>
+        <p className="text-muted-foreground mt-4">{raceData.name}</p>
       </div>
 
       <Leaderboard leaderboard={leaderboard} />

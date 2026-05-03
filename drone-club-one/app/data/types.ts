@@ -1,4 +1,5 @@
 export type RaceTableType = {
+    id: number,
     name: string,
     date: string,
     location: string
