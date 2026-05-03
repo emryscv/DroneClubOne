@@ -13,7 +13,7 @@ export async function getLatestRace() {
         LIMIT 1;`;
     return data[0];
 }
-export async function getAllRaces() {
+export async function getAllTimesForRace(raceId: number) {
     const data = await sql<LeaderbaordEntryType[]>`
         SELECT
             p.id, 
@@ -27,7 +27,7 @@ export async function getAllRaces() {
         FROM races r
         JOIN pilot_race pr ON r.id = pr.raceid
         JOIN pilots p ON pr.pilotid = p.id
-        WHERE r.id = 1
+        WHERE r.id = ${raceId}
         ORDER BY position;`;
     return data;
 }

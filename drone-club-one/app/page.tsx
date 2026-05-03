@@ -1,13 +1,12 @@
-import { getLatestRace } from "./data/queries";
+import { getAllTimesForRace, getLatestRace } from "./data/queries";
 import Link from "next/link";
 import Leaderboard from "./components/Leaderboard";
 import TitleBorder from "./components/TitleBorder";
-import { LeaderbaordEntryType } from "./data/types";
 
 
 export default async function Home() {
   const raceData = await getLatestRace();
-  const leaderboard: LeaderbaordEntryType[] = [];
+  const leaderboard = await getAllTimesForRace(raceData.id);
 
   return (
     <main className="mx-auto px-4 sm:px-12 lg:px-24 py-12">
@@ -20,7 +19,7 @@ export default async function Home() {
 
       <div className="mt-8 text-center">
         <Link
-          href="/races/3"
+          href={`/races/${raceData.id}`}
           className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
         >
           View Full Race Details
