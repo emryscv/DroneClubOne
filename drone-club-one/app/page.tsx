@@ -1,6 +1,8 @@
 import { getAllRaces } from "./data/queries";
 import Link from "next/link";
 import Leaderboard from "./components/Leaderboard";
+import HUDTitle from "./components/TitleBorder";
+import TitleBorder from "./components/TitleBorder";
 
 
 export default async function Home() {
@@ -9,7 +11,11 @@ export default async function Home() {
 
   return (
     <main className="mx-auto px-4 sm:px-12 lg:px-24 py-12">
-      
+      <div className="mb-8 mt-16">
+        <TitleBorder>Current Race Leaderboard</TitleBorder>
+        <p className="text-muted-foreground mt-4">Spring Championship 2026 - Round 3</p>
+      </div>
+
       <Leaderboard leaderboard={leaderboard} />
 
       <div className="mt-8 text-center">
