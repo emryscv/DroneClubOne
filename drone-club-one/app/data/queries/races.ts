@@ -38,7 +38,7 @@ export async function getRace(raceId: number) {
             title, 
             date, 
             location,
-            bannerUrl
+            bannerurl
         FROM races
         WHERE id = ${raceId};`;
     return data[0];
