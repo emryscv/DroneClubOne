@@ -1,3 +1,4 @@
+"use server";
 import postgres from 'postgres';
 import { PilotTableType } from '../types';
 
@@ -11,7 +12,7 @@ export async function getPilot(pilotId: number) {
             middlename,    
             lastname,  
             nickname, 
-            picture, 
+            pictureurl, 
             status
         FROM pilots 
         WHERE id = ${pilotId};`;
