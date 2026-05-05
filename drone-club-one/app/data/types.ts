@@ -27,3 +27,12 @@ export type PilotTableType = {
     pictureUrl: string,
 
 }
+
+export type RaceHistoryEntryType = {
+    raceId: number,
+    position: number,
+    time: number,
+    crashes: number,
+    title: string,
+    date: string,
+}
