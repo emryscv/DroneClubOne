@@ -29,7 +29,7 @@ export default function Pilot({ params }: { params: { id: string } }) {
     if (!data) return <div>Pilot not found</div>;
 
     return <div>
-        <Image src={data.picture ?? "/default-avatar.png"} alt={data.nickname + "_avatar"} width={100} height={100} />
+        <Image src={data.pictureUrl ?? "/default-avatar.png"} alt={data.nickname + "_avatar"} width={100} height={100} />
         <button onClick={() => setToggleUpload(!toggleUpload)}>Change Avatar</button>
         <h1>{data.nickname}</h1>
         <p>{data.firstname} {data.middlename} {data.lastname}</p>

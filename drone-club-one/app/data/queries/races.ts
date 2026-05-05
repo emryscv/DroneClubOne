@@ -31,3 +31,15 @@ export async function getAllTimesForRace(raceId: number) {
         ORDER BY position;`;
     return data;
 }
+export async function getRace(raceId: number) {
+    const data = await sql<RaceTableType[]>`
+        SELECT 
+            id, 
+            title, 
+            date, 
+            location,
+            bannerUrl
+        FROM races
+        WHERE id = ${raceId};`;
+    return data[0];
+}

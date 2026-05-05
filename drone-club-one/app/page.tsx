@@ -12,7 +12,7 @@ export default async function Home() {
     <main className="mx-auto px-4 sm:px-12 lg:px-24 py-12">
       <div className="mb-8 mt-16">
         <TitleBorder>Current Race Leaderboard</TitleBorder>
-        <p className="text-muted-foreground mt-4">{raceData.name}</p>
+        <p className="text-muted-foreground mt-4">{raceData.title}</p>
       </div>
 
       <Leaderboard leaderboard={leaderboard} />
