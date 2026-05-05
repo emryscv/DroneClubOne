@@ -1,4 +1,4 @@
-import { getAllTimesForRace, getLatestRace } from "./data/queries/races";
+import { getTimesForRace, getLatestRace } from "./data/queries/races";
 import Link from "next/link";
 import Leaderboard from "./components/Leaderboard";
 import TitleBorder from "./components/TitleBorder";
@@ -6,10 +6,10 @@ import TitleBorder from "./components/TitleBorder";
 
 export default async function Home() {
   const raceData = await getLatestRace();
-  const leaderboard = await getAllTimesForRace(raceData.id);
+  const leaderboard = await getTimesForRace(raceData.id);
 
   return (
-    <main className="mx-auto px-4 sm:px-12 lg:px-24 py-12">
+    <>
       <div className="mb-8 mt-16">
         <TitleBorder>Current Race Leaderboard</TitleBorder>
         <p className="text-muted-foreground mt-4">{raceData.title}</p>
@@ -25,6 +25,6 @@ export default async function Home() {
           View Full Race Details
         </Link>
       </div>
-    </main>
+    </>
   );
 }

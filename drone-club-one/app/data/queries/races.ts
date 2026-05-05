@@ -13,7 +13,7 @@ export async function getLatestRace() {
         LIMIT 1;`;
     return data[0];
 }
-export async function getAllTimesForRace(raceId: number) {
+export async function getTimesForRace(raceId: number) {
     const data = await sql<LeaderbaordEntryType[]>`
         SELECT
             p.id, 
