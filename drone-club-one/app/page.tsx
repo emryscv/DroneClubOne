@@ -1,4 +1,4 @@
-import { getAllTimesForRace, getLatestRace } from "./data/queries";
+import { getAllTimesForRace, getLatestRace } from "./data/queries/races";
 import Link from "next/link";
 import Leaderboard from "./components/Leaderboard";
 import TitleBorder from "./components/TitleBorder";

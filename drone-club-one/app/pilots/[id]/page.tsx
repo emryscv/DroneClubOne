@@ -1,6 +1,6 @@
 "use client"
 import UploadPictureForm from "@/app/components/UploadPictureForm";
-import { getPilot } from "@/app/data/queries";
+import { getPilot } from "@/app/data/queries/pilots";
 import { PilotTableType } from "@/app/data/types";
 import Image from "next/image";
 import { useState, useEffect } from "react";
@@ -35,6 +35,6 @@ export default function Pilot({ params }: { params: { id: string } }) {
         <p>{data.firstname} {data.middlename} {data.lastname}</p>
         <p>{data.status}</p>
 
-        {toggleUpload && <UploadPictureForm pilotId={data.id}/>}
+        {toggleUpload && <UploadPictureForm pilotId={data.id} />}
     </div>
 }

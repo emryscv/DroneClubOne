@@ -1,4 +1,4 @@
-import { getPilots } from "../data/queries";
+import { getPilots } from "../data/queries/pilots";
 
 export default async function Pilots() {
     const pilots = await getPilots();

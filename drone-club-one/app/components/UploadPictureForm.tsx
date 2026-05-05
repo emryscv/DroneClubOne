@@ -2,7 +2,7 @@
 
 import { upload } from "@vercel/blob/client";
 import { useRef } from "react";
-import { uploadAvatar } from "../data/queries";
+import { uploadAvatar } from "../data/queries/pilots";
 
 
 export default function UploadPictureForm({ pilotId }: { pilotId: number }) {
