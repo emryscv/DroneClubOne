@@ -57,3 +57,20 @@ export async function getUpcomingRaces() {
         ORDER BY date ASC;`;
     return data;
 }
+
+// Check if this is still a good idea, given the fact that 
+// checking the time here maybe not a good ideaMaybe it is 
+// better to check that by hand on dashboards
+export async function getPreviousRaces() { 
+    const data = await sql<RaceTableType[]>`
+        SELECT 
+            id, 
+            title, 
+            date, 
+            location,
+            bannerurl
+        FROM races
+        WHERE date <= CURRENT_DATE
+        ORDER BY date DESC;`;
+    return data;
+}
