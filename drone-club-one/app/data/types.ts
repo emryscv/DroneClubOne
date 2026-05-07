@@ -4,6 +4,8 @@ export type RaceTableType = {
     date: string,
     location: string,
     bannerUrl?: string,
+    isupcoming: boolean,
+    pilotscount: number 
 }
 
 export type LeaderbaordEntryType = {
