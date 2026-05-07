@@ -1,6 +1,8 @@
+import RaceHistoryEntry from "@/app/components/RaceHistoryEntry";
 import TitleBorder from "@/app/components/TitleBorder";
 import { getRacesForPilot, getPilot } from "@/app/data/queries/pilots";
-import { Calendar, TrendingUp, Trophy } from "lucide-react";
+import { RaceHistoryEntryType } from "@/app/data/types";
+import { TrendingUp } from "lucide-react";
 
 export default async function Pilot({ params }: { params: { id: number } }) {
     const { id } = await params;
@@ -41,40 +43,16 @@ export default async function Pilot({ params }: { params: { id: number } }) {
                     <table className="w-full">
                         <thead>
                             <tr className="bg-secondary border-b border-border">
-                                <th className="text-muted-foreground tracking-wide">RACE</th>
-                                <th className="text-muted-foreground tracking-wide">DATE</th>
-                                <th className="text-muted-foreground tracking-wide">POSITION</th>
-                                <th className="text-muted-foreground tracking-wide">TIME</th>
-                                <th className="text-muted-foreground tracking-wide">CRASHES</th>
+                                <th className="text-muted-foreground tracking-wide p-4 text-left">RACE</th>
+                                <th className="text-muted-foreground tracking-wide p-4 text-left">DATE</th>
+                                <th className="text-muted-foreground tracking-wide p-4 text-left">POSITION</th>
+                                <th className="text-muted-foreground tracking-wide p-4 text-left">TIME</th>
+                                <th className="text-muted-foreground tracking-wide p-4">CRASHES</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {raceHistory.map((race: any, index: number) => (
-                                <tr key={index}
-                                    className="p-4 border-b border-border last:border-b-0 hover:bg-secondary/50 transition-colors"
-                                >
-                                    <td>{race.title}</td>
-                                    <td >
-                                        <div className="flex items-center gap-2 text-muted-foreground">
-                                            <Calendar className="w-4 h-4" />
-                                            {new Date(race.date).toLocaleDateString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                year: 'numeric'
-                                            })}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div className="flex items-center gap-2">
-                                            <span className={race.position === 1 ? "text-accent" : ""}>
-                                                {race.position}
-                                            </span>
-                                            {race.position === 1 && <Trophy className="w-4 h-4 text-accent" />}
-                                        </div>
-                                    </td>
-                                    <td>{race.time}</td>
-                                    <td>{race.crashes}</td>
-                                </tr>
+                            {raceHistory.map((race: RaceHistoryEntryType, i: number) => (
+                                <RaceHistoryEntry key={i} race={race} />
                             ))}
                         </tbody>
                     </table>

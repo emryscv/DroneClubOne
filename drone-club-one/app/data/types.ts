@@ -29,7 +29,7 @@ export type PilotTableType = {
 }
 
 export type RaceHistoryEntryType = {
-    raceId: number,
+    raceid: any
     title: string,
     position: number,
     time: number,
