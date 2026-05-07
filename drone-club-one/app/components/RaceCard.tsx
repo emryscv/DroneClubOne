@@ -53,12 +53,12 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
 
         <div className="p-4">
             <div className="flex items-start justify-between mb-3">
-                <h3 className={`text-lg ${race.isupcoming ? "text-foreground" : "text-muted-foreground"}`}>
+                <h3>
                     {race.title}
                 </h3>
             </div>
 
-            <span className={`inline-block px-2 py-1 rounded-full text-xs uppercase tracking-wide mb-3 ${race.isupcoming ? "bg-secondary text-foreground" : "bg-muted text-muted-foreground"}`}>
+            <span className={`inline-block px-2 py-1 rounded-full text-xs uppercase tracking-wide mb-3 ${race.isupcoming ? "bg-secondary text-foreground" : "bg-secondary text-muted-foreground"}`}>
                 {race.isupcoming ? "upcoming" : "completed"}
             </span>
 
