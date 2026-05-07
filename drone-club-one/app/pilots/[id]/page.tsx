@@ -1,3 +1,4 @@
+import PilotCard from "@/app/components/PilotCard";
 import RaceHistoryEntry from "@/app/components/RaceHistoryEntry";
 import TitleBorder from "@/app/components/TitleBorder";
 import { getRacesForPilot, getPilot } from "@/app/data/queries/pilots";
@@ -11,27 +12,7 @@ export default async function Pilot({ params }: { params: { id: number } }) {
 
     return (
         <div className="grid md:grid-cols-3 gap-8 mb-12 mt-10">
-            <div className="md:col-span-1 bg-card border border-border rounded-lg overflow-hidden">
-                <div className="aspect-square bg-secondary flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center text-6xl text-accent">
-                        {"AB"}
-                    </div>
-                </div>
-                <div className="p-6">
-                    <div className="flex items-center justify-between">
-                        <TitleBorder size="small">{pilotData.nickname}</TitleBorder>
-
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm uppercase tracking-wide ${pilotData.status === "active" ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
-                            }`}>
-                            {pilotData.status}
-                        </span>
-                    </div>
-                    <div className="flex flex-col mt-4">
-                        <span className="text-accent">Full Name</span>
-                        <span className="text-xl">{`${pilotData.firstname}${pilotData.middlename ? " " + pilotData.middlename : ""} ${pilotData.lastname}`}</span>
-                    </div>
-                </div>
-            </div>
+            <PilotCard pilotData={pilotData} isLink={false} />
 
             <div className="md:col-span-2">
                 <h2 className="text-2xl mb-6 flex items-center gap-2">

@@ -12,8 +12,8 @@ export async function getPilot(pilotId: number) {
             middlename,    
             lastname,  
             nickname, 
-            pictureurl, 
-            status
+            status,
+            pictureurl
         FROM pilots 
         WHERE id = ${pilotId};`;
     return data[0];
@@ -27,7 +27,7 @@ export async function getPilots() {
             middlename,    
             lastname,  
             nickname, 
-            picture, 
+            pictureurl, 
             status
         FROM pilots 
         ORDER BY id;`
