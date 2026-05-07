@@ -43,3 +43,17 @@ export async function getRace(raceId: number) {
         WHERE id = ${raceId};`;
     return data[0];
 }
+
+export async function getUpcomingRaces() {
+    const data = await sql<RaceTableType[]>`
+        SELECT 
+            id, 
+            title, 
+            date, 
+            location,
+            bannerurl
+        FROM races
+        WHERE date > CURRENT_DATE
+        ORDER BY date ASC;`;
+    return data;
+}
