@@ -1,4 +1,3 @@
-import { Search } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
 import { getPilots } from "../data/queries/pilots";
 import PilotCard from "../components/PilotCard";
