@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { PilotTableType } from "../data/types";
 import TitleBorder from "./TitleBorder";
+import Image from "next/image";
 
 export default function PilotCard({ pilotData, isLink = true }: { pilotData: PilotTableType, isLink?: boolean }) {
     const router = useRouter();
@@ -11,11 +12,19 @@ export default function PilotCard({ pilotData, isLink = true }: { pilotData: Pil
             className={`bg-card border border-border rounded-lg overflow-hidden hover:border-accent transition-colors ${isLink ? "cursor-pointer" : ""}`}
         >
             <div className="md:col-span-1 bg-card border border-border rounded-lg overflow-hidden">
-                <div className="aspect-square bg-secondary flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center text-6xl text-accent">
-                        {"AB"}
-                    </div>
-                </div>
+                {//<div className="aspect-square bg-secondary flex items-center justify-center">
+                    //<Image className="w-32 h-32 rounded-full bg-muted flex items-center justify-center text-6xl text-accent">
+                
+                <Image 
+                    src={pilotData.pictureUrl ? pilotData.pictureUrl : "/default-avatar.png"} 
+                    alt={`${pilotData.nickname} profile picture`} 
+                    width={1024}
+                    height={1024}
+                    />
+                
+                    // </div>
+                }
+
                 <div className="p-6">
                     <div className="flex items-center justify-between">
                         <TitleBorder size="small">{pilotData.nickname}</TitleBorder>
