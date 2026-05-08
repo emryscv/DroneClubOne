@@ -8,12 +8,13 @@ import AddRaceModal from "../components/dashboard/AddRaceModal";
 import EditPilotModal from "../components/dashboard/EditPilotModal";
 import EditRaceModal from "../components/dashboard/EditRaceModal";
 import { useRouter } from "next/navigation";
+import { signOutAction } from "../data/actions";
 
 //insertPilot
 
 export default function Page() {
     const router = useRouter();
-    const handleLogout = () => {router.push("/")}; //Add actual logout logic here
+    const handleLogout = () => { router.push("/") }; //Add actual logout logic here
 
     const [showAddPilot, setShowAddPilot] = useState(false);
     const [showAddRace, setShowAddRace] = useState(false);
@@ -24,13 +25,16 @@ export default function Page() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="mb-8 flex items-center justify-between">
                 <TitleBorder>Admin Dashboard</TitleBorder>
-                <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-2 bg-destructive text-white rounded-md hover:opacity-90 transition-opacity cursor-pointer"
+                <form
+                    action={signOutAction}
                 >
-                    <LogOut className="w-4 h-4" />
-                    Logout
-                </button>
+                    < button
+                        className="flex items-center gap-2 px-4 py-2 bg-destructive text-white rounded-md hover:opacity-90 transition-opacity cursor-pointer"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                    </button>
+                </form >
             </div>
 
             <div className="mb-12">
