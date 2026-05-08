@@ -2,12 +2,17 @@ import { getTimesForRace, getLatestRace } from "./data/queries/races";
 import Link from "next/link";
 import Leaderboard from "./components/Leaderboard";
 import TitleBorder from "./components/TitleBorder";
+import bcrypt from 'bcrypt';
 
 
 export default async function Home() {
   const raceData = await getLatestRace();
   const leaderboard = await getTimesForRace(raceData.id);
 
+  const hashedPassword = await bcrypt.hash("12345678", 10);
+
+  console.log("Hashed password:", hashedPassword);
+  
   return (
     <>
       <div className="mb-8">

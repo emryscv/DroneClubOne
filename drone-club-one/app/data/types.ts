@@ -38,3 +38,10 @@ export type RaceHistoryEntryType = {
     crashes: number,
     date: string,
 }
+
+export type UserType = {
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+}

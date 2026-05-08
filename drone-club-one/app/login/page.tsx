@@ -3,7 +3,18 @@ import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { useActionState } from 'react';
+import { authenticate } from "../data/actions";
+import { useSearchParams } from 'next/navigation';
+
 export default function Page() {
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+    const [errorMessage, formAction, isPending] = useActionState(
+        authenticate,
+        undefined,
+    );
+
     const route = useRouter();
 
     const [formData, setFormData] = useState({
@@ -42,39 +53,44 @@ export default function Page() {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form action={formAction} className="space-y-4">
                     <div>
-                        <label className="block mb-2 text-sm">Username</label>
+                        <label className="block mb-2 text-sm">Email</label>
                         <input
-                            type="text"
+                            id="email"
+                            type="email"
+                            name="email"
                             required
                             value={formData.username}
                             onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                             className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
-                            placeholder="Enter username"
-                            autoComplete="username"
+                            placeholder="Enter email"
+                            autoComplete="email"
                         />
                     </div>
 
                     <div>
                         <label className="block mb-2 text-sm">Password</label>
                         <input
+                            id="password"
                             type="password"
+                            name="password"
                             required
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                             placeholder="Enter password"
                             autoComplete="current-password"
+                            minLength={6}
                         />
                     </div>
 
-                    {error && (
+                    {errorMessage && (
                         <div className="text-destructive text-sm p-2 bg-destructive/10 rounded border border-destructive">
-                            {error}
+                            {errorMessage}
                         </div>
                     )}
-
+                    <input type="hidden" name="redirectTo" value={callbackUrl} />
                     <div className="flex gap-3 pt-4">
                         <button
                             type="submit"
