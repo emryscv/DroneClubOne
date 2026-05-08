@@ -2,11 +2,23 @@
 import { Edit, LogOut, Plus, Save, Trophy, X } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
 import { insertPilot } from "../data/queries/pilots";
+import { useState } from "react";
+import AddPilotModal from "../components/dashboard/AddPilotModal";
+import AddRaceModal from "../components/dashboard/AddRaceModal";
+import EditPilotModal from "../components/dashboard/EditPilotModal";
+import EditRaceModal from "../components/dashboard/EditRaceModal";
+import { useRouter } from "next/navigation";
 
 //insertPilot
 
 export default function Page() {
-    const handleLogout = () => {};
+    const router = useRouter();
+    const handleLogout = () => {router.push("/")}; //Add actual logout logic here
+
+    const [showAddPilot, setShowAddPilot] = useState(false);
+    const [showAddRace, setShowAddRace] = useState(false);
+    const [showEditPilot, setShowEditPilot] = useState(false);
+    const [showEditRace, setShowEditRace] = useState(false);
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -25,7 +37,7 @@ export default function Page() {
                 <h2 className="text-2xl mb-6">Management Actions</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <button
-                        //onClick={() => setShowAddPilot(true)}
+                        onClick={() => setShowAddPilot(true)}
                         className="bg-card border-2 border-border rounded-lg p-6 hover:border-accent transition-colors text-left cursor-pointer"
                     >
                         <div className="flex items-center gap-3 mb-3">
@@ -38,7 +50,7 @@ export default function Page() {
                     </button>
 
                     <button
-                        //onClick={() => setShowAddRace(true)}
+                        onClick={() => setShowAddRace(true)}
                         className="bg-card border-2 border-border rounded-lg p-6 hover:border-accent transition-colors text-left cursor-pointer"
                     >
                         <div className="flex items-center gap-3 mb-3">
@@ -51,7 +63,7 @@ export default function Page() {
                     </button>
 
                     <button
-                        //onClick={() => setShowEditPilot(true)}
+                        onClick={() => setShowEditPilot(true)}
                         className="bg-card border-2 border-border rounded-lg p-6 hover:border-accent transition-colors text-left cursor-pointer"
                     >
                         <div className="flex items-center gap-3 mb-3">
@@ -64,7 +76,7 @@ export default function Page() {
                     </button>
 
                     <button
-                        //onClick={() => setShowEditRace(true)}
+                        onClick={() => setShowEditRace(true)}
                         className="bg-card border-2 border-border rounded-lg p-6 hover:border-accent transition-colors text-left cursor-pointer"
                     >
                         <div className="flex items-center gap-3 mb-3">
@@ -253,10 +265,10 @@ export default function Page() {
                 )*/}
             </div>
 
-            {/*<AddPilotModal isOpen={showAddPilot} onClose={() => setShowAddPilot(false)} />
+            <AddPilotModal isOpen={showAddPilot} onClose={() => setShowAddPilot(false)} />
             <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} />
             <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} />
-            <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} />*/}
+            <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} />
         </div>
     );
 }
