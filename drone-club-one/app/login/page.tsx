@@ -93,7 +93,7 @@ export default function Page() {
                 </form>
 
                 <div className="mt-4 text-xs text-muted-foreground text-center">
-                    Access to admin dashboard is restricted to administrators only.
+                    Access to dashboard is restricted to administrators only.
                 </div>
             </div>
         </div>
