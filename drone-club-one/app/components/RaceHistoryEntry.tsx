@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function RaceHistoryEntry({ race }: { race: RaceHistoryEntryType }) {
     const  router = useRouter();
+    const raceDate = new Date(race.date);
     console.log(race);
     return <tr
         className="border-b border-border last:border-b-0 hover:bg-secondary/50 transition-colors cursor-pointer"
@@ -15,10 +16,11 @@ export default function RaceHistoryEntry({ race }: { race: RaceHistoryEntryType 
             <div className="flex items-center gap-2 text-muted-foreground" >
                 <Calendar className="w-4 h-4" />
                 {
-                    new Date(race.date).toLocaleDateString('en-US', {
+                    raceDate.toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
-                        year: 'numeric'
+                        year: 'numeric',
+                        timeZone: 'UTC'
                     })
                 }
             </div>

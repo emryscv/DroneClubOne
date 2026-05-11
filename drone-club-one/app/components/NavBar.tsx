@@ -74,7 +74,7 @@ export default function NavBar() {
                                 key={link.path}
                                 href={link.path}
                                 onClick={handleLinkClick}
-                                className="block tracking-wide transition-colors flex items-center gap-2 py-2"
+                                className="tracking-wide transition-colors flex items-center gap-2 py-2"
                             >
                                 <span className={isActive(link.path) ? "text-accent" : "opacity-0"}>&gt;</span>
                                 <span className={isActive(link.path) ? "text-white" : "text-muted-foreground hover:text-foreground"}>

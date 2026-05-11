@@ -30,7 +30,8 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
 //         return "bg-secondary text-foreground";
 //     }
 //   };
-    const router = useRouter();    
+    const router = useRouter();
+    const raceDate = new Date(race.date);
 
     return <div
         key={race.id}
@@ -40,12 +41,13 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
         <div className="aspect-square bg-secondary flex items-center justify-center p-6">
             <div className="text-center">
                 <div className="text-6xl mb-4 text-accent">
-                    {new Date(race.date).getDate()}
+                    {raceDate.getUTCDate()}
                 </div>
                 <div className="text-muted-foreground">
-                    {new Date(race.date).toLocaleDateString('en-US', {
+                    {raceDate.toLocaleDateString('en-US', {
                         month: 'short',
-                        year: 'numeric'
+                        year: 'numeric',
+                        timeZone: 'UTC'
                     })}
                 </div>
             </div>
