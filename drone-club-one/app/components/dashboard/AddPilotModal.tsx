@@ -29,7 +29,7 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent) => {
     console.log("New pilot data:", formData);
     alert("Pilot added successfully!");
     onClose();

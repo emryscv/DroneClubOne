@@ -77,3 +77,11 @@ export async function getPreviousRaces() {
         ORDER BY date DESC;`;
     return data;
 }
+
+export async function insertRace(raceData: RaceTableType) {
+    console.log(raceData);
+
+    const data = await sql<RaceTableType[]>`
+        INSERT INTO races (title, date, location, bannerurl)
+        VALUES (${raceData.title}, ${raceData.date}, ${raceData.location}, ${raceData.bannerurl});`;
+}

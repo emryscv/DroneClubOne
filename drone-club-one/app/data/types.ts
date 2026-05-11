@@ -3,7 +3,7 @@ export type RaceTableType = {
     title: string,
     date: string,
     location: string,
-    bannerurl?: string,
+    bannerurl: string | null,
     isupcoming: boolean,
     pilotscount: number 
 }

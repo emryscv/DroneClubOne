@@ -1,4 +1,6 @@
+import { addRace } from "@/app/data/actions";
 import { X, Upload } from "lucide-react";
+import { title } from "process";
 import { useState } from "react";
 
 interface AddRaceModalProps {
@@ -8,10 +10,10 @@ interface AddRaceModalProps {
 
 export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
   const [formData, setFormData] = useState({
-    name: "",
+    title: "",
     date: "",
     location: "",
-    picture: null as File | null,
+    banner: null as File | null,
   });
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -21,18 +23,15 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData({ ...formData, picture: file });
+      setFormData({ ...formData, banner: file });
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e: React.SubmitEvent) => {
     console.log("New race data:", formData);
     alert("Race added successfully!");
-    setFormData({ name: "", date: "", location: "", picture: null });
-    setPreviewUrl(null);
     onClose();
   };
 
@@ -49,9 +48,9 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} action={addRace} className="space-y-4">
           <div>
-            <label className="block mb-2 text-sm">Race Picture</label>
+            <label htmlFor="banner" className="block mb-2 text-sm">Race Banner</label>
             <div className="flex items-center gap-4">
               <div className="w-32 h-32 rounded-lg bg-secondary flex items-center justify-center overflow-hidden">
                 {previewUrl ? (
@@ -60,10 +59,12 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
                   <Upload className="w-8 h-8 text-muted-foreground" />
                 )}
               </div>
-              <label className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
+              <label htmlFor="banner" className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
                 Choose File
                 <input
                   type="file"
+                  id="banner"
+                  name="banner"
                   accept="image/*"
                   onChange={handleFileChange}
                   className="hidden"
@@ -73,21 +74,25 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm">Race Name</label>
+            <label htmlFor="title" className="block mb-2 text-sm">Race Title</label>
             <input
               type="text"
+              id="title"
+              name="title"
               required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
               placeholder="Spring Championship 2026 - Round 5"
             />
           </div>
 
           <div>
-            <label className="block mb-2 text-sm">Date</label>
+            <label htmlFor="date" className="block mb-2 text-sm">Date</label>
             <input
               type="date"
+              id="date"
+              name="date"
               required
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
@@ -96,9 +101,11 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm">Location</label>
+            <label htmlFor="location" className="block mb-2 text-sm">Location</label>
             <input
               type="text"
+              id="location"
+              name="location"
               required
               value={formData.location}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}

@@ -5,8 +5,9 @@ import { AuthError } from 'next-auth';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { blob } from 'stream/consumers';
-import { PilotTableType } from './types';
+import { PilotTableType, RaceTableType } from './types';
 import { insertPilot } from './queries/pilots';
+import { insertRace } from './queries/races';
 
 
 export async function authenticate(
@@ -62,4 +63,33 @@ export async function addPilot(formData: FormData) {
     };
 
     insertPilot(pilotData);
+}
+
+export async function addRace(formData: FormData) {
+    const banner: File | null = formData.get('banner') as File | null;
+    const title = formData.get('title') as string;
+    const date = formData.get('date') as string;
+    const location = formData.get('location') as string;
+
+    console.log("formData", banner, title, date, location);  
+    let blob;
+    if (banner) {
+        blob = await put(banner.name, banner, {
+            access: 'public' /* or 'public' */,
+            addRandomSuffix: true,
+        });
+        revalidatePath('/');
+    }
+    
+    const raceData: RaceTableType = {
+        id: -1, // This will be set by the database
+        title,
+        date,
+        location,
+        bannerurl: blob ? blob.url : null,
+        isupcoming: true, // This will be calculated based on the date
+        pilotscount: -1, // This will be updated when pilots
+    };
+
+    insertRace(raceData);
 }
