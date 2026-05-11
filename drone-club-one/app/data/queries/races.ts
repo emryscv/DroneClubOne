@@ -55,7 +55,7 @@ export async function getRaces() {
             date > CURRENT_DATE AS isupcoming,
             count(pr.pilotid) AS pilotscount
         FROM races r
-        JOIN pilot_race pr ON r.id = pr.raceid
+        LEFT JOIN pilot_race pr ON r.id = pr.raceid
         GROUP BY r.id
         ORDER BY date DESC;`;
     return data;

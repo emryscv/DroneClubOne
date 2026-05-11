@@ -1,7 +1,6 @@
 'use client';
 import { addRace } from "@/app/data/actions";
 import { X, Upload } from "lucide-react";
-import { title } from "process";
 import { useState } from "react";
 
 interface AddRaceModalProps {

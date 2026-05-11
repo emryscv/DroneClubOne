@@ -1,7 +1,6 @@
 "use client"
 import { Edit, LogOut, Plus, Save, Trophy, X } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
-import { insertPilot } from "../data/queries/pilots";
 import { useState } from "react";
 import AddPilotModal from "../components/dashboard/AddPilotModal";
 import AddRaceModal from "../components/dashboard/AddRaceModal";
@@ -9,8 +8,6 @@ import EditPilotModal from "../components/dashboard/EditPilotModal";
 import EditRaceModal from "../components/dashboard/EditRaceModal";
 import { useRouter } from "next/navigation";
 import { signOutAction } from "../data/actions";
-
-//insertPilot
 
 export default function Page() {
     const router = useRouter();
