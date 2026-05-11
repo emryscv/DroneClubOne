@@ -3,7 +3,7 @@ export type RaceTableType = {
     title: string,
     date: string,
     location: string,
-    bannerUrl?: string,
+    bannerurl?: string,
     isupcoming: boolean,
     pilotscount: number 
 }
@@ -13,7 +13,7 @@ export type LeaderbaordEntryType = {
     position: number,
     nickname: string,
     firstname: string,
-    middlename: string,
+    middlename: string | null,
     lastname: string,
     time: number,
     crashes: number
@@ -22,12 +22,11 @@ export type LeaderbaordEntryType = {
 export type PilotTableType = {
     id: number,
     firstname: string,
-    middlename: string,
+    middlename: string | null,
     lastname: string,
     nickname: string,
     status: "active" | "inactive",
-    pictureUrl: string,
-
+    pictureurl: string | null,
 }
 
 export type RaceHistoryEntryType = {

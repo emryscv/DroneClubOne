@@ -2,6 +2,12 @@
 
 import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
+import { put } from '@vercel/blob';
+import { revalidatePath } from 'next/cache';
+import { blob } from 'stream/consumers';
+import { PilotTableType } from './types';
+import { insertPilot } from './queries/pilots';
+
 
 export async function authenticate(
     prevState: string | undefined,
@@ -26,4 +32,34 @@ export async function authenticate(
 export async function signOutAction() {
     'use server';
     await signOut({ redirectTo: '/' });
+}
+
+export async function addPilot(formData: FormData) {
+    const image: File | null = formData.get('image') as File | null;
+    const nickname = formData.get('nickname') as string;
+    const firstname = formData.get('firstName') as string;
+    const middlename = formData.get('middleName') as string;
+    const lastname = formData.get('lastName') as string;
+
+    console.log("formData", nickname, firstname, middlename, lastname, image);  
+    let blob;
+    if (image) {
+        blob = await put(image.name, image, {
+            access: 'public' /* or 'public' */,
+            addRandomSuffix: true,
+        });
+        revalidatePath('/');
+    }
+    
+    const pilotData: PilotTableType = {
+        id: -1, // This will be set by the database
+        nickname,
+        firstname,
+        middlename,
+        lastname,
+        status: 'active',
+        pictureurl: blob ? blob.url : null,
+    };
+
+    insertPilot(pilotData);
 }

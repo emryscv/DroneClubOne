@@ -52,21 +52,15 @@ export async function getRacesForPilot(pilotId: number) {
     return data;
 }
 
-export async function insertPilot(formData: FormData) {
-    console.log(formData);
-    const pilot = {
-        firstname: formData.get("firstname") as string,
-        middlename: formData.get("middlename") as string,
-        lastname: formData.get("lastname") as string,
-        nickname: formData.get("nickname") as string,
-    };
+export async function insertPilot(pilotData: PilotTableType) {
+    console.log(pilotData);
 
     const data = await sql<PilotTableType[]>`
-        INSERT INTO pilots (firstname, middlename, lastname, nickname)
-        VALUES (${pilot.firstname}, ${pilot.middlename}, ${pilot.lastname}, ${pilot.nickname});`;
+        INSERT INTO pilots (firstname, middlename, lastname, nickname, status, pictureurl)
+        VALUES (${pilotData.firstname}, ${pilotData.middlename}, ${pilotData.lastname}, ${pilotData.nickname}, ${pilotData.status}, ${pilotData.pictureurl});`;
 }
 
-export async function uploadAvatar(pilotId: number, fileUrl: string) {
-    const data = await sql<PilotTableType[]>`
-        UPDATE pilots SET picture = ${fileUrl} WHERE id = ${pilotId};`;
-}
+// export async function uploadAvatar(pilotId: number, fileUrl: string) {
+//     const data = await sql<PilotTableType[]>`
+//         UPDATE pilots SET picture = ${fileUrl} WHERE id = ${pilotId};`;
+// }

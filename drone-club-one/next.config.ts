@@ -1,13 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-   images: {
+  images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "*.blob.vercel-storage.com",
       },
     ],
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
 };
 

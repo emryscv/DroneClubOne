@@ -6,6 +6,7 @@ import Image from "next/image";
 
 export default function PilotCard({ pilotData, isLink = true }: { pilotData: PilotTableType, isLink?: boolean }) {
     const router = useRouter();
+    console.log("pilotData", pilotData);
     return (
         <div
             onClick={() => isLink && router.push(`pilots/${pilotData.id}`)}
@@ -16,7 +17,7 @@ export default function PilotCard({ pilotData, isLink = true }: { pilotData: Pil
                     //<Image className="w-32 h-32 rounded-full bg-muted flex items-center justify-center text-6xl text-accent">
                 
                 <Image 
-                    src={pilotData.pictureUrl ? pilotData.pictureUrl : "/default-avatar.png"} 
+                    src={pilotData.pictureurl ? pilotData.pictureurl : "/default-avatar.png"} 
                     alt={`${pilotData.nickname} profile picture`} 
                     width={1024}
                     height={1024}

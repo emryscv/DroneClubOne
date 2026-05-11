@@ -1,3 +1,4 @@
+import { addPilot } from "@/app/data/actions";
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
 
@@ -29,11 +30,8 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
     console.log("New pilot data:", formData);
     alert("Pilot added successfully!");
-    setFormData({ nickname: "", firstName: "", middleName: "", lastName: "", picture: null });
-    setPreviewUrl(null);
     onClose();
   };
 
@@ -50,7 +48,7 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} action={addPilot} className="space-y-4">
           <div>
             <label className="block mb-2 text-sm">Profile Picture</label>
             <div className="flex items-center gap-4">
@@ -61,10 +59,13 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
                   <Upload className="w-8 h-8 text-muted-foreground" />
                 )}
               </div>
-              <label className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
+              <label htmlFor="image" className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
                 Choose File
                 <input
                   type="file"
+                  id="image"
+                  name="image"
+                  
                   accept="image/*"
                   onChange={handleFileChange}
                   className="hidden"
@@ -74,9 +75,11 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
           </div>
 
           <div>
-            <label className="block mb-2 text-sm">Nickname</label>
+            <label htmlFor="nickname" className="block mb-2 text-sm">Nickname</label>
             <input
               type="text"
+              id="nickname"
+              name="nickname"
               required
               value={formData.nickname}
               onChange={(e) => setFormData({ ...formData, nickname: e.target.value })}
@@ -87,9 +90,11 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block mb-2 text-sm">First Name</label>
+              <label htmlFor="firstName" className="block mb-2 text-sm">First Name</label>
               <input
                 type="text"
+                id="firstName"
+                name="firstName"
                 required
                 value={formData.firstName}
                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
@@ -98,9 +103,11 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm">Middle Name</label>
+              <label htmlFor="middleName" className="block mb-2 text-sm">Middle Name</label>
               <input
                 type="text"
+                id="middleName"
+                name="middleName"
                 value={formData.middleName}
                 onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
                 className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
@@ -108,9 +115,11 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
               />
             </div>
             <div>
-              <label className="block mb-2 text-sm">Last Name</label>
+              <label htmlFor="lastName" className="block mb-2 text-sm">Last Name</label>
               <input
                 type="text"
+                id="lastName"
+                name="lastName"
                 required
                 value={formData.lastName}
                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}

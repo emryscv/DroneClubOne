@@ -10,6 +10,7 @@ export default async function Pilot({ params }: { params: { id: number } }) {
     const pilotData = await getPilot(id);
     const raceHistory = await getRacesForPilot(id);
 
+    console.log("pilotData", pilotData);
     return (
         <div className="grid md:grid-cols-3 gap-8 mb-12 mt-10">
             <PilotCard pilotData={pilotData} isLink={false} />
