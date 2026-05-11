@@ -1,3 +1,4 @@
+'use client';
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
 

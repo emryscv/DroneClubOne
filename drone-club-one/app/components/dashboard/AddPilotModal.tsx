@@ -1,3 +1,4 @@
+'use client';
 import { addPilot } from "@/app/data/actions";
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
