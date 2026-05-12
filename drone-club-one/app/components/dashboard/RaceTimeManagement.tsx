@@ -1,22 +1,29 @@
 "use client";
 
-import { PilotTableType } from "@/app/data/types";
+import { addPilotTime } from "@/app/data/actions";
+import { getTimesForRace } from "@/app/data/queries/races";
+import { LeaderbaordEntryType, PilotTableType } from "@/app/data/types";
 import { Edit, Plus, Save, Trophy, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
     const [selectedRace, setSelectedRace] = useState("");
     const [showAddEntry, setShowAddEntry] = useState(false);
     const [newEntry, setNewEntry] = useState({ pilotId: "", time: "", crashes: "0" });
-    const [leaderboard, setLeaderboard] = useState([]);
+    const [leaderboard, setLeaderboard] = useState<LeaderbaordEntryType[]>([]);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editEntry, setEditEntry] = useState({ time: "", crashes: "" });
 
-    
+    const [isPending, startTransition] = useTransition();
 
-    const handleAddEntry = () => {
-
-    }
+    useEffect(() => {
+        if (selectedRace) {
+            startTransition(async () => {
+                const data = await getTimesForRace(Number(selectedRace));
+                setLeaderboard(data);
+            });
+        }
+    }, [selectedRace]);
 
     return (
         <div>
@@ -52,7 +59,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                     </div>
 
                     {showAddEntry && (
-                        <form className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150">
+                        <form action={addPilotTime} className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150">
                             <div>
                                 <label className="block mb-2 text-sm">Pilot</label>
                                 <select
@@ -89,7 +96,6 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                             <div className="flex items-end gap-2">
                                 <button
                                     type="submit"
-                                    onClick={handleAddEntry}
                                     className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
                                 >
                                     <Save className="w-4 h-4 mx-auto" />
@@ -131,7 +137,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                 <span>{index + 1}</span>
                                                 {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
                                             </td>
-                                            <td>{entry.pilotName}</td>
+                                            <td>{entry.firstname + (entry.middlename ? ` ${entry.middlename} ` : " ") + entry.lastname + `( ${entry.nickname} )`}</td>
                                             <td>
                                                 <input
                                                     type="text"
@@ -151,13 +157,13 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                             </td>
                                             <td className="flex gap-2">
                                                 <button
-                                                    onClick={handleSaveEdit}
+                                                    onClick={() => {}/*handleSaveEdit*/}
                                                     className="px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-90 transition-opacity"
                                                 >
                                                     <Save className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={handleCancelEdit}
+                                                    onClick={() => {}/*handleCancelEdit*/}
                                                     className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors"
                                                 >
                                                     <X className="w-4 h-4" />
@@ -170,12 +176,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                 <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
                                                 {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
                                             </td>
-                                            <td>{entry.pilotName}</td>
+                                            <td>{entry.firstname + (entry.middlename ? ` ${entry.middlename} ` : " ") + entry.lastname + `( ${entry.nickname} )`}</td>
                                             <td className="font-mono">{entry.time}</td>
                                             <td>{entry.crashes}</td>
                                             <td>
                                                 <button
-                                                    onClick={() => handleEditEntry(index)}
+                                                    onClick={() => {}/*handleEditEntry(index)*/}
                                                     className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors flex items-center gap-2"
                                                 >
                                                     <Edit className="w-4 h-4" />

@@ -94,6 +94,10 @@ export async function addRaceAction(formData: FormData) {
     insertRace(raceData);
 }
 
+export async function addPilotTime(formData: FormData) {
+    
+}
+
 export async function getDashboardData() {
     const pilots = await getPilots();
     const races = await getRaceNamesAndIDs();
