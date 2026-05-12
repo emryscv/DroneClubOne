@@ -64,7 +64,7 @@ export async function getRaces() {
 // Check if this is still a good idea, given the fact that 
 // checking the time here maybe not a good ideaMaybe it is 
 // better to check that by hand on dashboards
-export async function getPreviousRaces() { 
+export async function getPreviousRaces() {
     const data = await sql<RaceTableType[]>`
         SELECT 
             id, 
@@ -84,4 +84,13 @@ export async function insertRace(raceData: RaceTableType) {
     const data = await sql<RaceTableType[]>`
         INSERT INTO races (title, date, location, bannerurl)
         VALUES (${raceData.title}, ${raceData.date}, ${raceData.location}, ${raceData.bannerurl});`;
+}
+
+export async function getRaceNamesAndIDs() {
+    const data = await sql<{ id: number, title: string }[]>`
+        SELECT 
+            id, 
+            title
+        FROM races;`;
+    return data;
 }

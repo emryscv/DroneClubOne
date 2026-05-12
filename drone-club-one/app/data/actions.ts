@@ -35,7 +35,7 @@ export async function signOutAction() {
     await signOut({ redirectTo: '/' });
 }
 
-export async function addPilot(formData: FormData) {
+export async function addPilotAction(formData: FormData) {
     const image: File | null = formData.get('image') as File | null;
     const nickname = formData.get('nickname') as string;
     const firstname = formData.get('firstName') as string;
@@ -65,7 +65,7 @@ export async function addPilot(formData: FormData) {
     insertPilot(pilotData);
 }
 
-export async function addRace(formData: FormData) {
+export async function addRaceAction(formData: FormData) {
     const banner: File | null = formData.get('banner') as File | null;
     const title = formData.get('title') as string;
     const date = formData.get('date') as string;

@@ -60,7 +60,3 @@ export async function insertPilot(pilotData: PilotTableType) {
         VALUES (${pilotData.firstname}, ${pilotData.middlename}, ${pilotData.lastname}, ${pilotData.nickname}, ${pilotData.status}, ${pilotData.pictureurl});`;
 }
 
-// export async function uploadAvatar(pilotId: number, fileUrl: string) {
-//     const data = await sql<PilotTableType[]>`
-//         UPDATE pilots SET picture = ${fileUrl} WHERE id = ${pilotId};`;
-// }

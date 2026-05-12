@@ -1,5 +1,5 @@
 'use client';
-import { addRace } from "@/app/data/actions";
+import { addRaceAction } from "@/app/data/actions";
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
 
@@ -48,7 +48,7 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} action={addRace} className="space-y-4">
+        <form onSubmit={handleSubmit} action={addRaceAction} className="space-y-4">
           <div>
             <label htmlFor="banner" className="block mb-2 text-sm">Race Banner</label>
             <div className="flex items-center gap-4">

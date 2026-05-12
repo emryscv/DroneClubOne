@@ -1,5 +1,5 @@
 'use client';
-import { addPilot } from "@/app/data/actions";
+import { addPilotAction } from "@/app/data/actions";
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
 
@@ -49,7 +49,7 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} action={addPilot} className="space-y-4">
+        <form onSubmit={handleSubmit} action={addPilotAction} className="space-y-4">
           <div>
             <label className="block mb-2 text-sm">Profile Picture</label>
             <div className="flex items-center gap-4">
