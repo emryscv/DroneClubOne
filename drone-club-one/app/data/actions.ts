@@ -6,8 +6,8 @@ import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { blob } from 'stream/consumers';
 import { PilotTableType, RaceTableType } from './types';
-import { insertPilot } from './queries/pilots';
-import { insertRace } from './queries/races';
+import { getPilot, getPilots, insertPilot } from './queries/pilots';
+import { getRaceNamesAndIDs, insertRace } from './queries/races';
 
 
 export async function authenticate(
@@ -42,7 +42,7 @@ export async function addPilotAction(formData: FormData) {
     const middlename = formData.get('middleName') as string;
     const lastname = formData.get('lastName') as string;
 
-    console.log("formData", nickname, firstname, middlename, lastname, image);  
+    console.log("formData", nickname, firstname, middlename, lastname, image);
     let blob;
     if (image) {
         blob = await put(image.name, image, {
@@ -51,7 +51,7 @@ export async function addPilotAction(formData: FormData) {
         });
         revalidatePath('/');
     }
-    
+
     const pilotData: PilotTableType = {
         id: -1, // This will be set by the database
         nickname,
@@ -71,7 +71,7 @@ export async function addRaceAction(formData: FormData) {
     const date = formData.get('date') as string;
     const location = formData.get('location') as string;
 
-    console.log("formData", banner, title, date, location);  
+    console.log("formData", banner, title, date, location);
     let blob;
     if (banner) {
         blob = await put(banner.name, banner, {
@@ -80,7 +80,7 @@ export async function addRaceAction(formData: FormData) {
         });
         revalidatePath('/');
     }
-    
+
     const raceData: RaceTableType = {
         id: -1, // This will be set by the database
         title,
@@ -92,4 +92,14 @@ export async function addRaceAction(formData: FormData) {
     };
 
     insertRace(raceData);
+}
+
+export async function getDashboardData() {
+    const pilots = await getPilots();
+    const races = await getRaceNamesAndIDs();
+
+    return {
+        pilots,
+        races
+    }
 }

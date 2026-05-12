@@ -1,16 +1,30 @@
 "use client"
 import { Edit, LogOut, Plus, Save, Trophy, X } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import AddPilotModal from "../components/dashboard/AddPilotModal";
 import AddRaceModal from "../components/dashboard/AddRaceModal";
 import EditPilotModal from "../components/dashboard/EditPilotModal";
 import EditRaceModal from "../components/dashboard/EditRaceModal";
 import { useRouter } from "next/navigation";
-import { signOutAction } from "../data/actions";
+import { getDashboardData, signOutAction } from "../data/actions";
 import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
+import { get } from "http";
+import { PilotTableType } from "../data/types";
 
 export default function Page() {
+    const [isPending, startTransition] = useTransition();
+    const [pilots, setPilots] = useState<PilotTableType[]>([]);
+    const [races, setRaces] = useState<{id: number, title: string}[]>([]); 
+
+    useEffect(() => {
+        startTransition(async () => {
+            const data = await getDashboardData(); // or pass FormData/args
+            setPilots(data.pilots);
+            setRaces(data.races);
+        });
+    }, []);
+
     const router = useRouter();
 
     const [showAddPilot, setShowAddPilot] = useState(false);
@@ -91,7 +105,7 @@ export default function Page() {
                 </div>
             </div>
 
-            <RaceTimeManagement />
+            <RaceTimeManagement pilots={pilots} races={races}/>
 
             <AddPilotModal isOpen={showAddPilot} onClose={() => setShowAddPilot(false)} />
             <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} />
