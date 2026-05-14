@@ -1,6 +1,5 @@
 'use client';
 import { editPilotAction } from "@/app/data/actions";
-import { updatePilot } from "@/app/data/queries/pilots";
 import { PilotTableType } from "@/app/data/types";
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
@@ -38,7 +37,7 @@ export default function EditPilotModal({ isOpen, onClose, pilots }: EditPilotMod
         status: pilot.status,
         picture: null,
       });
-      setPreviewUrl(null);
+      setPreviewUrl(pilot.pictureurl);
     } else {
       setSelectedPilot("");
       setFormData({ nickname: "", firstName: "", middleName: null, lastName: "", status: "active", picture: null });

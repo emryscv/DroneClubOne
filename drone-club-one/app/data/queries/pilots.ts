@@ -42,7 +42,7 @@ export async function insertPilot(pilotData: PilotTableType) {
         VALUES (${pilotData.firstname}, ${pilotData.middlename}, ${pilotData.lastname}, ${pilotData.nickname}, ${pilotData.status}, ${pilotData.pictureurl});`;
 }
 
-export async function updatePilot(pilotData: PilotTableType) {    
+export async function updatePilot(pilotData: PilotTableType) {
     console.log("Updating pilot data in database", pilotData);
     const data = await sql<PilotTableType[]>`UPDATE pilots
         SET 
@@ -51,6 +51,6 @@ export async function updatePilot(pilotData: PilotTableType) {
             lastname = ${pilotData.lastname},
             nickname = ${pilotData.nickname},
             status = ${pilotData.status},
-            pictureurl = ${pilotData.pictureurl}
+            pictureurl = COALESCE(${pilotData.pictureurl}, pictureurl)
         WHERE id = ${pilotData.id};`;
-};
+}
