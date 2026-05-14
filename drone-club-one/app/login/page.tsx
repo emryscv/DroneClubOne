@@ -8,8 +8,6 @@ import { authenticate } from '../data/actions';
 import { useSearchParams } from 'next/navigation';
 
 export default function Page() {
-    const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
     const [errorMessage, formAction, isPending] = useActionState(
         authenticate,
         undefined,
@@ -46,6 +44,7 @@ export default function Page() {
                             id="email"
                             type="email"
                             name="email"
+                            disabled={isPending}
                             required
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -61,6 +60,7 @@ export default function Page() {
                             id="password"
                             type="password"
                             name="password"
+                            disabled={isPending}
                             required
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -75,17 +75,17 @@ export default function Page() {
                             {errorMessage}
                         </div>
                     )}
-
-                    <input type="hidden" name="redirectTo" value={callbackUrl} />
-
+                    
                     <div className="flex gap-3 pt-4">
                         <button
+                            disabled={isPending}
                             type="submit"
                             className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity cursor-pointer"
                         >
                             Login
                         </button>
                         <button
+                            disabled={isPending}
                             type="button"
                             onClick={onClose}
                             className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer"
