@@ -30,7 +30,7 @@ export default function PilotCard({ pilotData, isLink = true }: { pilotData: Pil
                     <div className="flex items-center justify-between">
                         <TitleBorder size="small">{pilotData.nickname}</TitleBorder>
 
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm uppercase tracking-wide ${pilotData.status === "active" ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
+                        <span className={`inline-block px-3 py-1 rounded-full text-sm uppercase tracking-wide ${pilotData.status === "active" ? "bg-accent text-accent-foreground" : "bg-secondary text-muted-foreground"
                             }`}>
                             {pilotData.status}
                         </span>

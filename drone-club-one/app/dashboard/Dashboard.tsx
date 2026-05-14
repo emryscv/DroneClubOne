@@ -1,15 +1,14 @@
 "use client"
-import { Edit, LogOut, Plus, Save, Trophy, X } from "lucide-react";
+import { Edit, LogOut, Plus } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
-import { useEffect, useState, useTransition } from "react";
+import { useState } from "react";
 import AddPilotModal from "../components/dashboard/AddPilotModal";
 import AddRaceModal from "../components/dashboard/AddRaceModal";
 import EditPilotModal from "../components/dashboard/EditPilotModal";
 import EditRaceModal from "../components/dashboard/EditRaceModal";
 import { useRouter } from "next/navigation";
-import { getDashboardData, signOutAction } from "../data/actions";
+import { signOutAction } from "../data/actions";
 import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
-import { get } from "http";
 import { PilotTableType } from "../data/types";
 
 export default function Dashboard({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
@@ -97,7 +96,7 @@ export default function Dashboard({ pilots, races }: { pilots: PilotTableType[],
 
             <AddPilotModal isOpen={showAddPilot} onClose={() => setShowAddPilot(false)} />
             <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} />
-            <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} />
+            <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} pilots={pilots} />
             <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} />
         </div>
     );

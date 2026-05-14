@@ -5,7 +5,7 @@ import { AuthError } from 'next-auth';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { PilotTableType, RaceTableType } from './types';
-import { getPilots, insertPilot } from './queries/pilots';
+import { getPilots, insertPilot, updatePilot } from './queries/pilots';
 import { getRaceNamesAndIDs, insertRace } from './queries/races';
 import { addTimeToRace, updatePilotTime } from './queries/pilotRace';
 
@@ -42,9 +42,10 @@ export async function addPilotAction(formData: FormData) {
     const middlename = formData.get('middleName') as string;
     const lastname = formData.get('lastName') as string;
 
-    console.log("formData", nickname, firstname, middlename, lastname, image);
+    console.log("Add Pilot Form Data", image, nickname, firstname, middlename, lastname);
+
     let blob;
-    if (image) {
+    if (image && image.size > 0) {
         blob = await put(image.name, image, {
             access: 'public' /* or 'public' */,
             addRandomSuffix: true,
@@ -63,6 +64,39 @@ export async function addPilotAction(formData: FormData) {
     };
 
     insertPilot(pilotData);
+}
+
+export async function editPilotAction(formData: FormData) {
+    const pilotId = parseInt(formData.get('pilotId') as string);
+    const image: File | null = formData.get('image') as File | null;
+    const nickname = formData.get('nickname') as string;
+    const firstname = formData.get('firstName') as string;
+    const middlename = formData.get('middleName') as string;
+    const lastname = formData.get('lastName') as string;
+    const status = formData.get('status') as string;
+
+    let blob;
+    if (image && image.size > 0) {
+        blob = await put(image.name, image, {
+            access: 'public' /* or 'public' */,
+            addRandomSuffix: true,
+        });
+        revalidatePath('/');
+    }
+
+    const pilotData: PilotTableType = {
+        id: pilotId, // This will be set by the database
+        nickname,
+        firstname,
+        middlename,
+        lastname,
+        status: status as 'active' | 'inactive',
+        pictureurl: blob ? blob.url : null,
+    };
+
+    console.log("Updating pilot data", pilotData);
+
+    updatePilot(pilotData);
 }
 
 export async function addRaceAction(formData: FormData) {
@@ -94,17 +128,17 @@ export async function addRaceAction(formData: FormData) {
     insertRace(raceData);
 }
 
-export async function addPilotTime(formData: FormData) {
+export async function addPilotTimeAction(formData: FormData) {
     const pilotId = parseInt(formData.get('pilotId') as string);
     const raceId = parseInt(formData.get('raceId') as string);
     const time = parseFloat(formData.get('time') as string);
     const crashes = parseInt(formData.get('crashes') as string);
 
-    console.log("Updating pilot time", { pilotId, raceId, time, crashes });
+    console.log("Addding pilot time", { pilotId, raceId, time, crashes });
     addTimeToRace(pilotId, raceId, time, crashes);
 }
 
-export async function editPilotTime(formData: FormData) {
+export async function editPilotTimeAction(formData: FormData) {
     const pilotId = parseInt(formData.get('pilotId') as string);
     const raceId = parseInt(formData.get('raceId') as string);
     const time = parseFloat(formData.get('time') as string);
@@ -112,14 +146,4 @@ export async function editPilotTime(formData: FormData) {
 
     console.log("Updating pilot time", { pilotId, raceId, time, crashes });
     updatePilotTime(pilotId, raceId, time, crashes);
-}
-
-export async function getDashboardData() {
-    const pilots = await getPilots();
-    const races = await getRaceNamesAndIDs();
-
-    return {
-        pilots,
-        races
-    }
 }

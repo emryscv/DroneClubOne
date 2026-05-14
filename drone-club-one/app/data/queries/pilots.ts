@@ -36,10 +36,21 @@ export async function getPilots() {
 }
 
 export async function insertPilot(pilotData: PilotTableType) {
-    console.log(pilotData);
-
+    console.log("Inserting pilot data into database", pilotData);
     const data = await sql<PilotTableType[]>`
         INSERT INTO pilots (firstname, middlename, lastname, nickname, status, pictureurl)
         VALUES (${pilotData.firstname}, ${pilotData.middlename}, ${pilotData.lastname}, ${pilotData.nickname}, ${pilotData.status}, ${pilotData.pictureurl});`;
 }
 
+export async function updatePilot(pilotData: PilotTableType) {    
+    console.log("Updating pilot data in database", pilotData);
+    const data = await sql<PilotTableType[]>`UPDATE pilots
+        SET 
+            firstname = ${pilotData.firstname},
+            middlename = ${pilotData.middlename},
+            lastname = ${pilotData.lastname},
+            nickname = ${pilotData.nickname},
+            status = ${pilotData.status},
+            pictureurl = ${pilotData.pictureurl}
+        WHERE id = ${pilotData.id};`;
+};

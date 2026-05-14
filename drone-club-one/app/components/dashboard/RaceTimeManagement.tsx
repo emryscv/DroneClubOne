@@ -1,6 +1,6 @@
 "use client";
 
-import { addPilotTime, editPilotTime } from "@/app/data/actions";
+import { addPilotTimeAction, editPilotTimeAction } from "@/app/data/actions";
 import { getTimesForRace } from "@/app/data/queries/pilotRace";
 import { LeaderbaordEntryType, PilotTableType } from "@/app/data/types";
 import { Edit, Plus, Save, Trophy, X } from "lucide-react";
@@ -64,7 +64,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                     </div>
 
                     {showAddEntry && (
-                        <form action={addPilotTime} className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150">
+                        <form action={addPilotTimeAction} className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150">
                             <input type="hidden" name="raceId" value={selectedRace} />
                             <div>
                                 <label className="block mb-2 text-sm">Pilot</label>
@@ -76,7 +76,10 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                 >
                                     <option value="">Select pilot...</option>
                                     {pilots.map(pilot => (
-                                        <option key={pilot.id} value={pilot.id}>{`${pilot.firstname} ${pilot.middlename ? pilot.middlename + ' ' : ''}${pilot.lastname} (${pilot.nickname})`}</option>
+                                        <option key={pilot.id} value={pilot.id}>
+                                            <span className="font-bold">{`${pilot.nickname} `}</span>
+                                            <span className="text-muted-foreground">{`(${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`}</span>
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -142,7 +145,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     return editingIndex === index ? (
                                         <tr key={index}>
                                             <td className="p-4 col-span-5">
-                                                <form action={editPilotTime} id={`edit-form-${index}`}>
+                                                <form action={editPilotTimeAction} id={`edit-form-${index}`}>
                                                     <input type="hidden" name="pilotId" value={entry.id} />
                                                     <input type="hidden" name="raceId" value={selectedRace} />
                                                 </form>

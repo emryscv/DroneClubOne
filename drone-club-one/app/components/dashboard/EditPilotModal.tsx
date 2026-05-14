@@ -1,24 +1,22 @@
 'use client';
+import { editPilotAction } from "@/app/data/actions";
+import { updatePilot } from "@/app/data/queries/pilots";
+import { PilotTableType } from "@/app/data/types";
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
 
 interface EditPilotModalProps {
   isOpen: boolean;
   onClose: () => void;
+  pilots: PilotTableType[];
 }
 
-const mockPilots = [
-  { id: "1", nickname: "Maverick", firstName: "Alex", middleName: "J.", lastName: "Rivera", status: "active" },
-  { id: "2", nickname: "Sky", firstName: "Jordan", middleName: "", lastName: "Chen", status: "active" },
-  { id: "3", nickname: "Thunder", firstName: "Sam", middleName: "M.", lastName: "Taylor", status: "inactive" },
-];
-
-export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps) {
+export default function EditPilotModal({ isOpen, onClose, pilots }: EditPilotModalProps) {
   const [selectedPilot, setSelectedPilot] = useState("");
   const [formData, setFormData] = useState({
     nickname: "",
     firstName: "",
-    middleName: "",
+    middleName: null as string | null,
     lastName: "",
     status: "active",
     picture: null as File | null,
@@ -29,17 +27,21 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
   if (!isOpen) return null;
 
   const handlePilotSelect = (pilotId: string) => {
-    const pilot = mockPilots.find(p => p.id === pilotId);
+    const pilot = pilots.find(p => p.id === Number(pilotId));
     if (pilot) {
       setSelectedPilot(pilotId);
       setFormData({
         nickname: pilot.nickname,
-        firstName: pilot.firstName,
-        middleName: pilot.middleName,
-        lastName: pilot.lastName,
+        firstName: pilot.firstname,
+        middleName: pilot.middlename ? pilot.middlename : null,
+        lastName: pilot.lastname,
         status: pilot.status,
         picture: null,
       });
+      setPreviewUrl(null);
+    } else {
+      setSelectedPilot("");
+      setFormData({ nickname: "", firstName: "", middleName: null, lastName: "", status: "active", picture: null });
       setPreviewUrl(null);
     }
   };
@@ -53,14 +55,17 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Updated pilot data:", formData);
-    alert("Pilot information updated successfully!");
+  const handleOnClose = () => {
     setSelectedPilot("");
-    setFormData({ nickname: "", firstName: "", middleName: "", lastName: "", status: "active", picture: null });
+    setFormData({ nickname: "", firstName: "", middleName: null, lastName: "", status: "active", picture: null });
     setPreviewUrl(null);
     onClose();
+  }
+
+  const handleSubmit = (e: React.SubmitEvent) => {
+    console.log("Updated pilot data:", formData);
+    alert("Pilot information updated successfully!");
+    handleOnClose();
   };
 
   return (
@@ -69,25 +74,27 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl text-accent">Edit Pilot Info</h2>
           <button
-            onClick={onClose}
+            onClick={handleOnClose}
             className="w-8 h-8 flex items-center justify-center hover:bg-secondary rounded"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} action={editPilotAction} className="space-y-4">
           <div>
-            <label className="block mb-2 text-sm">Select Pilot</label>
+            <label htmlFor="pilotId" className="block mb-2 text-sm">Select Pilot</label>
             <select
+              id="pilotId"
+              name="pilotId"
               required
               value={selectedPilot}
               onChange={(e) => handlePilotSelect(e.target.value)}
               className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
             >
               <option value="">Choose a pilot...</option>
-              {mockPilots.map(pilot => (
-                <option key={pilot.id} value={pilot.id}>{pilot.nickname} - {pilot.firstName} {pilot.lastName}</option>
+              {pilots.map(pilot => (
+                <option key={pilot.id} value={pilot.id}>{`${pilot.nickname} (${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`}</option>
               ))}
             </select>
           </div>
@@ -95,7 +102,7 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
           {selectedPilot && (
             <>
               <div>
-                <label className="block mb-2 text-sm">Profile Picture</label>
+                <label htmlFor="image" className="block mb-2 text-sm">Profile Picture</label>
                 <div className="flex items-center gap-4">
                   <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                     {previewUrl ? (
@@ -104,9 +111,11 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
                       <Upload className="w-8 h-8 text-muted-foreground" />
                     )}
                   </div>
-                  <label className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
+                  <label htmlFor="image" className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
                     Choose File
                     <input
+                      id = "image"
+                      name = "image"
                       type="file"
                       accept="image/*"
                       onChange={handleFileChange}
@@ -117,8 +126,10 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
               </div>
 
               <div>
-                <label className="block mb-2 text-sm">Nickname</label>
+                <label htmlFor="nickname" className="block mb-2 text-sm">Nickname</label>
                 <input
+                  id="nickname"
+                  name="nickname"
                   type="text"
                   required
                   value={formData.nickname}
@@ -130,8 +141,10 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block mb-2 text-sm">First Name</label>
+                  <label htmlFor="firstName" className="block mb-2 text-sm">First Name</label>
                   <input
+                    id="firstName"
+                    name="firstName"
                     type="text"
                     required
                     value={formData.firstName}
@@ -141,18 +154,22 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
                   />
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm">Middle Name</label>
+                  <label htmlFor="middleName" className="block mb-2 text-sm">Middle Name</label>
                   <input
+                    id="middleName"
+                    name="middleName"
                     type="text"
-                    value={formData.middleName}
+                    value={formData.middleName ? formData.middleName : ""}
                     onChange={(e) => setFormData({ ...formData, middleName: e.target.value })}
                     className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                     placeholder="M."
                   />
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm">Last Name</label>
+                  <label htmlFor="lastName" className="block mb-2 text-sm">Last Name</label>
                   <input
+                    id="lastName"
+                    name="lastName"
                     type="text"
                     required
                     value={formData.lastName}
@@ -164,8 +181,10 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
               </div>
 
               <div>
-                <label className="block mb-2 text-sm">Status</label>
+                <label htmlFor="status" className="block mb-2 text-sm">Status</label>
                 <select
+                  id="status"
+                  name="status"
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                   className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
@@ -187,14 +206,14 @@ export default function EditPilotModal({ isOpen, onClose }: EditPilotModalProps)
             </button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleOnClose}
               className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors"
             >
               Cancel
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
