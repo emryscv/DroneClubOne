@@ -50,7 +50,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                         {!showAddEntry && (
                             <button
                                 onClick={() => setShowAddEntry(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
+                                className="flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity cursor-pointer"
                             >
                                 <Plus className="w-4 h-4" />
                                 Add Entry
@@ -118,7 +118,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                         <thead>
                             <tr className="bg-secondary border-b border-border">
                                 <th className="p-4 text-muted-foreground tracking-wide">POS</th>
-                                <th className="p-4 text-muted-foreground tracking-wide">PILOT</th>
+                                <th className="p-4 text-muted-foreground tracking-wide text-left">PILOT</th>
                                 <th className="p-4 text-muted-foreground tracking-wide">TIME</th>
                                 <th className="p-4 text-muted-foreground tracking-wide">CRASHES</th>
                                 <th className="p-4 text-muted-foreground tracking-wide">ACTIONS</th>
@@ -126,72 +126,91 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                         </thead>
 
                         {leaderboard.length !== 0 && (
-                            leaderboard.map((entry, index) => (
-                                <tbody
-                                    key={index}
-                                    className="p-4 border-b border-border last:border-b-0"
-                                >
-                                    {editingIndex === index ? (
-                                        <tr>
-                                            <td className="flex items-center gap-2">
-                                                <span>{index + 1}</span>
+                            <tbody
+                                className="p-4 border-b border-border last:border-b-0"
+                            >
+                                {leaderboard.map((entry, index) => {
+                                    return editingIndex === index ? (
+                                        <tr key={index}>
+                                            <td className="p-4">
+                                                <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+                                                <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
                                                 {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
+                                                </div>
                                             </td>
-                                            <td>{entry.firstname + (entry.middlename ? ` ${entry.middlename} ` : " ") + entry.lastname + `( ${entry.nickname} )`}</td>
-                                            <td>
-                                                <input
-                                                    type="text"
-                                                    value={editEntry.time}
-                                                    onChange={(e) => setEditEntry({ ...editEntry, time: e.target.value })}
-                                                    className="w-full px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent font-mono"
-                                                />
+                                            <td className="p-4">
+                                                <span className="font-bold">{`${entry.nickname} `}</span>
+                                                <span className="text-muted-foreground">{`(${entry.firstname}${entry.middlename ? " " + entry.middlename : ""} ${entry.lastname})`}</span>
                                             </td>
-                                            <td>
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    value={editEntry.crashes}
-                                                    onChange={(e) => setEditEntry({ ...editEntry, crashes: e.target.value })}
-                                                    className="w-full px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                                                />
+                                            <td className="p-4">
+                                                <div className="flex justify-center">
+                                                    <input
+                                                        type="text"
+                                                        value={editEntry.time}
+                                                        onChange={(e) => setEditEntry({ ...editEntry, time: e.target.value })}
+                                                        className="h-8 px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent font-mono"
+                                                    />
+                                                </div>
                                             </td>
-                                            <td className="flex gap-2">
+                                            <td className="p-4">
+                                                <div className="flex justify-center">
+                                                    <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={editEntry.crashes}
+                                                        onChange={(e) => setEditEntry({ ...editEntry, crashes: e.target.value })}
+                                                        className="h-8 px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="p-4">
+                                                <div className="flex items-center justify-center gap-2 whitespace-nowrap">
                                                 <button
-                                                    onClick={() => {}/*handleSaveEdit*/}
+                                                    onClick={() => { }/*handleSaveEdit*/}
                                                     className="px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-90 transition-opacity"
                                                 >
-                                                    <Save className="w-4 h-4" />
+                                                    <Save className="w-4 h-6" />
                                                 </button>
                                                 <button
-                                                    onClick={() => {}/*handleCancelEdit*/}
+                                                    onClick={() => { }/*handleCancelEdit*/}
                                                     className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors"
                                                 >
-                                                    <X className="w-4 h-4" />
+                                                    <X className="w-4 h-6" />
                                                 </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ) : (
-                                        <tr>
-                                            <td className="flex items-center gap-2">
+                                        <tr key={index}>
+                                            <td className="p-4 flex items-center justify-center gap-2">
                                                 <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
                                                 {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
                                             </td>
-                                            <td>{entry.firstname + (entry.middlename ? ` ${entry.middlename} ` : " ") + entry.lastname + `( ${entry.nickname} )`}</td>
-                                            <td className="font-mono">{entry.time}</td>
-                                            <td>{entry.crashes}</td>
-                                            <td>
+                                            <td className="p-4">
+                                                <span className="font-bold">{`${entry.nickname} `}</span>
+                                                <span className="text-muted-foreground">{`(${entry.firstname}${entry.middlename ? " " + entry.middlename : ""} ${entry.lastname})`}</span>
+                                            </td>
+                                            <td className="p-4 text-center font-mono">{entry.time}</td>
+                                            <td className="p-4 text-center">{entry.crashes}</td>
+                                            <td className="p-4 flex justify-center">
                                                 <button
-                                                    onClick={() => {}/*handleEditEntry(index)*/}
-                                                    className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors flex items-center gap-2"
+                                                    onClick={() => {
+                                                        setEditEntry({
+                                                            time: entry.time.toString(),
+                                                            crashes: entry.crashes.toString()
+                                                        }); setEditingIndex(index)
+                                                    }}
+                                                    className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors flex items-center gap-2 cursor-pointer"
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                     Edit
                                                 </button>
                                             </td>
                                         </tr>
-                                    )}
-                                </tbody>
-                            ))
+                                    )
+                                }
+                                )}
+                            </tbody>
                         )}
                     </table>
                     {leaderboard.length === 0 && (
