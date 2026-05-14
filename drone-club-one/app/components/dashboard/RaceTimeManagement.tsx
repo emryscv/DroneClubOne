@@ -65,10 +65,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
                     {showAddEntry && (
                         <form action={addPilotTime} className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150">
+                            <input type="hidden" name="raceId" value={selectedRace} />
                             <div>
                                 <label className="block mb-2 text-sm">Pilot</label>
                                 <select
                                     value={newEntry.pilotId}
+                                    name="pilotId"
                                     onChange={(e) => setNewEntry({ ...newEntry, pilotId: e.target.value })}
                                     className="w-full px-3 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                                 >
@@ -81,7 +83,8 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                             <div>
                                 <label className="block mb-2 text-sm">Time</label>
                                 <input
-                                    type="text"
+                                    type="number"
+                                    name="time"
                                     value={newEntry.time}
                                     onChange={(e) => setNewEntry({ ...newEntry, time: e.target.value })}
                                     className="w-full px-3 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent font-mono"
@@ -92,6 +95,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                 <label className="block mb-2 text-sm">Crashes</label>
                                 <input
                                     type="number"
+                                    name="crashes"
                                     min="0"
                                     value={newEntry.crashes}
                                     onChange={(e) => setNewEntry({ ...newEntry, crashes: e.target.value })}

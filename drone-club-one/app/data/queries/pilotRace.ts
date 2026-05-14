@@ -44,6 +44,6 @@ export async function updatePilotTime(pilotId: number, raceId: number, time: num
     await sql`UPDATE pilot_race SET time = ${time}, crashes = ${crashes} WHERE pilotid = ${pilotId} AND raceid = ${raceId};`;
 }
 
-export async function addPilotTime(pilotId: number, raceId: number, time: number, crashes: number) {
+export async function addTimeToRace(pilotId: number, raceId: number, time: number, crashes: number) {
     await sql`INSERT INTO pilot_race (pilotid, raceid, time, crashes) VALUES (${pilotId}, ${raceId}, ${time}, ${crashes});`;
 }

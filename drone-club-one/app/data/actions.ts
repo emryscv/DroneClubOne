@@ -4,11 +4,10 @@ import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
-import { blob } from 'stream/consumers';
 import { PilotTableType, RaceTableType } from './types';
-import { getPilot, getPilots, insertPilot } from './queries/pilots';
+import { getPilots, insertPilot } from './queries/pilots';
 import { getRaceNamesAndIDs, insertRace } from './queries/races';
-import { updatePilotTime } from './queries/pilotRace';
+import { addTimeToRace, updatePilotTime } from './queries/pilotRace';
 
 
 export async function authenticate(
@@ -96,7 +95,13 @@ export async function addRaceAction(formData: FormData) {
 }
 
 export async function addPilotTime(formData: FormData) {
+    const pilotId = parseInt(formData.get('pilotId') as string);
+    const raceId = parseInt(formData.get('raceId') as string);
+    const time = parseFloat(formData.get('time') as string);
+    const crashes = parseInt(formData.get('crashes') as string);
 
+    console.log("Updating pilot time", { pilotId, raceId, time, crashes });
+    addTimeToRace(pilotId, raceId, time, crashes);
 }
 
 export async function editPilotTime(formData: FormData) {
