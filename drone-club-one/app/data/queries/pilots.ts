@@ -1,28 +1,8 @@
 "use server";
 import postgres from 'postgres';
-import { LeaderbaordEntryType, PilotTableType, RaceTableType } from './types';
+import { PilotTableType, RaceHistoryEntryType } from '../types';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
-export async function getAllRaces() {
-    const data = await sql<LeaderbaordEntryType[]>`
-        SELECT
-            p.id, 
-            position, 
-            nickname, 
-            firstname, 
-            middlename, 
-            lastname, 
-            time, 
-            crashes 
-        FROM races r
-        JOIN pilot_race pr ON r.id = pr.raceid
-        JOIN pilots p ON pr.pilotid = p.id
-        WHERE r.id = 1
-        ORDER BY position
-        ;`;
-    return data;
-}
 
 export async function getPilot(pilotId: number) {
     const data = await sql<PilotTableType[]>`
@@ -32,10 +12,10 @@ export async function getPilot(pilotId: number) {
             middlename,    
             lastname,  
             nickname, 
-            picture, 
-            status
-        FROM pilots WHERE id = ${pilotId};`
-
+            status,
+            pictureurl
+        FROM pilots 
+        WHERE id = ${pilotId};`;
     return data[0];
 }
 
@@ -47,11 +27,28 @@ export async function getPilots() {
             middlename,    
             lastname,  
             nickname, 
-            picture, 
+            pictureurl, 
             status
         FROM pilots 
         ORDER BY id;`
 
+    return data;
+}
+
+export async function getRacesForPilot(pilotId: number) {
+    const data = await sql<RaceHistoryEntryType[]>`
+        SELECT
+            pr.raceid,
+            r.title,
+            r.date,
+            position,
+            time,
+            crashes
+        FROM pilots p
+        JOIN pilot_race pr ON p.id = pr.pilotid
+        JOIN races r ON pr.raceid = r.id
+        WHERE p.id = ${pilotId};
+    `;
     return data;
 }
 

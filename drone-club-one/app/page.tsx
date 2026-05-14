@@ -1,32 +1,30 @@
-import Image from "next/image";
-import { getAllRaces } from "./data/queries";
-import TableRow from "./components/TableRow";
+import { getTimesForRace, getLatestRace } from "./data/queries/races";
+import Link from "next/link";
+import Leaderboard from "./components/Leaderboard";
+import TitleBorder from "./components/TitleBorder";
 
 
 export default async function Home() {
-  const leaderboard = await getAllRaces();
-  console.log(leaderboard);
+  const raceData = await getLatestRace();
+  const leaderboard = await getTimesForRace(raceData.id);
 
   return (
-    <div className="flex flex-col flex-1 bg-white">
-      <main className="">
-        <table>
-          <thead>
-            <tr>
-              <th>Pos</th>
-              <th>Nickname</th>
-              <th>Fullname</th>
-              <th>Time</th>
-              <th>Crashes</th>
-            </tr>
-          </thead>
-          <tbody className="text-black">
-            {
-              leaderboard.map((row, i) => <TableRow key={i} data={row} />)
-            }
-          </tbody>
-        </table>
-      </main>
-    </div>
+    <>
+      <div className="mb-8">
+        <TitleBorder>Current Race Leaderboard</TitleBorder>
+        <p className="text-muted-foreground mt-4">{raceData.title}</p>
+      </div>
+
+      <Leaderboard leaderboard={leaderboard} />
+
+      <div className="mt-8 text-center">
+        <Link
+          href={`/races/${raceData.id}`}
+          className="inline-flex items-center px-6 py-3 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
+        >
+          View Full Race Details
+        </Link>
+      </div>
+    </>
   );
 }

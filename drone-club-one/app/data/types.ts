@@ -1,7 +1,11 @@
 export type RaceTableType = {
-    name: string,
+    id: number,
+    title: string,
     date: string,
-    location: string
+    location: string,
+    bannerUrl?: string,
+    isupcoming: boolean,
+    pilotscount: number 
 }
 
 export type LeaderbaordEntryType = {
@@ -22,6 +26,23 @@ export type PilotTableType = {
     lastname: string,
     nickname: string,
     status: "active" | "inactive",
-    picture: string,
+    pictureUrl: string,
+
+}
+
+export type RaceHistoryEntryType = {
+    raceid: any
+    title: string,
+    position: number,
+    time: number,
+    crashes: number,
+    date: string,
+}
+
+export type UserType = {
+    id: string,
+    name: string,
+    email: string,
+    password: string,
 
 }

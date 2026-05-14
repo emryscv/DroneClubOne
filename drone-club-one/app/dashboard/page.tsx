@@ -1,5 +1,5 @@
 "use client"
-import { insertPilot } from "../data/queries";
+import { insertPilot } from "../data/queries/pilots";
 
 export default function Page() {
 
