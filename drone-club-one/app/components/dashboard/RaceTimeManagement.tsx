@@ -1,7 +1,7 @@
 "use client";
 
-import { addPilotTime } from "@/app/data/actions";
-import { getTimesForRace } from "@/app/data/queries/races";
+import { addPilotTime, editPilotTime } from "@/app/data/actions";
+import { getTimesForRace } from "@/app/data/queries/pilotRace";
 import { LeaderbaordEntryType, PilotTableType } from "@/app/data/types";
 import { Edit, Plus, Save, Trophy, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
@@ -15,6 +15,11 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
     const [editEntry, setEditEntry] = useState({ time: "", crashes: "" });
 
     const [isPending, startTransition] = useTransition();
+
+    const handleCancelEdit = () => {
+        setEditingIndex(null);
+        setEditEntry({ time: "", crashes: "" });
+    }
 
     useEffect(() => {
         if (selectedRace) {
@@ -132,10 +137,14 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                 {leaderboard.map((entry, index) => {
                                     return editingIndex === index ? (
                                         <tr key={index}>
-                                            <td className="p-4">
+                                            <td className="p-4 col-span-5">
+                                                <form action={editPilotTime} id={`edit-form-${index}`}>
+                                                    <input type="hidden" name="pilotId" value={entry.id} />
+                                                    <input type="hidden" name="raceId" value={selectedRace} />
+                                                </form>
                                                 <div className="flex items-center justify-center gap-2 whitespace-nowrap">
-                                                <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
-                                                {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
+                                                    <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
+                                                    {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
                                                 </div>
                                             </td>
                                             <td className="p-4">
@@ -145,7 +154,9 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                             <td className="p-4">
                                                 <div className="flex justify-center">
                                                     <input
-                                                        type="text"
+                                                        form={`edit-form-${index}`}
+                                                        type="number"
+                                                        name="time"
                                                         value={editEntry.time}
                                                         onChange={(e) => setEditEntry({ ...editEntry, time: e.target.value })}
                                                         className="h-8 px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent font-mono"
@@ -153,9 +164,11 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                 </div>
                                             </td>
                                             <td className="p-4">
-                                                <div className="flex justify-center">
+                                                <div className="p-4 flex justify-center">
                                                     <input
+                                                        form={`edit-form-${index}`}
                                                         type="number"
+                                                        name="crashes"
                                                         min="0"
                                                         value={editEntry.crashes}
                                                         onChange={(e) => setEditEntry({ ...editEntry, crashes: e.target.value })}
@@ -165,19 +178,21 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                             </td>
                                             <td className="p-4">
                                                 <div className="flex items-center justify-center gap-2 whitespace-nowrap">
-                                                <button
-                                                    onClick={() => { }/*handleSaveEdit*/}
-                                                    className="px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-90 transition-opacity"
-                                                >
-                                                    <Save className="w-4 h-6" />
-                                                </button>
-                                                <button
-                                                    onClick={() => { }/*handleCancelEdit*/}
-                                                    className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors"
-                                                >
-                                                    <X className="w-4 h-6" />
-                                                </button>
+                                                    <button
+                                                        form={`edit-form-${index}`}
+                                                        type="submit"
+                                                        className="px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-90 transition-opacity"
+                                                    >
+                                                        <Save className="w-4 h-6" />
+                                                    </button>
+                                                    <button
+                                                        onClick={handleCancelEdit}
+                                                        className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors"
+                                                    >
+                                                        <X className="w-4 h-6" />
+                                                    </button>
                                                 </div>
+
                                             </td>
                                         </tr>
                                     ) : (
@@ -219,7 +234,8 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                         </div>
                     )}
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

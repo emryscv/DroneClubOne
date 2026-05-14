@@ -1,6 +1,6 @@
 "use server";
 import postgres from 'postgres';
-import { PilotTableType, RaceHistoryEntryType } from '../types';
+import { PilotTableType } from '../types';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -32,23 +32,6 @@ export async function getPilots() {
         FROM pilots 
         ORDER BY id;`
 
-    return data;
-}
-
-export async function getRacesForPilot(pilotId: number) {
-    const data = await sql<RaceHistoryEntryType[]>`
-        SELECT
-            pr.raceid,
-            r.title,
-            r.date,
-            position,
-            time,
-            crashes
-        FROM pilots p
-        JOIN pilot_race pr ON p.id = pr.pilotid
-        JOIN races r ON pr.raceid = r.id
-        WHERE p.id = ${pilotId};
-    `;
     return data;
 }
 
