@@ -27,7 +27,7 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
       getRace(selectedRace).then((race) => {
         setFormData({
           name: race.title,
-          date: race.date,
+          date: new Date(race.date).toISOString().split('T')[0], // Format date for input type="date"
           location: race.location,
           picture: null,
         });
@@ -137,12 +137,7 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
                   id="date"
                   name="date"
                   required
-                  value={new Date(formData.date).toLocaleDateString('sv-SE', { //sv-SE format ensures the date is in YYYY-MM-DD format which is compatible with input type="date"
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    timeZone: 'UTC',
-                  })}
+                  value={formData.date}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                 />

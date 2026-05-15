@@ -57,7 +57,7 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
 
         <form onSubmit={handleSubmit} action={addPilotAction} className="space-y-4">
           <div>
-            <label className="block mb-2 text-sm">Profile Picture</label>
+            <label htmlFor="image" className="block mb-2 text-sm">Profile Picture</label>
             <div className="flex items-center gap-4">
               <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
                 {previewUrl ? (

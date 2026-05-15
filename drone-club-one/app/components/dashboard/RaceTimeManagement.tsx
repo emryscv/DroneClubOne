@@ -35,8 +35,10 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
             <h2 className="text-2xl mb-6">Race Time Management</h2>
 
             <div className="bg-card border border-border rounded-lg p-6 mb-6">
-                <label className="block mb-2">Select Race</label>
+                <label htmlFor="raceId" className="block mb-2">Select Race</label>
                 <select
+                    id="raceId"
+                    name="raceId"
                     value={selectedRace || ""}
                     onChange={(e) => setSelectedRace(e.target.value)}
                     className="w-full max-w-md px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
@@ -65,11 +67,17 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
                     {showAddEntry && (
                         <form action={addPilotTimeAction} className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150">
-                            <input type="hidden" name="raceId" value={selectedRace} />
+                            <input
+                                type="hidden"
+                                id="raceId"
+                                name="raceId"
+                                value={selectedRace}
+                            />
                             <div>
-                                <label className="block mb-2 text-sm">Pilot</label>
+                                <label htmlFor="pilotId" className="block mb-2 text-sm">Pilot</label>
                                 <select
                                     value={newEntry.pilotId}
+                                    id="pilotId"
                                     name="pilotId"
                                     onChange={(e) => setNewEntry({ ...newEntry, pilotId: e.target.value })}
                                     className="w-full px-3 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
@@ -77,16 +85,16 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     <option value="">Select pilot...</option>
                                     {pilots.map(pilot => (
                                         <option key={pilot.id} value={pilot.id}>
-                                            <span className="font-bold">{`${pilot.nickname} `}</span>
-                                            <span className="text-muted-foreground">{`(${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`}</span>
+                                            {`${pilot.nickname} (${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`}
                                         </option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label className="block mb-2 text-sm">Time</label>
+                                <label htmlFor="time" className="block mb-2 text-sm">Time</label>
                                 <input
                                     type="number"
+                                    id="time"
                                     name="time"
                                     value={newEntry.time}
                                     onChange={(e) => setNewEntry({ ...newEntry, time: e.target.value })}
@@ -95,9 +103,10 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                 />
                             </div>
                             <div>
-                                <label className="block mb-2 text-sm">Crashes</label>
+                                <label htmlFor="crashes" className="block mb-2 text-sm">Crashes</label>
                                 <input
                                     type="number"
+                                    id="crashes"
                                     name="crashes"
                                     min="0"
                                     value={newEntry.crashes}
@@ -146,8 +155,8 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                         <tr key={index}>
                                             <td className="p-4 col-span-5">
                                                 <form action={editPilotTimeAction} id={`edit-form-${index}`}>
-                                                    <input type="hidden" name="pilotId" value={entry.id} />
-                                                    <input type="hidden" name="raceId" value={selectedRace} />
+                                                    <input type="hidden" id="pilotId" name="pilotId" value={entry.id} />
+                                                    <input type="hidden" id="raceId" name="raceId" value={selectedRace} />
                                                 </form>
                                                 <div className="flex items-center justify-center gap-2 whitespace-nowrap">
                                                     <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
@@ -163,6 +172,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                     <input
                                                         form={`edit-form-${index}`}
                                                         type="number"
+                                                        id="time"
                                                         name="time"
                                                         value={editEntry.time}
                                                         onChange={(e) => setEditEntry({ ...editEntry, time: e.target.value })}
@@ -175,6 +185,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                     <input
                                                         form={`edit-form-${index}`}
                                                         type="number"
+                                                        id="crashes"
                                                         name="crashes"
                                                         min="0"
                                                         value={editEntry.crashes}

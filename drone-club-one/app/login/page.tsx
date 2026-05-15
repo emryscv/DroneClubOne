@@ -38,7 +38,7 @@ export default function Page() {
 
                 <form action={formAction} className="space-y-4">
                     <div>
-                        <label className="block mb-2 text-sm">Email</label>
+                        <label htmlFor="email" className="block mb-2 text-sm">Email</label>
                         <input
                             id="email"
                             type="email"
@@ -54,7 +54,7 @@ export default function Page() {
                     </div>
 
                     <div>
-                        <label className="block mb-2 text-sm">Password</label>
+                        <label htmlFor="password" className="block mb-2 text-sm">Password</label>
                         <input
                             id="password"
                             type="password"
