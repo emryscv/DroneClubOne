@@ -1,20 +1,19 @@
 'use client';
+import { getRace } from "@/app/data/queries/races";
+import { RaceTableType } from "@/app/data/types";
+import { get } from "http";
 import { X, Upload } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface EditRaceModalProps {
   isOpen: boolean;
   onClose: () => void;
+  races: { id: number, title: string }[];
 }
 
-const mockRaces = [
-  { id: "1", name: "Spring Championship 2026 - Round 1", date: "2026-03-15", location: "Innovation Center Track" },
-  { id: "2", name: "Spring Championship 2026 - Round 2", date: "2026-04-05", location: "Campus Outdoor Circuit" },
-  { id: "3", name: "Spring Championship 2026 - Round 3", date: "2026-04-20", location: "Innovation Center Track" },
-];
 
-export default function EditRaceModal({ isOpen, onClose }: EditRaceModalProps) {
-  const [selectedRace, setSelectedRace] = useState("");
+export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalProps) {
+  const [selectedRace, setSelectedRace] = useState(-1);
   const [formData, setFormData] = useState({
     name: "",
     date: "",
@@ -24,21 +23,21 @@ export default function EditRaceModal({ isOpen, onClose }: EditRaceModalProps) {
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  if (!isOpen) return null;
-
-  const handleRaceSelect = (raceId: string) => {
-    const race = mockRaces.find(r => r.id === raceId);
-    if (race) {
-      setSelectedRace(raceId);
-      setFormData({
-        name: race.name,
-        date: race.date,
-        location: race.location,
-        picture: null,
+  useEffect(() => {
+    if (selectedRace !== -1) {
+      getRace(selectedRace).then((race) => {
+        setFormData({
+          name: race.title,
+          date: race.date,
+          location: race.location,
+          picture: null,
+        });
+        setPreviewUrl(race.bannerurl);
       });
-      setPreviewUrl(null);
     }
-  };
+  }, [selectedRace]);
+
+  if (!isOpen) return null;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -49,14 +48,18 @@ export default function EditRaceModal({ isOpen, onClose }: EditRaceModalProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Updated race data:", formData);
-    alert("Race information updated successfully!");
-    setSelectedRace("");
+  const handleOnClose = () => {
+    setSelectedRace(-1);
     setFormData({ name: "", date: "", location: "", picture: null });
     setPreviewUrl(null);
     onClose();
+  }
+
+  const handleSubmit = (e: React.SubmitEvent) => {
+    e.preventDefault();
+    console.log("Updated race data:", formData);
+    alert("Race information updated successfully!");
+    handleOnClose();
   };
 
   return (
@@ -65,7 +68,7 @@ export default function EditRaceModal({ isOpen, onClose }: EditRaceModalProps) {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl text-accent">Edit Race Info</h2>
           <button
-            onClick={onClose}
+            onClick={handleOnClose}
             className="w-8 h-8 flex items-center justify-center hover:bg-secondary rounded"
           >
             <X className="w-5 h-5" />
@@ -78,17 +81,17 @@ export default function EditRaceModal({ isOpen, onClose }: EditRaceModalProps) {
             <select
               required
               value={selectedRace}
-              onChange={(e) => handleRaceSelect(e.target.value)}
+              onChange={(e) => setSelectedRace(Number(e.target.value))}
               className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
             >
-              <option value="">Choose a race...</option>
-              {mockRaces.map(race => (
-                <option key={race.id} value={race.id}>{race.name}</option>
+              <option value={-1}>Choose a race...</option>
+              {races.map(race => (
+                <option key={race.id} value={race.id}>{race.title}</option>
               ))}
             </select>
           </div>
 
-          {selectedRace && (
+          {selectedRace !== -1 && (
             <>
               <div>
                 <label className="block mb-2 text-sm">Race Picture</label>
@@ -128,7 +131,12 @@ export default function EditRaceModal({ isOpen, onClose }: EditRaceModalProps) {
                 <input
                   type="date"
                   required
-                  value={formData.date}
+                  value={new Date(formData.date).toLocaleDateString('sv-SE', { //sv-SE format ensures the date is in YYYY-MM-DD format which is compatible with input type="date"
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    timeZone: 'UTC',
+                  })}
                   onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                 />
@@ -150,14 +158,14 @@ export default function EditRaceModal({ isOpen, onClose }: EditRaceModalProps) {
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              disabled={!selectedRace}
+              disabled={selectedRace === -1}
               className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Update Race
             </button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleOnClose}
               className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors"
             >
               Cancel

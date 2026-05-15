@@ -97,7 +97,7 @@ export default function Dashboard({ pilots, races }: { pilots: PilotTableType[],
             <AddPilotModal isOpen={showAddPilot} onClose={() => setShowAddPilot(false)} />
             <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} />
             <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} pilots={pilots} />
-            <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} />
+            <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} races={races} />
         </div>
     );
 }
