@@ -90,3 +90,9 @@ export async function getRaceNamesAndIDs() {
         FROM races;`;
     return data;
 }
+
+export async function getLocations() {
+    const data = await sql<{ location: string }[]>`
+        SELECT DISTINCT location From races;`;
+    return data.map((row) => row.location);
+}
