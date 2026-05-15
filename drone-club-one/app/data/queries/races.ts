@@ -1,6 +1,6 @@
 "use server";
 import postgres from 'postgres';
-import { LeaderbaordEntryType, RaceTableType } from '../types';
+import { RaceTableType } from '../types';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -67,6 +67,19 @@ export async function insertRace(raceData: RaceTableType) {
     const data = await sql<RaceTableType[]>`
         INSERT INTO races (title, date, location, bannerurl)
         VALUES (${raceData.title}, ${raceData.date}, ${raceData.location}, ${raceData.bannerurl});`;
+}
+
+export async function updateRace(raceData: RaceTableType) {
+    console.log(raceData);
+
+    const data = await sql<RaceTableType[]>`
+        UPDATE races
+        SET 
+            title = ${raceData.title},
+            date = ${raceData.date},
+            location = ${raceData.location},
+            bannerurl = COALESCE(${raceData.bannerurl}, bannerurl)
+        WHERE id = ${raceData.id};`;
 }
 
 export async function getRaceNamesAndIDs() {

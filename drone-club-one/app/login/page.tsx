@@ -5,7 +5,6 @@ import { useState } from "react";
 
 import { useActionState } from 'react';
 import { authenticate } from '../data/actions';
-import { useSearchParams } from 'next/navigation';
 
 export default function Page() {
     const [errorMessage, formAction, isPending] = useActionState(

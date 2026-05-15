@@ -1,7 +1,6 @@
 'use client';
+import { editRaceAction } from "@/app/data/actions";
 import { getRace } from "@/app/data/queries/races";
-import { RaceTableType } from "@/app/data/types";
-import { get } from "http";
 import { X, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -56,7 +55,6 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
   }
 
   const handleSubmit = (e: React.SubmitEvent) => {
-    e.preventDefault();
     console.log("Updated race data:", formData);
     alert("Race information updated successfully!");
     handleOnClose();
@@ -75,11 +73,13 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} action={editRaceAction} className="space-y-4">
           <div>
-            <label className="block mb-2 text-sm">Select Race</label>
+            <label htmlFor="raceId" className="block mb-2 text-sm">Select Race</label>
             <select
               required
+              id="raceId"
+              name="raceId"
               value={selectedRace}
               onChange={(e) => setSelectedRace(Number(e.target.value))}
               className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
@@ -94,7 +94,7 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
           {selectedRace !== -1 && (
             <>
               <div>
-                <label className="block mb-2 text-sm">Race Picture</label>
+                <label htmlFor="banner" className="block mb-2 text-sm">Race Picture</label>
                 <div className="flex items-center gap-4">
                   <div className="w-32 h-32 rounded-lg bg-secondary flex items-center justify-center overflow-hidden">
                     {previewUrl ? (
@@ -103,10 +103,12 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
                       <Upload className="w-8 h-8 text-muted-foreground" />
                     )}
                   </div>
-                  <label className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
+                  <label htmlFor="banner" className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
                     Choose File
                     <input
                       type="file"
+                      id="banner"
+                      name="banner"
                       accept="image/*"
                       onChange={handleFileChange}
                       className="hidden"
@@ -116,9 +118,11 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
               </div>
 
               <div>
-                <label className="block mb-2 text-sm">Race Name</label>
+                <label htmlFor="title" className="block mb-2 text-sm">Race Name</label>
                 <input
                   type="text"
+                  id="title"
+                  name="title"
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -127,9 +131,11 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
               </div>
 
               <div>
-                <label className="block mb-2 text-sm">Date</label>
+                <label htmlFor="date" className="block mb-2 text-sm">Date</label>
                 <input
                   type="date"
+                  id="date"
+                  name="date"
                   required
                   value={new Date(formData.date).toLocaleDateString('sv-SE', { //sv-SE format ensures the date is in YYYY-MM-DD format which is compatible with input type="date"
                     year: 'numeric',
@@ -143,9 +149,11 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
               </div>
 
               <div>
-                <label className="block mb-2 text-sm">Location</label>
+                <label htmlFor="location" className="block mb-2 text-sm">Location</label>
                 <input
                   type="text"
+                  id="location"
+                  name="location"
                   required
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
