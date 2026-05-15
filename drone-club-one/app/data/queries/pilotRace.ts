@@ -30,6 +30,7 @@ export async function getTimesForRace(raceId: number) {
             firstname, 
             middlename, 
             lastname, 
+            pictureurl,
             time, 
             crashes 
         FROM races r

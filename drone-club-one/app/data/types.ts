@@ -15,6 +15,7 @@ export type LeaderbaordEntryType = {
     firstname: string,
     middlename: string | null,
     lastname: string,
+    pictureurl: string | null,
     time: number,
     crashes: number
 }
