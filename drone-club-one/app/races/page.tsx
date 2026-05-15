@@ -77,5 +77,10 @@ export default function Races() {
                     <RaceCard key={i} race={race} />
                 ))}
             </div>
+            {filteredRaces.length === 0 && (
+                <div className="text-center py-12 text-muted-foreground">
+                    No races found matching "{searchQuery}"
+                </div>
+            )}
         </>);
 }
