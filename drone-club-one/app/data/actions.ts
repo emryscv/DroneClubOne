@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 import { PilotTableType, RaceTableType } from './types';
 import { insertPilot, updatePilot } from './queries/pilots';
 import { insertRace, updateRace } from './queries/races';
-import { addTimeToRace, updatePilotTime } from './queries/pilotRace';
+import { addTimeToRace, updatePilotTime, updatePositions } from './queries/pilotRace';
 
 
 export async function authenticate(
@@ -166,6 +166,7 @@ export async function addPilotTimeAction(formData: FormData) {
 
     console.log("Addding pilot time", { pilotId, raceId, time, crashes });
     addTimeToRace(pilotId, raceId, time, crashes);
+    updatePositions(raceId);
 }
 
 export async function editPilotTimeAction(formData: FormData) {
@@ -176,4 +177,5 @@ export async function editPilotTimeAction(formData: FormData) {
 
     console.log("Updating pilot time", { pilotId, raceId, time, crashes });
     updatePilotTime(pilotId, raceId, time, crashes);
+    updatePositions(raceId);
 }

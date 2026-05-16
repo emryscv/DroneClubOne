@@ -48,3 +48,18 @@ export async function updatePilotTime(pilotId: number, raceId: number, time: num
 export async function addTimeToRace(pilotId: number, raceId: number, time: number, crashes: number) {
     await sql`INSERT INTO pilot_race (pilotid, raceid, time, crashes) VALUES (${pilotId}, ${raceId}, ${time}, ${crashes});`;
 }
+
+export async function updatePositions(raceId: number) {
+    await sql`
+    UPDATE pilot_race SET position = newPosition
+    FROM (
+        SELECT 
+            pilotid, 
+            time, 
+            crashes,
+            RANK() OVER (ORDER BY time ASC, crashes ASC) AS newPosition
+        FROM pilot_race
+        WHERE raceid = ${raceId}
+    ) AS ranked
+    WHERE pilot_race.pilotid = ranked.pilotid AND pilot_race.raceid = ${raceId};`;
+}
