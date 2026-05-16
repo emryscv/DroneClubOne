@@ -21,9 +21,9 @@ export default function PilotCard({ pilotData, isLink = true }: { pilotData: Pil
                     alt={`${pilotData.nickname} profile picture`} 
                     width={1024}
                     height={1024}
+                    className="aspect-square"
                     />
-                
-                    // </div>
+
                 }
 
                 <div className="p-6">

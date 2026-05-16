@@ -3,6 +3,7 @@ import { editRaceAction } from "@/app/data/actions";
 import { getRace } from "@/app/data/queries/races";
 import { X, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
+import UploadPicture from "./UploadPicture";
 
 interface EditRaceModalProps {
   isOpen: boolean;
@@ -38,15 +39,6 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
 
   if (!isOpen) return null;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData({ ...formData, picture: file });
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    }
-  };
-
   const handleOnClose = () => {
     setSelectedRace(-1);
     setFormData({ name: "", date: "", location: "", picture: null });
@@ -62,7 +54,7 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-card border-2 border-accent rounded-lg p-6 max-w-md w-full mx-4">
+      <div className="bg-card border-2 border-accent rounded-lg p-6 max-w-lg w-full mx-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl text-accent">Edit Race Info</h2>
           <button
@@ -93,29 +85,7 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
 
           {selectedRace !== -1 && (
             <>
-              <div>
-                <label htmlFor="banner" className="block mb-2 text-sm">Race Picture</label>
-                <div className="flex items-center gap-4">
-                  <div className="w-32 h-32 rounded-lg bg-secondary flex items-center justify-center overflow-hidden">
-                    {previewUrl ? (
-                      <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      <Upload className="w-8 h-8 text-muted-foreground" />
-                    )}
-                  </div>
-                  <label htmlFor="banner" className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
-                    Choose File
-                    <input
-                      type="file"
-                      id="banner"
-                      name="banner"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
+              <UploadPicture onFileChange={(file) => setFormData({ ...formData, picture: file })} defaultPreviewUrl={previewUrl} />
 
               <div>
                 <label htmlFor="title" className="block mb-2 text-sm">Race Name</label>

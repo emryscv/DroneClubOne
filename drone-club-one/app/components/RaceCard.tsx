@@ -45,6 +45,7 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
                 alt={`${race.title} banner`}
                 width={1024}
                 height={1024}
+                className="aspect-square"
             />
         )}
         {!race.bannerurl && (

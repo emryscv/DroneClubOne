@@ -2,6 +2,7 @@
 import { addPilotAction } from "@/app/data/actions";
 import { X, Upload } from "lucide-react";
 import { useState } from "react";
+import UploadPicture from "./UploadPicture";
 
 interface AddPilotModalProps {
   isOpen: boolean;
@@ -17,22 +18,10 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
     picture: null as File | null,
   });
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
   if (!isOpen) return null;
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData({ ...formData, picture: file });
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    }
-  };
 
   const handleOnClose = () => {
     setFormData({ nickname: "", firstName: "", middleName: "", lastName: "", picture: null });
-    setPreviewUrl(null);
     onClose();
   }
 
@@ -56,30 +45,7 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} action={addPilotAction} className="space-y-4">
-          <div>
-            <label htmlFor="image" className="block mb-2 text-sm">Profile Picture</label>
-            <div className="flex items-center gap-4">
-              <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
-                {previewUrl ? (
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                ) : (
-                  <Upload className="w-8 h-8 text-muted-foreground" />
-                )}
-              </div>
-              <label htmlFor="image" className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer text-center">
-                Choose File
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
-          </div>
+        <UploadPicture isProfilePicture onFileChange={(file) => setFormData({ ...formData, picture: file })} />
 
           <div>
             <label htmlFor="nickname" className="block mb-2 text-sm">Nickname</label>
