@@ -75,6 +75,8 @@ export async function editPilotAction(formData: FormData) {
     const lastname = formData.get('lastName') as string;
     const status = formData.get('status') as string;
 
+    console.log("Edit Pilot Form Data", { pilotId, image, nickname, firstname, middlename, lastname, status });
+
     let blob;
     if (image && image.size > 0) {
         blob = await put(image.name, image, {
@@ -100,12 +102,12 @@ export async function editPilotAction(formData: FormData) {
 }
 
 export async function addRaceAction(formData: FormData) {
-    const banner: File | null = formData.get('banner') as File | null;
+    const banner: File | null = formData.get('image') as File | null;
     const title = formData.get('title') as string;
     const date = formData.get('date') as string;
     const location = formData.get('location') as string;
 
-    console.log("formData", banner, title, date, location);
+    console.log("Add Race Form Data", { banner, title, date, location });
     let blob;
     if (banner) {
         blob = await put(banner.name, banner, {
@@ -130,12 +132,12 @@ export async function addRaceAction(formData: FormData) {
 
 export async function editRaceAction(formData: FormData) {
     const raceId = parseInt(formData.get('raceId') as string);
-    const banner: File | null = formData.get('banner') as File | null;
+    const banner: File | null = formData.get('image') as File | null;
     const title = formData.get('title') as string;
     const date = formData.get('date') as string;
     const location = formData.get('location') as string;
 
-    console.log("formData", banner, title, date, location);
+    console.log("Edit Race Form Data", { raceId, banner, title, date, location });
     let blob;
     if (banner) {
         blob = await put(banner.name, banner, {
