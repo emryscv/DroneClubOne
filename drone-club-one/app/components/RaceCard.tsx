@@ -36,8 +36,8 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
 
     return <div
         key={race.id}
-        onClick={() => router.push(`/races/${race.id}`)}
-        className="bg-card border border-border rounded-lg overflow-hidden hover:border-accent transition-colors cursor-pointer"
+        onClick={() => { if (!race.isupcoming) router.push(`/races/${race.id}`) }}
+        className={`bg-card border border-border rounded-lg overflow-hidden ${race.isupcoming ? "opacity-70 cursor-default" : "hover:border-accent transition-colors cursor-pointer"}`}
     >
         {race.bannerurl && (
             <Image

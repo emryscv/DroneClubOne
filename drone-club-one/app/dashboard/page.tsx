@@ -24,11 +24,13 @@ export default function Dashboard() {
     const [showEditRace, setShowEditRace] = useState(false);
 
     const refreshPilots = async () => {
+        console.log("Refreshing pilots...");
         const data = await getPilots();
         setPilots(data);
     }
 
     const refreshRaces = async () => {
+        console.log("Refreshing races...");
         const data = await getRaceNamesAndIDs();
         setRaces(data);
     }
