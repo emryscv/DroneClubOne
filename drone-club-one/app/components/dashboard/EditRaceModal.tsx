@@ -7,12 +7,13 @@ import UploadPicture from "./UploadPicture";
 
 interface EditRaceModalProps {
   isOpen: boolean;
-  onClose: () => void;
   races: { id: number, title: string }[];
+  onClose: () => void;
+  refreshRaces: () => void;
 }
 
 
-export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalProps) {
+export default function EditRaceModal({ isOpen, races, onClose, refreshRaces }: EditRaceModalProps) {
   const [selectedRace, setSelectedRace] = useState(-1);
   const [formData, setFormData] = useState({
     name: "",
@@ -46,8 +47,9 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
     onClose();
   }
 
-  const handleSubmit = (e: React.SubmitEvent) => {
-    console.log("Updated race data:", formData);
+  const handleEditRaceAction = async (formData: FormData) => {
+    await editRaceAction(formData);
+    await refreshRaces();
     alert("Race information updated successfully!");
     handleOnClose();
   };
@@ -65,7 +67,7 @@ export default function EditRaceModal({ isOpen, onClose, races }: EditRaceModalP
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} action={editRaceAction} className="space-y-4">
+        <form action={handleEditRaceAction} className="space-y-4">
           <div>
             <label htmlFor="raceId" className="block mb-2 text-sm">Select Race</label>
             <select

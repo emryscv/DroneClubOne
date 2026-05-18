@@ -7,9 +7,10 @@ import UploadPicture from "./UploadPicture";
 interface AddRaceModalProps {
   isOpen: boolean;
   onClose: () => void;
+  refreshRaces: () => void;
 }
 
-export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
+export default function AddRaceModal({ isOpen, onClose, refreshRaces }: AddRaceModalProps) {
   const [formData, setFormData] = useState({
     title: "",
     date: "",
@@ -24,8 +25,9 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
     onClose();
   }
 
-  const handleSubmit = (e: React.SubmitEvent) => {
-    console.log("New race data:", formData);
+  const handleAddRaceAction = async (formData: FormData) => {
+    await addRaceAction(formData);
+    await refreshRaces();
     alert("Race added successfully!");
     handleOnClose();
   };
@@ -43,7 +45,7 @@ export default function AddRaceModal({ isOpen, onClose }: AddRaceModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} action={addRaceAction} className="space-y-4">
+        <form action={handleAddRaceAction} className="space-y-4">
           <UploadPicture onFileChange={(file) => setFormData({ ...formData, banner: file })} />
 
           <div>

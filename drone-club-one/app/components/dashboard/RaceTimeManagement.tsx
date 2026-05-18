@@ -21,12 +21,16 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
         setEditEntry({ time: "", crashes: "" });
     }
 
+    const refreshLeaderboard = async () => {
+        startTransition(async () => {
+            const data = await getTimesForRace(Number(selectedRace));
+            setLeaderboard(data);
+        });
+    }
+
     useEffect(() => {
         if (selectedRace) {
-            startTransition(async () => {
-                const data = await getTimesForRace(Number(selectedRace));
-                setLeaderboard(data);
-            });
+            refreshLeaderboard();
         }
     }, [selectedRace]);
 
@@ -66,7 +70,13 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                     </div>
 
                     {showAddEntry && (
-                        <form action={addPilotTimeAction} className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150">
+                        <form
+                            action={(formData: FormData) => {
+                                addPilotTimeAction(formData);
+                                refreshLeaderboard();
+                            }}
+                            className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150"
+                        >
                             <input
                                 type="hidden"
                                 id="raceId"
@@ -154,7 +164,13 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     return editingIndex === index ? (
                                         <tr key={index}>
                                             <td className="p-4 col-span-5">
-                                                <form action={editPilotTimeAction} id={`edit-form-${index}`}>
+                                                <form
+                                                    action={(formData: FormData) => {
+                                                        editPilotTimeAction(formData);
+                                                        refreshLeaderboard();
+                                                    }}
+                                                    id={`edit-form-${index}`}
+                                                >
                                                     <input type="hidden" id="pilotId" name="pilotId" value={entry.id} />
                                                     <input type="hidden" id="raceId" name="raceId" value={selectedRace} />
                                                 </form>

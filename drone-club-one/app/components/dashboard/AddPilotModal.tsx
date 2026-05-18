@@ -7,9 +7,10 @@ import UploadPicture from "./UploadPicture";
 interface AddPilotModalProps {
   isOpen: boolean;
   onClose: () => void;
+  refreshPilots: () => void;
 }
 
-export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
+export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPilotModalProps) {
   const [formData, setFormData] = useState({
     nickname: "",
     firstName: "",
@@ -25,11 +26,12 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
     onClose();
   }
 
-  const handleSubmit = (e: React.SubmitEvent) => {
-    console.log("New pilot data:", formData);
+  const handleAddPilotAction = async (formData: FormData) => {
+    await addPilotAction(formData);
+    await refreshPilots();
     alert("Pilot added successfully!");
     handleOnClose();
-  };
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -44,7 +46,7 @@ export default function AddPilotModal({ isOpen, onClose }: AddPilotModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} action={addPilotAction} className="space-y-4">
+        <form action={handleAddPilotAction} className="space-y-4">
         <UploadPicture isProfilePicture onFileChange={(file) => setFormData({ ...formData, picture: file })} />
 
           <div>

@@ -7,11 +7,12 @@ import UploadPicture from "./UploadPicture";
 
 interface EditPilotModalProps {
   isOpen: boolean;
-  onClose: () => void;
   pilots: PilotTableType[];
+  onClose: () => void;
+  refreshPilots: () => void;
 }
 
-export default function EditPilotModal({ isOpen, onClose, pilots }: EditPilotModalProps) {
+export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots }: EditPilotModalProps) {
   const [selectedPilot, setSelectedPilot] = useState("");
   const [formData, setFormData] = useState({
     nickname: "",
@@ -51,8 +52,9 @@ export default function EditPilotModal({ isOpen, onClose, pilots }: EditPilotMod
     onClose();
   }
 
-  const handleSubmit = (e: React.SubmitEvent) => {
-    console.log("Updated pilot data:", formData);
+  const handleEditPilotAction = async (formData: FormData) => {
+    await editPilotAction(formData);
+    await refreshPilots();
     alert("Pilot information updated successfully!");
     handleOnClose();
   };
@@ -70,7 +72,7 @@ export default function EditPilotModal({ isOpen, onClose, pilots }: EditPilotMod
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} action={editPilotAction} className="space-y-4">
+        <form action={handleEditPilotAction} className="space-y-4">
           <div>
             <label htmlFor="pilotId" className="block mb-2 text-sm">Select Pilot</label>
             <select
