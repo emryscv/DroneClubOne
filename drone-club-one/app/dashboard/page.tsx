@@ -6,7 +6,6 @@ import AddPilotModal from "../components/dashboard/AddPilotModal";
 import EditPilotModal from "../components/dashboard/EditPilotModal";
 import AddRaceModal from "../components/dashboard/AddRaceModal";
 import EditRaceModal from "../components/dashboard/EditRaceModal";
-import { useRouter } from "next/navigation";
 import { signOutAction } from "../data/actions";
 import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
@@ -14,8 +13,6 @@ import { getPilots } from "../data/queries/pilots";
 import { getRaceNamesAndIDs } from "../data/queries/races";
 
 export default function Dashboard() {
-    const router = useRouter();
-
     const [pilots, setPilots] = useState<PilotTableType[]>([]);
     const [races, setRaces] = useState<{ id: number, title: string }[]>([]);
     const [showAddPilot, setShowAddPilot] = useState(false);

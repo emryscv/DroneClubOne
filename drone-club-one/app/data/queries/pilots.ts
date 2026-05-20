@@ -5,7 +5,8 @@ import { PilotTableType } from '../types';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getPilot(pilotId: number) {
-    const data = await sql<PilotTableType[]>`
+    try {
+        const data = await sql<PilotTableType[]>`
         SELECT 
             id, 
             firstname, 
@@ -16,11 +17,16 @@ export async function getPilot(pilotId: number) {
             pictureurl
         FROM pilots 
         WHERE id = ${pilotId};`;
-    return data[0];
+        return data[0];
+    } catch (error) {
+        console.error("Error fetching pilot's metadata by ID", error);
+        return {} as any;
+    }
 }
 
 export async function getPilots() {
-    const data = await sql<PilotTableType[]>`
+    try {
+        const data = await sql<PilotTableType[]>`
         SELECT 
             id, 
             firstname, 
@@ -32,19 +38,29 @@ export async function getPilots() {
         FROM pilots 
         ORDER BY id;`
 
-    return data;
+        return data;
+    }
+    catch (error) {
+        console.error("Error fetching pilots' metadata", error);
+        return [];
+    }
 }
 
 export async function insertPilot(pilotData: PilotTableType) {
     console.log("Inserting pilot data into database", pilotData);
-    const data = await sql<PilotTableType[]>`
-        INSERT INTO pilots (firstname, middlename, lastname, nickname, status, pictureurl)
-        VALUES (${pilotData.firstname}, ${pilotData.middlename}, ${pilotData.lastname}, ${pilotData.nickname}, ${pilotData.status}, ${pilotData.pictureurl});`;
+    try {
+        const data = await sql<PilotTableType[]>`
+            INSERT INTO pilots (firstname, middlename, lastname, nickname, status, pictureurl)
+            VALUES (${pilotData.firstname}, ${pilotData.middlename}, ${pilotData.lastname}, ${pilotData.nickname}, ${pilotData.status}, ${pilotData.pictureurl});`;
+    } catch (error) {
+        console.error("Error inserting a new pilot", error); //notify this in frontend
+    }
 }
 
 export async function updatePilot(pilotData: PilotTableType) {
     console.log("Updating pilot data in database", pilotData);
-    const data = await sql<PilotTableType[]>`UPDATE pilots
+    try {
+        const data = await sql<PilotTableType[]>`UPDATE pilots
         SET 
             firstname = ${pilotData.firstname},
             middlename = ${pilotData.middlename},
@@ -53,4 +69,7 @@ export async function updatePilot(pilotData: PilotTableType) {
             status = ${pilotData.status},
             pictureurl = COALESCE(${pilotData.pictureurl}, pictureurl)
         WHERE id = ${pilotData.id};`;
+    } catch (error) {
+        console.error("Error updating a pilot's profile", error); //notify this in frontend
+    }
 }
