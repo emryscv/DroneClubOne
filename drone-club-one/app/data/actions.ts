@@ -63,7 +63,7 @@ export async function addPilotAction(formData: FormData) {
         pictureurl: blob ? blob.url : null,
     };
 
-    insertPilot(pilotData);
+    await insertPilot(pilotData);
 }
 
 export async function editPilotAction(formData: FormData) {
@@ -98,7 +98,7 @@ export async function editPilotAction(formData: FormData) {
 
     console.log("Updating pilot data", pilotData);
 
-    updatePilot(pilotData);
+    await updatePilot(pilotData);
 }
 
 export async function addRaceAction(formData: FormData) {
@@ -109,7 +109,7 @@ export async function addRaceAction(formData: FormData) {
 
     console.log("Add Race Form Data", { banner, title, date, location });
     let blob;
-    if (banner) {
+    if (banner && banner.size > 0) {
         blob = await put(banner.name, banner, {
             access: 'public' /* or 'public' */,
             addRandomSuffix: true,
@@ -127,7 +127,7 @@ export async function addRaceAction(formData: FormData) {
         pilotscount: -1, // This will be updated when pilots
     };
 
-    insertRace(raceData);
+    await insertRace(raceData);
 }
 
 export async function editRaceAction(formData: FormData) {
@@ -139,7 +139,7 @@ export async function editRaceAction(formData: FormData) {
 
     console.log("Edit Race Form Data", { raceId, banner, title, date, location });
     let blob;
-    if (banner) {
+    if (banner && banner.size > 0) {
         blob = await put(banner.name, banner, {
             access: 'public' /* or 'public' */,
             addRandomSuffix: true,
@@ -157,7 +157,7 @@ export async function editRaceAction(formData: FormData) {
         pilotscount: -1, // This will be updated when pilots
     };
 
-    updateRace(raceData);
+    await updateRace(raceData);
 }
 
 export async function addPilotTimeAction(formData: FormData) {
@@ -167,8 +167,8 @@ export async function addPilotTimeAction(formData: FormData) {
     const crashes = parseInt(formData.get('crashes') as string);
 
     console.log("Addding pilot time", { pilotId, raceId, time, crashes });
-    addTimeToRace(pilotId, raceId, time, crashes);
-    updatePositions(raceId);
+    await addTimeToRace(pilotId, raceId, time, crashes);
+    await updatePositions(raceId);
 }
 
 export async function editPilotTimeAction(formData: FormData) {
@@ -178,6 +178,6 @@ export async function editPilotTimeAction(formData: FormData) {
     const crashes = parseInt(formData.get('crashes') as string);
 
     console.log("Updating pilot time", { pilotId, raceId, time, crashes });
-    updatePilotTime(pilotId, raceId, time, crashes);
-    updatePositions(raceId);
+    await updatePilotTime(pilotId, raceId, time, crashes);
+    await updatePositions(raceId);
 }

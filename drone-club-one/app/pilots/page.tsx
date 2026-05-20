@@ -5,7 +5,6 @@ import PilotCard from "../components/PilotCard";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PilotTableType } from "../data/types";
-import { set } from "zod";
 
 export default function Pilots() {
     const [pilotsList, setPilotsList] = useState<PilotTableType[]>([]);
