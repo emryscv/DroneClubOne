@@ -47,7 +47,7 @@ export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPil
         </div>
 
         <form action={handleAddPilotAction} className="space-y-4">
-        <UploadPicture isProfilePicture onFileChange={(file) => setFormData({ ...formData, picture: file })} />
+          <UploadPicture isProfilePicture onFileChange={(file) => setFormData({ ...formData, picture: file })} />
 
           <div>
             <label htmlFor="nickname" className="block mb-2 text-sm">Nickname</label>

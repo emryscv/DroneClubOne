@@ -1,8 +1,6 @@
 "use client";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-
 import { useActionState } from 'react';
 import { authenticate } from '../data/actions';
 
@@ -13,11 +11,6 @@ export default function Page() {
     );
 
     const route = useRouter();
-
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
 
     const onClose = () => {
         route.push("/");
@@ -45,8 +38,6 @@ export default function Page() {
                             name="email"
                             disabled={isPending}
                             required
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                             placeholder="Enter email"
                             autoComplete="email"
@@ -61,8 +52,6 @@ export default function Page() {
                             name="password"
                             disabled={isPending}
                             required
-                            value={formData.password}
-                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
                             placeholder="Enter password"
                             autoComplete="current-password"

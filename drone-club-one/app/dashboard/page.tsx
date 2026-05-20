@@ -113,9 +113,9 @@ export default function Dashboard() {
             <RaceTimeManagement pilots={pilots} races={races} />
 
             <AddPilotModal isOpen={showAddPilot} onClose={() => setShowAddPilot(false)} refreshPilots={refreshPilots} />
-            <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} refreshRaces={refreshRaces}/>
-            <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} pilots={pilots} refreshPilots={refreshPilots}/>
-            <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} races={races} refreshRaces={refreshRaces}/>
+            <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} refreshRaces={refreshRaces} />
+            <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} pilots={pilots} refreshPilots={refreshPilots} />
+            <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} races={races} refreshRaces={refreshRaces} />
         </div>
     );
 }
