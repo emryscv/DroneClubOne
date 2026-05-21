@@ -22,6 +22,7 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
     status: "active",
     picture: null as File | null,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -52,12 +53,26 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
     onClose();
   }
 
-  const handleEditPilotAction = async (formData: FormData) => {
-    await editPilotAction(formData);
-    await refreshPilots();
-    alert("Pilot information updated successfully!");
-    handleOnClose();
-  };
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+
+    console.log("Submitting pilot form with data:", event);
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const submittedFormData = new FormData(event.currentTarget);
+      await editPilotAction(submittedFormData);
+      await refreshPilots();
+      alert("Pilot information updated successfully!");
+      handleOnClose();
+    } catch (error) {
+      console.error("Error updating pilot information:", error);
+      alert("Unable to update pilot information right now. Check server logs for details.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -72,7 +87,7 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
           </button>
         </div>
 
-        <form action={handleEditPilotAction} className="space-y-4">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
           <div>
             <label htmlFor="pilotId" className="block mb-2 text-sm">Select Pilot</label>
             <select
@@ -168,10 +183,10 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              disabled={!selectedPilot}
+              disabled={!selectedPilot || isSubmitting}
               className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Update Pilot
+              {isSubmitting ? "Updating..." : "Update Pilot"}
             </button>
             <button
               type="button"
