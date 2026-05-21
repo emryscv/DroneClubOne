@@ -21,15 +21,17 @@ export default function Dashboard() {
     const [showEditRace, setShowEditRace] = useState(false);
 
     const refreshPilots = async () => {
-        console.log("Refreshing pilots...");
-        const data = await getPilots();
-        setPilots(data);
+        fetch("/api/refreshPilots")
+            .then((res) => res.json())
+            .then((data) => setPilots(data))
+            .catch((error) => console.error("Error refreshing pilots:", error)); //check this
     }
 
     const refreshRaces = async () => {
-        console.log("Refreshing races...");
-        const data = await getRaceNamesAndIDs();
-        setRaces(data);
+       fetch("/api/refreshRaces")
+            .then((res) => res.json())
+            .then((data) => setRaces(data))
+            .catch((error) => console.error("Error refreshing races:", error)); //check this
     }
 
     useEffect(() => {

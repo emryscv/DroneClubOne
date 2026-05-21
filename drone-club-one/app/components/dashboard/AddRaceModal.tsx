@@ -17,6 +17,7 @@ export default function AddRaceModal({ isOpen, onClose, refreshRaces }: AddRaceM
     location: "",
     banner: null as File | null,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -25,12 +26,25 @@ export default function AddRaceModal({ isOpen, onClose, refreshRaces }: AddRaceM
     onClose();
   }
 
-  const handleAddRaceAction = async (formData: FormData) => {
-    await addRaceAction(formData);
-    await refreshRaces();
-    alert("Race added successfully!");
-    handleOnClose();
-  };
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+
+    console.log("Submitting pilot form with data:", event);
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const submittedFormData = new FormData(event.currentTarget);
+      await addRaceAction(submittedFormData);
+      await refreshRaces();
+      alert("Race added successfully!");
+      handleOnClose();
+    } catch (error) {
+      console.error("Error adding race:", error);
+      alert("Unable to add race right now. Check server logs for details.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -45,7 +59,7 @@ export default function AddRaceModal({ isOpen, onClose, refreshRaces }: AddRaceM
           </button>
         </div>
 
-        <form action={handleAddRaceAction} className="space-y-4">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
           <UploadPicture onFileChange={(file) => setFormData({ ...formData, banner: file })} />
 
           <div>
@@ -92,9 +106,10 @@ export default function AddRaceModal({ isOpen, onClose, refreshRaces }: AddRaceM
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
+              disabled={isSubmitting}
               className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
             >
-              Add Race
+              {isSubmitting ? "Adding..." : "Add Race"}
             </button>
             <button
               type="button"

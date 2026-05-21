@@ -18,6 +18,7 @@ export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPil
     lastName: "",
     picture: null as File | null,
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
@@ -26,11 +27,24 @@ export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPil
     onClose();
   }
 
-  const handleAddPilotAction = async (formData: FormData) => {
-    await addPilotAction(formData);
-    await refreshPilots();
-    alert("Pilot added successfully!");
-    handleOnClose();
+  const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+    
+    console.log("Submitting pilot form with data:", event);
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const submittedFormData = new FormData(event.currentTarget);
+      await addPilotAction(submittedFormData);
+      await refreshPilots();
+      alert("Pilot added successfully!");
+      handleOnClose();
+    } catch (error) {
+      console.error("Error adding pilot:", error);
+      alert("Unable to add pilot right now. Check server logs for details.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -46,7 +60,7 @@ export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPil
           </button>
         </div>
 
-        <form action={handleAddPilotAction} className="space-y-4">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
           <UploadPicture isProfilePicture onFileChange={(file) => setFormData({ ...formData, picture: file })} />
 
           <div>
@@ -107,9 +121,10 @@ export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPil
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
+              disabled={isSubmitting}
               className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
             >
-              Add Pilot
+              {isSubmitting ? "Adding..." : "Add Pilot"}
             </button>
             <button
               type="button"
