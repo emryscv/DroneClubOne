@@ -6,6 +6,7 @@ import TitleBorder from "../components/TitleBorder";
 import { getLocations, getRaces } from "../data/queries/races";
 import { RaceTableType } from "../data/types";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Races() {
     const [racesData, setRacesData] = useState<RaceTableType[]>([]);
@@ -17,9 +18,13 @@ export default function Races() {
     const [selectedLocation, setSelectedLocation] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
 
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
+        setIsLoading(true);
         getRaces().then((data) => {
             setRacesData(data);
+            setIsLoading(false);
         });
         getLocations().then((data) => {
             setLocations(data);
@@ -92,12 +97,17 @@ export default function Races() {
                     </div>
                 </div >
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-16">
-                {filteredRaces.map((race: RaceTableType, i: number) => (
-                    <RaceCard key={i} race={race} />
-                ))}
-            </div>
-            {filteredRaces.length === 0 && (
+            {isLoading ? (
+                <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto mt-32 animate-spin" />
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-16">
+                    {filteredRaces.map((race: RaceTableType, i: number) => (
+                        <RaceCard key={i} race={race} />
+                    )
+                    )}
+                </div>
+            )}
+            {!isLoading && filteredRaces.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground">
                     No races found matching "{searchQuery}"
                 </div>

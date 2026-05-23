@@ -25,6 +25,7 @@ export async function getPilot(pilotId: number) {
 }
 
 export async function getPilots() {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<PilotTableType[]>`
         SELECT 

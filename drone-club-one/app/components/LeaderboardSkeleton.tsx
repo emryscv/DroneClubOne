@@ -17,8 +17,8 @@ export default function LeaderboardSkeleton() {
                 <TableRow data={{ id: 1, position: 1, nickname: "nick", firstname: "Jhon", middlename: "Michael", lastname: "Doe", time: 0.4000, crashes: 1 } as LeaderbaordEntryType} />
             </tbody>
         </table>
-        <div>
-            <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto mb-16 animate-spin" />
-        </div>
+
+        <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto mb-16 animate-spin" />
+
     </div>
 }
