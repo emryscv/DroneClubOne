@@ -6,7 +6,6 @@ import TitleBorder from "../components/TitleBorder";
 import { getLocations, getRaces } from "../data/queries/races";
 import { RaceTableType } from "../data/types";
 import { useEffect, useState } from "react";
-import { set } from "zod";
 
 export default function Races() {
     const [racesData, setRacesData] = useState<RaceTableType[]>([]);

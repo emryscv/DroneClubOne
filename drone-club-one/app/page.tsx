@@ -7,7 +7,6 @@ import TitleBorder from "./components/TitleBorder";
 
 export default async function Home() {
   const raceData = await getLatestRace();
-  const leaderboard = await getTimesForRace(raceData.id);
 
   return (
     <>
@@ -16,7 +15,7 @@ export default async function Home() {
         <p className="text-muted-foreground mt-4">{raceData.title}</p>
       </div>
 
-      <Leaderboard leaderboard={leaderboard} />
+      <Leaderboard raceId={raceData.id} />
 
       <div className="mt-8 text-center">
         <Link
