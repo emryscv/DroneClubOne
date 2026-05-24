@@ -15,6 +15,8 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
     const [leaderboard, setLeaderboard] = useState<LeaderbaordEntryType[]>([]);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editEntry, setEditEntry] = useState({ time: "", crashes: "" });
+    const [isPendingAddEntry, setIsPendingAddEntry] = useState(false);
+    const [isPendingEditEntry, setIsPendingEditEntry] = useState(false);
 
     const [isPending, startTransition] = useTransition();
 
@@ -29,6 +31,39 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
             const data = await getTimesForRace(Number(selectedRace));
             setLeaderboard(data);
         });
+    }
+
+    const handleSubmitAddEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+        console.log("Submitting pilot' time form with data:", event);
+        event.preventDefault();
+        setIsPendingAddEntry(true);
+        try {
+            const submittedFormData = new FormData(event.currentTarget);
+            await addPilotTimeAction(submittedFormData);
+            await refreshLeaderboard();
+        } catch (error) {
+            console.error("Error adding pilot time:", error);
+            alert("Unable to add pilot time right now. Check server logs for details.");
+        } finally {
+            setIsPendingAddEntry(false);
+        }
+    }
+
+
+    const handleSubmitEditEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+        console.log("Submitting pilot' time form with edit data:", event);
+        event.preventDefault();
+        setIsPendingEditEntry(true);
+        try {
+            const submittedFormData = new FormData(event.currentTarget);
+            await editPilotTimeAction(submittedFormData);
+            await refreshLeaderboard();
+        } catch (error) {
+            console.error("Error editing pilot time:", error);
+            alert("Unable to edit pilot time right now. Check server logs for details.");
+        } finally {
+            setIsPendingEditEntry(false);
+        }
     }
 
     useEffect(() => {
@@ -74,10 +109,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
                     {showAddEntry && (
                         <form
-                            action={async (formData: FormData) => {
-                                await addPilotTimeAction(formData);
-                                await refreshLeaderboard();
-                            }}
+                            onSubmit={handleSubmitAddEntry}
                             className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150"
                         >
                             <input
@@ -132,7 +164,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     type="submit"
                                     className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
                                 >
-                                    <Save className="w-4 h-4 mx-auto" />
+                                    {
+                                        !isPendingAddEntry ?
+                                            <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={24} height={24} className="opacity-50 mx-auto animate-spin" />
+                                            :
+                                            <Save className="w-6 h-6 mx-auto" />
+                                    }
                                 </button>
                                 <button
                                     type="reset"
@@ -142,7 +179,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     }}
                                     className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors"
                                 >
-                                    <X className="w-4 h-4 mx-auto" />
+                                    <X className="w-6 h-6 mx-auto" />
                                 </button>
                             </div>
                         </form>
@@ -168,10 +205,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                         <tr key={index}>
                                             <td className="p-4 col-span-5">
                                                 <form
-                                                    action={async (formData: FormData) => {
-                                                        await editPilotTimeAction(formData);
-                                                        await refreshLeaderboard();
-                                                    }}
+                                                    onSubmit={handleSubmitEditEntry}
                                                     id={`edit-form-${index}`}
                                                 >
                                                     <input type="hidden" id="pilotId" name="pilotId" value={entry.id} />
@@ -220,7 +254,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                         type="submit"
                                                         className="px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-90 transition-opacity"
                                                     >
-                                                        <Save className="w-4 h-6" />
+                                                        {
+                                                            isPendingEditEntry ?
+                                                                <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={24} height={24} className="opacity-50 mx-auto animate-spin" />
+                                                                :
+                                                                <Save className="w-4 h-6" />
+                                                        }
                                                     </button>
                                                     <button
                                                         onClick={handleCancelEdit}

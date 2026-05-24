@@ -62,29 +62,8 @@ export async function getRaces() {
     }
 }
 
-// Check if this is still a good idea, given the fact that 
-// checking the time here maybe not a good ideaMaybe it is 
-// better to check that by hand on dashboards
-export async function getPreviousRaces() {
-    try {
-        const data = await sql<RaceTableType[]>`
-        SELECT 
-            id, 
-            title, 
-            date, 
-            location,
-            bannerurl
-        FROM races
-        WHERE date <= CURRENT_DATE
-        ORDER BY date DESC;`;
-        return data;
-    } catch (error) {
-        console.error("Error fetching previous races", error);
-        return [];
-    }
-}
-
 export async function insertRace(raceData: RaceTableType) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     console.log(raceData);
     try {
         const data = await sql<RaceTableType[]>`
@@ -96,6 +75,7 @@ export async function insertRace(raceData: RaceTableType) {
 }
 
 export async function updateRace(raceData: RaceTableType) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     console.log(raceData);
 
     try {
