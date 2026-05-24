@@ -5,6 +5,7 @@ import { LeaderbaordEntryType, RaceHistoryEntryType } from "../types";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getRacesForPilot(pilotId: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<RaceHistoryEntryType[]>`
         SELECT
@@ -28,7 +29,7 @@ export async function getRacesForPilot(pilotId: number) {
 
 export async function getTimesForRace(raceId: number) {
     await new Promise((resolve) => setTimeout(resolve, 10000));
-    
+
     try {
         const data = await sql<LeaderbaordEntryType[]>`
         SELECT

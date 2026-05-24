@@ -1,6 +1,6 @@
 import Image from "next/image";
-import TableRow from "./TableRow";
-import { LeaderbaordEntryType } from "../data/types";
+import TableRow from "../TableRow";
+import { LeaderbaordEntryType } from "../../data/types";
 
 export default function LeaderboardSkeleton() {
     return <div className="bg-card border border-border rounded-lg overflow-hidden">

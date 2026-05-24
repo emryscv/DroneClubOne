@@ -5,6 +5,7 @@ import { PilotTableType } from '../types';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getPilot(pilotId: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<PilotTableType[]>`
         SELECT 

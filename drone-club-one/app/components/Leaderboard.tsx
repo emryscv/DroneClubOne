@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getTimesForRace } from "../data/queries/pilotRace";
 import { LeaderbaordEntryType } from "../data/types";
 import TableRow from "./TableRow";
-import LeaderboardSkeleton from "./LeaderboardSkeleton";
+import LeaderboardSkeleton from "./skeletons/LeaderboardSkeleton";
 
 async function LeaderboardContent({ raceId }: { raceId: number }) {
     const leaderboard = await getTimesForRace(raceId);
