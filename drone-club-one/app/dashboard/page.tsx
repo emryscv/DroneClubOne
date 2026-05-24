@@ -9,8 +9,6 @@ import EditRaceModal from "../components/dashboard/EditRaceModal";
 import { signOutAction } from "../data/actions";
 import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
-import { getPilots } from "../data/queries/pilots";
-import { getRaceNamesAndIDs } from "../data/queries/races";
 
 export default function Dashboard() {
     const [pilots, setPilots] = useState<PilotTableType[]>([]);

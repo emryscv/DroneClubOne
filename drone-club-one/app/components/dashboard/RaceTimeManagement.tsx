@@ -5,6 +5,8 @@ import { getTimesForRace } from "@/app/data/queries/pilotRace";
 import { LeaderbaordEntryType, PilotTableType } from "@/app/data/types";
 import { Edit, Plus, Save, Trophy, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
+import Image from "next/image";
+import { set } from "zod";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
     const [selectedRace, setSelectedRace] = useState("");
@@ -30,6 +32,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
     useEffect(() => {
         if (selectedRace) {
+            setLeaderboard([]); // Clear current leaderboard to show loading state
             refreshLeaderboard();
         }
     }, [selectedRace]);
@@ -262,11 +265,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                             </tbody>
                         )}
                     </table>
-                    {leaderboard.length === 0 && (
+                    {!isPending && leaderboard.length === 0 && (
                         <div className="p-8 text-center text-muted-foreground">
                             No entries yet. Add the first entry above.
                         </div>
                     )}
+                    {isPending && <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto my-16 animate-spin" />}
                 </div>
             )
             }
