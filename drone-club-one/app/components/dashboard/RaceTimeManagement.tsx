@@ -24,6 +24,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
     }
 
     const refreshLeaderboard = async () => {
+        setLeaderboard([]); // Clear current leaderboard to show loading stat
         startTransition(async () => {
             const data = await getTimesForRace(Number(selectedRace));
             setLeaderboard(data);
@@ -32,13 +33,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
     useEffect(() => {
         if (selectedRace) {
-            setLeaderboard([]); // Clear current leaderboard to show loading state
             refreshLeaderboard();
         }
     }, [selectedRace]);
 
     return (
-        <div>
+        <div >
             <h2 className="text-2xl mb-6">Race Time Management</h2>
 
             <div className="bg-card border border-border rounded-lg p-6 mb-6">
@@ -74,9 +74,9 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
                     {showAddEntry && (
                         <form
-                            action={(formData: FormData) => {
-                                addPilotTimeAction(formData);
-                                refreshLeaderboard();
+                            action={async (formData: FormData) => {
+                                await addPilotTimeAction(formData);
+                                await refreshLeaderboard();
                             }}
                             className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150"
                         >
@@ -168,9 +168,9 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                         <tr key={index}>
                                             <td className="p-4 col-span-5">
                                                 <form
-                                                    action={(formData: FormData) => {
-                                                        editPilotTimeAction(formData);
-                                                        refreshLeaderboard();
+                                                    action={async (formData: FormData) => {
+                                                        await editPilotTimeAction(formData);
+                                                        await refreshLeaderboard();
                                                     }}
                                                     id={`edit-form-${index}`}
                                                 >

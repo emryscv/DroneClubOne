@@ -1,9 +1,10 @@
 'use client';
 import { editPilotAction } from "@/app/data/actions";
 import { PilotTableType } from "@/app/data/types";
-import { X, Upload } from "lucide-react";
+import { X } from "lucide-react";
 import { useState } from "react";
 import UploadPicture from "./UploadPicture";
+import Image from "next/image";
 
 interface EditPilotModalProps {
   isOpen: boolean;

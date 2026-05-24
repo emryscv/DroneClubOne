@@ -113,6 +113,7 @@ export async function updateRace(raceData: RaceTableType) {
 }
 
 export async function getRaceNamesAndIDs() {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<{ id: number, title: string }[]>`
         SELECT 
