@@ -63,6 +63,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
             alert("Unable to edit pilot time right now. Check server logs for details.");
         } finally {
             setIsPendingEditEntry(false);
+            setEditingIndex(null);
         }
     }
 
@@ -165,7 +166,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
                                 >
                                     {
-                                        !isPendingAddEntry ?
+                                        isPendingAddEntry ?
                                             <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={24} height={24} className="opacity-50 mx-auto animate-spin" />
                                             :
                                             <Save className="w-6 h-6 mx-auto" />
