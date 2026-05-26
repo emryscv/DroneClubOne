@@ -5,6 +5,7 @@ import { LeaderbaordEntryType, RaceHistoryEntryType } from "../types";
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getRacesForPilot(pilotId: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<RaceHistoryEntryType[]>`
         SELECT
@@ -27,6 +28,8 @@ export async function getRacesForPilot(pilotId: number) {
 }
 
 export async function getTimesForRace(raceId: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
+
     try {
         const data = await sql<LeaderbaordEntryType[]>`
         SELECT
@@ -52,6 +55,7 @@ export async function getTimesForRace(raceId: number) {
 }
 
 export async function updatePilotTime(pilotId: number, raceId: number, time: number, crashes: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         await sql`UPDATE pilot_race SET time = ${time}, crashes = ${crashes} WHERE pilotid = ${pilotId} AND raceid = ${raceId};`;
     } catch (error) {
@@ -60,6 +64,7 @@ export async function updatePilotTime(pilotId: number, raceId: number, time: num
 }
 
 export async function addTimeToRace(pilotId: number, raceId: number, time: number, crashes: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         await sql`INSERT INTO pilot_race (pilotid, raceid, time, crashes) VALUES (${pilotId}, ${raceId}, ${time}, ${crashes});`;
     } catch (error) {
@@ -68,6 +73,7 @@ export async function addTimeToRace(pilotId: number, raceId: number, time: numbe
 }
 
 export async function updatePositions(raceId: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         await sql`
     UPDATE pilot_race SET position = newPosition

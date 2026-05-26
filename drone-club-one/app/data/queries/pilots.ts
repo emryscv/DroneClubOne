@@ -5,6 +5,7 @@ import { PilotTableType } from '../types';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getPilot(pilotId: number) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<PilotTableType[]>`
         SELECT 
@@ -25,6 +26,7 @@ export async function getPilot(pilotId: number) {
 }
 
 export async function getPilots() {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<PilotTableType[]>`
         SELECT 
@@ -47,6 +49,7 @@ export async function getPilots() {
 }
 
 export async function insertPilot(pilotData: PilotTableType) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     console.log("Inserting pilot data into database", pilotData);
     try {
         const data = await sql<PilotTableType[]>`
@@ -58,6 +61,7 @@ export async function insertPilot(pilotData: PilotTableType) {
 }
 
 export async function updatePilot(pilotData: PilotTableType) {
+    await new Promise((resolve) => setTimeout(resolve, 10000));
     console.log("Updating pilot data in database", pilotData);
     try {
         const data = await sql<PilotTableType[]>`UPDATE pilots

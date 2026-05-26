@@ -5,15 +5,19 @@ import PilotCard from "../components/PilotCard";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PilotTableType } from "../data/types";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Pilots() {
     const [pilotsList, setPilotsList] = useState<PilotTableType[]>([]);
     const [filteredPilots, setFilteredPilots] = useState<PilotTableType[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() => {
+        setIsLoading(true);
         getPilots().then((data) => {
             setPilotsList(data);
+            setIsLoading(false);
         });
     }, [])
 
@@ -49,13 +53,19 @@ export default function Pilots() {
             </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-16">
-            {filteredPilots.map((pilot) => (
-                <PilotCard key={pilot.id} pilotData={pilot} />
-            ))}
-        </div>
+        {isLoading ? (
+            <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto mt-32 animate-spin" />
+        ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-16">
+                {filteredPilots.map((pilot) => (
+                    <Link key={pilot.id} href={`/pilots/${pilot.id}`} className="hover:border-accent transition-colors">
+                        <PilotCard pilotData={pilot} />
+                    </Link>
+                ))}
+            </div>
+        )}
 
-        {filteredPilots.length === 0 && (
+        {filteredPilots.length === 0 && !isLoading && (
             <div className="text-center py-12 text-muted-foreground">
                 No pilots found matching "{searchQuery}"
             </div>

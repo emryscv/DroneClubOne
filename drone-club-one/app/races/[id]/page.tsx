@@ -7,7 +7,6 @@ import { Calendar, MapPin } from "lucide-react";
 export default async function Race({ params }: { params: { id: number } }) {
   const { id } = await params;
   const raceData = await getRace(id);
-  const leaderboard = await getTimesForRace(id);
   const raceDate = new Date(raceData.date);
 
   return (
@@ -32,7 +31,7 @@ export default async function Race({ params }: { params: { id: number } }) {
         </div>
       </div>
 
-      <Leaderboard leaderboard={leaderboard} />
+      <Leaderboard raceId={id} />
     </>
   );
 }

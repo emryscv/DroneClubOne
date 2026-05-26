@@ -5,6 +5,8 @@ import { getTimesForRace } from "@/app/data/queries/pilotRace";
 import { LeaderbaordEntryType, PilotTableType } from "@/app/data/types";
 import { Edit, Plus, Save, Trophy, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
+import Image from "next/image";
+import { set } from "zod";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
     const [selectedRace, setSelectedRace] = useState("");
@@ -13,6 +15,8 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
     const [leaderboard, setLeaderboard] = useState<LeaderbaordEntryType[]>([]);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [editEntry, setEditEntry] = useState({ time: "", crashes: "" });
+    const [isPendingAddEntry, setIsPendingAddEntry] = useState(false);
+    const [isPendingEditEntry, setIsPendingEditEntry] = useState(false);
 
     const [isPending, startTransition] = useTransition();
 
@@ -22,10 +26,45 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
     }
 
     const refreshLeaderboard = async () => {
+        setLeaderboard([]); // Clear current leaderboard to show loading stat
         startTransition(async () => {
             const data = await getTimesForRace(Number(selectedRace));
             setLeaderboard(data);
         });
+    }
+
+    const handleSubmitAddEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+        console.log("Submitting pilot' time form with data:", event);
+        event.preventDefault();
+        setIsPendingAddEntry(true);
+        try {
+            const submittedFormData = new FormData(event.currentTarget);
+            await addPilotTimeAction(submittedFormData);
+            await refreshLeaderboard();
+        } catch (error) {
+            console.error("Error adding pilot time:", error);
+            alert("Unable to add pilot time right now. Check server logs for details.");
+        } finally {
+            setIsPendingAddEntry(false);
+        }
+    }
+
+
+    const handleSubmitEditEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
+        console.log("Submitting pilot' time form with edit data:", event);
+        event.preventDefault();
+        setIsPendingEditEntry(true);
+        try {
+            const submittedFormData = new FormData(event.currentTarget);
+            await editPilotTimeAction(submittedFormData);
+            await refreshLeaderboard();
+        } catch (error) {
+            console.error("Error editing pilot time:", error);
+            alert("Unable to edit pilot time right now. Check server logs for details.");
+        } finally {
+            setIsPendingEditEntry(false);
+            setEditingIndex(null);
+        }
     }
 
     useEffect(() => {
@@ -35,7 +74,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
     }, [selectedRace]);
 
     return (
-        <div>
+        <div >
             <h2 className="text-2xl mb-6">Race Time Management</h2>
 
             <div className="bg-card border border-border rounded-lg p-6 mb-6">
@@ -71,10 +110,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
                     {showAddEntry && (
                         <form
-                            action={(formData: FormData) => {
-                                addPilotTimeAction(formData);
-                                refreshLeaderboard();
-                            }}
+                            onSubmit={handleSubmitAddEntry}
                             className="p-4 bg-secondary/50 border-b border-border overflow-x-auto grid grid-cols-4 gap-4 min-w-150"
                         >
                             <input
@@ -129,7 +165,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     type="submit"
                                     className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
                                 >
-                                    <Save className="w-4 h-4 mx-auto" />
+                                    {
+                                        isPendingAddEntry ?
+                                            <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={24} height={24} className="opacity-50 mx-auto animate-spin" />
+                                            :
+                                            <Save className="w-6 h-6 mx-auto" />
+                                    }
                                 </button>
                                 <button
                                     type="reset"
@@ -139,7 +180,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     }}
                                     className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors"
                                 >
-                                    <X className="w-4 h-4 mx-auto" />
+                                    <X className="w-6 h-6 mx-auto" />
                                 </button>
                             </div>
                         </form>
@@ -165,10 +206,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                         <tr key={index}>
                                             <td className="p-4 col-span-5">
                                                 <form
-                                                    action={(formData: FormData) => {
-                                                        editPilotTimeAction(formData);
-                                                        refreshLeaderboard();
-                                                    }}
+                                                    onSubmit={handleSubmitEditEntry}
                                                     id={`edit-form-${index}`}
                                                 >
                                                     <input type="hidden" id="pilotId" name="pilotId" value={entry.id} />
@@ -217,7 +255,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                         type="submit"
                                                         className="px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-90 transition-opacity"
                                                     >
-                                                        <Save className="w-4 h-6" />
+                                                        {
+                                                            isPendingEditEntry ?
+                                                                <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={24} height={24} className="opacity-50 mx-auto animate-spin" />
+                                                                :
+                                                                <Save className="w-4 h-6" />
+                                                        }
                                                     </button>
                                                     <button
                                                         onClick={handleCancelEdit}
@@ -262,11 +305,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                             </tbody>
                         )}
                     </table>
-                    {leaderboard.length === 0 && (
+                    {!isPending && leaderboard.length === 0 && (
                         <div className="p-8 text-center text-muted-foreground">
                             No entries yet. Add the first entry above.
                         </div>
                     )}
+                    {isPending && <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto my-16 animate-spin" />}
                 </div>
             )
             }

@@ -1,7 +1,7 @@
 "use client"
 import { Edit, LogOut, Plus } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import AddPilotModal from "../components/dashboard/AddPilotModal";
 import EditPilotModal from "../components/dashboard/EditPilotModal";
 import AddRaceModal from "../components/dashboard/AddRaceModal";
@@ -9,8 +9,8 @@ import EditRaceModal from "../components/dashboard/EditRaceModal";
 import { signOutAction } from "../data/actions";
 import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
-import { getPilots } from "../data/queries/pilots";
-import { getRaceNamesAndIDs } from "../data/queries/races";
+import Image from "next/image";
+import { set } from "zod";
 
 export default function Dashboard() {
     const [pilots, setPilots] = useState<PilotTableType[]>([]);
@@ -19,24 +19,30 @@ export default function Dashboard() {
     const [showAddRace, setShowAddRace] = useState(false);
     const [showEditPilot, setShowEditPilot] = useState(false);
     const [showEditRace, setShowEditRace] = useState(false);
+    const [isPendingPilot, setIsPendingPilot] = useState(false);
+    const [isPendingRace, setIsPendingRace] = useState(false);
 
     const refreshPilots = async () => {
         fetch("/api/refreshPilots")
             .then((res) => res.json())
             .then((data) => setPilots(data))
+            .then(() => setIsPendingPilot(false))
             .catch((error) => console.error("Error refreshing pilots:", error)); //check this
     }
 
     const refreshRaces = async () => {
-       fetch("/api/refreshRaces")
+        fetch("/api/refreshRaces")
             .then((res) => res.json())
             .then((data) => setRaces(data))
+            .then(() => setIsPendingRace(false))
             .catch((error) => console.error("Error refreshing races:", error)); //check this
     }
 
     useEffect(() => {
-        refreshPilots();
-        refreshRaces();
+        setIsPendingPilot(true);
+        setIsPendingRace(true);
+        refreshPilots()
+        refreshRaces()
     }, []);
 
     return (
@@ -86,7 +92,7 @@ export default function Dashboard() {
 
                     <button
                         onClick={() => setShowEditPilot(true)}
-                        className="bg-card border-2 border-border rounded-lg p-6 hover:border-accent transition-colors text-left cursor-pointer"
+                        className={`bg-card border-2 border-border rounded-lg p-6 ${isPendingPilot ? "" : "hover:border-accent cursor-pointer"} transition-colors text-left relative`}
                     >
                         <div className="flex items-center gap-3 mb-3">
                             <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
@@ -95,11 +101,14 @@ export default function Dashboard() {
                             <h3 className="text-xl">Edit Pilot Info</h3>
                         </div>
                         <p className="text-muted-foreground text-sm">Modify existing pilot information</p>
+                        {isPendingPilot && <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-500/30 border-2 border-border">
+                            <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 animate-spin" />
+                        </div>}
                     </button>
 
                     <button
                         onClick={() => setShowEditRace(true)}
-                        className="bg-card border-2 border-border rounded-lg p-6 hover:border-accent transition-colors text-left cursor-pointer"
+                        className={`bg-card border-2 border-border rounded-lg p-6 ${isPendingRace ? "" : "hover:border-accent cursor-pointer"} transition-colors text-left relative`}
                     >
                         <div className="flex items-center gap-3 mb-3">
                             <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
@@ -108,12 +117,21 @@ export default function Dashboard() {
                             <h3 className="text-xl">Edit Race Info</h3>
                         </div>
                         <p className="text-muted-foreground text-sm">Update race details and status</p>
+                        {isPendingRace && <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-500/30 border-2 border-border">
+                            <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 animate-spin" />
+                        </div>}
                     </button>
                 </div>
             </div>
-
-            <RaceTimeManagement pilots={pilots} races={races} />
-
+            {
+                isPendingPilot || isPendingRace ?
+                    <div>
+                        <h2 className="text-2xl mb-6">Race Time Management</h2>
+                        <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto animate-spin" />
+                    </div>
+                    :
+                    <RaceTimeManagement pilots={pilots} races={races} />
+            }
             <AddPilotModal isOpen={showAddPilot} onClose={() => setShowAddPilot(false)} refreshPilots={refreshPilots} />
             <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} refreshRaces={refreshRaces} />
             <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} pilots={pilots} refreshPilots={refreshPilots} />
