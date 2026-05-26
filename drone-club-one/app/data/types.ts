@@ -8,7 +8,7 @@ export type RaceTableType = {
     pilotscount: number 
 }
 
-export type LeaderbaordEntryType = {
+export type LeaderbaordTimeMSEntryType = {
     id: number,
     position: number,
     nickname: string,
@@ -17,6 +17,18 @@ export type LeaderbaordEntryType = {
     lastname: string,
     pictureurl: string | null,
     time: number,
+    crashes: number
+}
+
+export type LeaderbaordEntryType = {
+    id: number,
+    position: number,
+    nickname: string,
+    firstname: string,
+    middlename: string | null,
+    lastname: string,
+    pictureurl: string | null,
+    time: string,
     crashes: number
 }
 
@@ -30,11 +42,20 @@ export type PilotTableType = {
     pictureurl: string | null,
 }
 
-export type RaceHistoryEntryType = {
+export type RaceHistoryTimeMSEntryType = {
     raceid: any
     title: string,
     position: number,
     time: number,
+    crashes: number,
+    date: string,
+}
+
+export type RaceHistoryEntryType = {
+    raceid: any
+    title: string,
+    position: number,
+    time: string,
     crashes: number,
     date: string,
 }

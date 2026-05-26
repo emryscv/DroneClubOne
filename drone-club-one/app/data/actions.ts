@@ -163,21 +163,27 @@ export async function editRaceAction(formData: FormData) {
 export async function addPilotTimeAction(formData: FormData) {
     const pilotId = parseInt(formData.get('pilotId') as string);
     const raceId = parseInt(formData.get('raceId') as string);
-    const time = parseFloat(formData.get('time') as string);
+    const time = formData.get('time') as string;
     const crashes = parseInt(formData.get('crashes') as string);
 
+    time.split(":")[1].split(".")
     console.log("Addding pilot time", { pilotId, raceId, time, crashes });
-    await addTimeToRace(pilotId, raceId, time, crashes);
+    await addTimeToRace(pilotId, raceId, timeToMS(time), crashes);
     await updatePositions(raceId);
 }
 
 export async function editPilotTimeAction(formData: FormData) {
     const pilotId = parseInt(formData.get('pilotId') as string);
     const raceId = parseInt(formData.get('raceId') as string);
-    const time = parseFloat(formData.get('time') as string);
+    const time = formData.get('time') as string;
     const crashes = parseInt(formData.get('crashes') as string);
 
     console.log("Updating pilot time", { pilotId, raceId, time, crashes });
-    await updatePilotTime(pilotId, raceId, time, crashes);
+    await updatePilotTime(pilotId, raceId, timeToMS(time), crashes);
     await updatePositions(raceId);
+}
+
+function timeToMS(time: string): number {
+    const [minutes, seconds, milliseconds] = time.split(/[:.]/).map(Number);
+    return minutes * 60000 + seconds * 1000 + milliseconds;
 }

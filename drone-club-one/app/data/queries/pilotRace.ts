@@ -1,13 +1,13 @@
 "use server";
 import postgres from "postgres";
-import { LeaderbaordEntryType, RaceHistoryEntryType } from "../types";
+import { LeaderbaordEntryType, LeaderbaordTimeMSEntryType, RaceHistoryEntryType, RaceHistoryTimeMSEntryType } from "../types";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getRacesForPilot(pilotId: number) {
     await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
-        const data = await sql<RaceHistoryEntryType[]>`
+        const data = await sql<RaceHistoryTimeMSEntryType[]>`
         SELECT
             pr.raceid,
             r.title,
@@ -20,7 +20,13 @@ export async function getRacesForPilot(pilotId: number) {
         JOIN races r ON pr.raceid = r.id
         WHERE p.id = ${pilotId};
     `;
-        return data;
+
+        const formattedData: RaceHistoryEntryType[] = data.map(entry => ({
+            ...entry,
+            time: msToTime(entry.time)
+        }));
+
+        return formattedData;
     } catch (error) {
         console.error("Error fetching races for a pilot", error);
         return [];
@@ -31,7 +37,7 @@ export async function getTimesForRace(raceId: number) {
     await new Promise((resolve) => setTimeout(resolve, 10000));
 
     try {
-        const data = await sql<LeaderbaordEntryType[]>`
+        const data = await sql<LeaderbaordTimeMSEntryType[]>`
         SELECT
             p.id, 
             position, 
@@ -47,7 +53,13 @@ export async function getTimesForRace(raceId: number) {
         JOIN pilots p ON pr.pilotid = p.id
         WHERE r.id = ${raceId}
         ORDER BY position;`;
-        return data;
+
+        const formattedData: LeaderbaordEntryType[] = data.map(entry => ({
+            ...entry,
+            time: msToTime(entry.time)
+        }));
+
+        return formattedData;
     } catch (error) {
         console.error("Error fetching times for a race", error);
         return [];
@@ -90,4 +102,12 @@ export async function updatePositions(raceId: number) {
     } catch (error) {
         console.error("Error updating positions of a race", error); //notify this in frontend
     }
+}
+
+function msToTime(time: number): string {
+    const minutes = Math.floor(time / 60000);
+    time %= 60000;
+    const seconds = Math.floor(time / 1000);
+    const milliseconds = time % 1000;
+    return `${minutes}:${seconds >= 10 ? seconds : '0' + seconds}.${milliseconds >= 100 ? milliseconds : milliseconds >= 10 ? '0' + milliseconds : '00' + milliseconds}`;
 }

@@ -39,6 +39,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
         setIsPendingAddEntry(true);
         try {
             const submittedFormData = new FormData(event.currentTarget);
+            
             await addPilotTimeAction(submittedFormData);
             await refreshLeaderboard();
         } catch (error) {
