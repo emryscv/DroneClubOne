@@ -39,7 +39,7 @@ export async function getRace(raceId: number) {
     }
 }
 
-export async function getRaces() {
+export async function getRaces(year: number) {
     await new Promise((resolve) => setTimeout(resolve, 10000));
     try {
         const data = await sql<RaceTableType[]>`
@@ -53,6 +53,7 @@ export async function getRaces() {
             count(pr.pilotid) AS pilotscount
         FROM races r
         LEFT JOIN pilot_race pr ON r.id = pr.raceid
+        WHERE EXTRACT(YEAR FROM date) = ${year}
         GROUP BY r.id
         ORDER BY date DESC;`;
         return data;
