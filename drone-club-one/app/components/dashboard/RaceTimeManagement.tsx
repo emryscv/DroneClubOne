@@ -139,9 +139,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                             <div>
                                 <label htmlFor="time" className="block mb-2 text-sm">Time</label>
                                 <input
-                                    type="number"
+                                    type="text"
                                     id="time"
                                     name="time"
+                                    inputMode="decimal"
+                                    pattern="^([0-9]+:)?[0-5]?[0-9]\.[0-9]{3}$"
+                                    title="Use m:ss.SSS or mm:ss.SSS"
                                     value={newEntry.time}
                                     onChange={(e) => setNewEntry({ ...newEntry, time: e.target.value })}
                                     className="w-full px-3 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent font-mono"
@@ -225,9 +228,12 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                                 <div className="flex justify-center">
                                                     <input
                                                         form={`edit-form-${index}`}
-                                                        type="number"
+                                                        type="text"
                                                         id="time"
                                                         name="time"
+                                                        inputMode="decimal"
+                                                        pattern="^([0-9]+:)?[0-5]?[0-9]\.[0-9]{3}$"
+                                                        title="Use m:ss.SSS or mm:ss.SSS"
                                                         value={editEntry.time}
                                                         onChange={(e) => setEditEntry({ ...editEntry, time: e.target.value })}
                                                         className="h-8 px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent font-mono"
