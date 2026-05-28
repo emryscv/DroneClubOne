@@ -1,8 +1,3 @@
-import PilotCard from "@/app/components/PilotCard";
-import RaceHistoryEntry from "@/app/components/RaceHistoryEntry";
-import { getPilot } from "@/app/data/queries/pilots";
-import { getRacesForPilot } from "@/app/data/queries/pilotRace";
-import { RaceHistoryEntryType } from "@/app/data/types";
 import { TrendingUp } from "lucide-react";
 import PilotCardServer from "@/app/components/PilotCardServer";
 import { Suspense } from "react";

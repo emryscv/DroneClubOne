@@ -1,7 +1,8 @@
 'use client';
 import { addPilotAction } from "@/app/data/actions";
-import { X, Upload } from "lucide-react";
+import { X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import UploadPicture from "./UploadPicture";
 
 interface AddPilotModalProps {
@@ -36,19 +37,19 @@ export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPil
     try {
       const submittedFormData = new FormData(event.currentTarget);
       const result = await addPilotAction(submittedFormData);
-      
+
       if (result === 'duplicate') {
-        alert("Pilot with this nickname already exists.");
+        toast.error("Pilot with this nickname already exists.");
       } else if (result === 'error') {
-        alert("Unable to add pilot right now. Check server logs for details.");
+        toast.error("Unable to add pilot right now. Check server logs for details.");
       } else {
         await refreshPilots();
-        alert("Pilot added successfully!");
+        toast.success("Pilot added successfully!");
         handleOnClose();
       }
     } catch (error) {
       console.error("Error adding pilot:", error);
-      alert("Unable to add pilot right now. Check server logs for details.");
+      toast.error("Unable to add pilot right now. Check server logs for details.");
     } finally {
       setIsSubmitting(false);
     }

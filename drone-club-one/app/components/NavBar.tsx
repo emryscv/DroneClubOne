@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Menu, X } from "lucide-react";
-import { is } from 'zod/locales';
 
 export default function NavBar({ is404 = false }: { is404?: boolean }) {
     const location = usePathname();

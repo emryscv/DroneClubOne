@@ -1,13 +1,12 @@
 "use client";
 
-import { Calendar, CalendarCheck, CalendarFold, MapPin, Search } from "lucide-react";
+import { CalendarCheck, CalendarFold, MapPin, Search } from "lucide-react";
 import RaceCard from "../components/RaceCard";
 import TitleBorder from "../components/TitleBorder";
 import { getLocations, getRaces } from "../data/queries/races";
 import { RaceTableType } from "../data/types";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Ca from "zod/v4/locales/ca.js";
 
 export default function Races() {
     const [racesData, setRacesData] = useState<RaceTableType[]>([]);

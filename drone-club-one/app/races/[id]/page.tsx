@@ -1,7 +1,6 @@
 import Leaderboard from "@/app/components/Leaderboard";
 import TitleBorder from "@/app/components/TitleBorder";
 import { getRace } from "@/app/data/queries/races";
-import { getTimesForRace } from "@/app/data/queries/pilotRace";
 import { Calendar, MapPin } from "lucide-react";
 
 export default async function Race({ params }: { params: { id: number } }) {

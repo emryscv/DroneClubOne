@@ -16,7 +16,7 @@ export default async function RaceHistorySkeleton({ pilotId }: { pilotId: number
                     </tr>
                 </thead>
                 <tbody aria-hidden="true" className="invisible">
-                    <RaceHistoryEntry key={0} race={{ raceid: 0, title: "Loading...", date: "Loading...", position: 0, time: 0, crashes: 0 }} />
+                    <RaceHistoryEntry key={0} race={{ raceid: 0, title: "Loading...", date: "Loading...", position: 0, time: "10:00.000", crashes: 0 }} />
                 </tbody>
             </table>
             <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto mb-16 animate-spin" />

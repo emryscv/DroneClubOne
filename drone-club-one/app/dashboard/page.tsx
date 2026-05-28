@@ -1,7 +1,7 @@
 "use client"
 import { Edit, LogOut, Plus } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import AddPilotModal from "../components/dashboard/AddPilotModal";
 import EditPilotModal from "../components/dashboard/EditPilotModal";
 import AddRaceModal from "../components/dashboard/AddRaceModal";
@@ -10,7 +10,6 @@ import { signOutAction } from "../data/actions";
 import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
 import Image from "next/image";
-import { set } from "zod";
 
 export default function Dashboard() {
     const [pilots, setPilots] = useState<PilotTableType[]>([]);

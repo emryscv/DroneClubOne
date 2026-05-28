@@ -1,7 +1,8 @@
 'use client';
 import { addRaceAction } from "@/app/data/actions";
-import { X, Upload } from "lucide-react";
+import { X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import UploadPicture from "./UploadPicture";
 
 interface AddRaceModalProps {
@@ -37,17 +38,17 @@ export default function AddRaceModal({ isOpen, onClose, refreshRaces }: AddRaceM
       const result = await addRaceAction(submittedFormData);
 
       if (result === 'duplicate') {
-        alert("A race with this title and date already exists.");
+        toast.error("A race with this title and date already exists.");
       } else if (result === 'error') {
-        alert("Unable to add race right now. Check server logs for details.");
+        toast.error("Unable to add race right now. Check server logs for details.");
       } else {
         await refreshRaces();
-        alert("Race added successfully!");
+        toast.success("Race added successfully!");
         handleOnClose();
       }
     } catch (error) {
       console.error("Error adding race:", error);
-      alert("Unable to add race right now. Check server logs for details.");
+      toast.error("Unable to add race right now. Check server logs for details.");
     } finally {
       setIsSubmitting(false);
     }

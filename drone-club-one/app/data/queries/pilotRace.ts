@@ -72,11 +72,7 @@ export async function updatePilotTime(pilotId: number, raceId: number, time: num
 }
 
 export async function addTimeToRace(pilotId: number, raceId: number, time: number, crashes: number) {
-    try {
-        await sql`INSERT INTO pilot_race (pilotid, raceid, time, crashes) VALUES (${pilotId}, ${raceId}, ${time}, ${crashes});`;
-    } catch (error) {
-        console.error("Error adding time to a race", error); //notify this in frontend
-    }
+    await sql`INSERT INTO pilot_race (pilotid, raceid, time, crashes) VALUES (${pilotId}, ${raceId}, ${time}, ${crashes});`;
 }
 
 export async function updatePositions(raceId: number) {

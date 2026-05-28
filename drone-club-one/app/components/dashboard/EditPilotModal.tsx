@@ -3,6 +3,7 @@ import { editPilotAction } from "@/app/data/actions";
 import { PilotTableType } from "@/app/data/types";
 import { X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import UploadPicture from "./UploadPicture";
 
 interface EditPilotModalProps {
@@ -64,17 +65,17 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
       const result = await editPilotAction(submittedFormData);
 
       if (result === 'duplicate') {
-        alert("Pilot with this nickname already exists.");
+        toast.error("Pilot with this nickname already exists.");
       } else if (result === 'error') {
-        alert("Unable to update pilot information right now. Check server logs for details.");
+        toast.error("Unable to update pilot information right now. Check server logs for details.");
       } else {
         await refreshPilots();
-        alert("Pilot information updated successfully!");
+        toast.success("Pilot information updated successfully!");
         handleOnClose();
       }
     } catch (error) {
       console.error("Error updating pilot information:", error);
-      alert("Unable to update pilot information right now. Check server logs for details.");
+      toast.error("Unable to update pilot information right now. Check server logs for details.");
     } finally {
       setIsSubmitting(false);
     }

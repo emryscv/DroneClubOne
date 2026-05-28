@@ -1,5 +1,4 @@
 import { getLatestRace } from "../data/queries/races";
-import { getTimesForRace } from "../data/queries/pilotRace";
 import Link from "next/link";
 import Leaderboard from "../components/Leaderboard";
 import TitleBorder from "../components/TitleBorder";

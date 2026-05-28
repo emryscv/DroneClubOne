@@ -6,7 +6,7 @@ import { LeaderbaordEntryType, PilotTableType } from "@/app/data/types";
 import { Edit, Plus, Save, Trophy, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
-import { set } from "zod";
+import { toast } from "sonner";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
     const [selectedRace, setSelectedRace] = useState("");
@@ -37,14 +37,20 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
         console.log("Submitting pilot' time form with data:", event);
         event.preventDefault();
         setIsPendingAddEntry(true);
+
         try {
             const submittedFormData = new FormData(event.currentTarget);
-            
-            await addPilotTimeAction(submittedFormData);
-            await refreshLeaderboard();
+            const result = await addPilotTimeAction(submittedFormData);
+            if (result === 'duplicate') {
+                toast.error("This pilot already has a time for this race.");
+            } else if (result === 'error') {
+                toast.error("Unable to add pilot time right now. Check server logs for details.");
+            } else {
+                await refreshLeaderboard();
+            }
         } catch (error) {
             console.error("Error adding pilot time:", error);
-            alert("Unable to add pilot time right now. Check server logs for details.");
+            toast.error("Unable to add pilot time right now. Check server logs for details.");
         } finally {
             setIsPendingAddEntry(false);
         }
@@ -57,11 +63,16 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
         setIsPendingEditEntry(true);
         try {
             const submittedFormData = new FormData(event.currentTarget);
-            await editPilotTimeAction(submittedFormData);
-            await refreshLeaderboard();
+            const result = await editPilotTimeAction(submittedFormData);
+
+            if (result === 'error') {
+                toast.error("Unable to edit pilot time right now. Check server logs for details.");
+            } else {
+                await refreshLeaderboard();
+            }
         } catch (error) {
             console.error("Error editing pilot time:", error);
-            alert("Unable to edit pilot time right now. Check server logs for details.");
+            toast.error("Unable to edit pilot time right now. Check server logs for details.");
         } finally {
             setIsPendingEditEntry(false);
             setEditingIndex(null);

@@ -19,13 +19,13 @@ function isUniqueConstraintError(error: unknown): error is PgErrorWithCode {
     return typeof error === 'object' && error !== null && 'code' in error && (error as PgErrorWithCode).code === '23505';
 }
 
-function handlePilotActionError(error: unknown, actionName: 'addPilotAction' | 'editPilotAction' | 'addRaceAction' | 'editRaceAction'): PilotActionResult {
+function handleActionError(error: unknown, actionName: 'addPilotAction' | 'editPilotAction' | 'addRaceAction' | 'editRaceAction' | 'addPilotTimeAction' | 'editPilotTimeAction'): PilotActionResult {
     console.error(`Error in ${actionName}:`, error);
 
     if (isUniqueConstraintError(error)) {
         return 'duplicate';
     }
-
+    throw new Error(`Error in ${actionName}: ${error instanceof Error ? error.message : String(error)}`);
     return 'error';
 }
 
@@ -84,11 +84,12 @@ export async function addPilotAction(formData: FormData): Promise<PilotActionRes
             pictureurl: blob ? blob.url : null,
         };
 
+        //throw new Error("Test error handling"); // Test error handling
         await insertPilot(pilotData);
 
         return 'success';
     } catch (error) {
-        return handlePilotActionError(error, 'addPilotAction');
+        return handleActionError(error, 'addPilotAction');
     }
 
 }
@@ -130,7 +131,7 @@ export async function editPilotAction(formData: FormData): Promise<PilotActionRe
 
         return 'success';
     } catch (error) {
-        return handlePilotActionError(error, 'editPilotAction');
+        return handleActionError(error, 'editPilotAction');
     }
 }
 
@@ -166,7 +167,7 @@ export async function addRaceAction(formData: FormData) {
 
         return 'success';
     } catch (error) {
-        return handlePilotActionError(error, 'addRaceAction');
+        return handleActionError(error, 'addRaceAction');
     }
 }
 
@@ -203,7 +204,7 @@ export async function editRaceAction(formData: FormData) {
 
         return 'success';
     } catch (error) {
-        return handlePilotActionError(error, 'editRaceAction');
+        return handleActionError(error, 'editRaceAction');
     }
 }
 
@@ -213,12 +214,15 @@ export async function addPilotTimeAction(formData: FormData) {
     const time = formData.get('time') as string;
     const crashes = parseInt(formData.get('crashes') as string);
 
-    time.split(":")[1].split(".")
     console.log("Addding pilot time", { pilotId, raceId, time, crashes });
-    await addTimeToRace(pilotId, raceId, timeToMS(time), crashes);
-    await updatePositions(raceId);
+    try {
+        await addTimeToRace(pilotId, raceId, timeToMS(time), crashes);
+        await updatePositions(raceId);
+        return 'success';
+    } catch (error) {
+        return handleActionError(error, 'addPilotTimeAction');
+    }
 }
-
 export async function editPilotTimeAction(formData: FormData) {
     const pilotId = parseInt(formData.get('pilotId') as string);
     const raceId = parseInt(formData.get('raceId') as string);
@@ -226,8 +230,13 @@ export async function editPilotTimeAction(formData: FormData) {
     const crashes = parseInt(formData.get('crashes') as string);
 
     console.log("Updating pilot time", { pilotId, raceId, time, crashes });
-    await updatePilotTime(pilotId, raceId, timeToMS(time), crashes);
-    await updatePositions(raceId);
+    try {
+        await updatePilotTime(pilotId, raceId, timeToMS(time), crashes);
+        await updatePositions(raceId);
+        return 'success';
+    } catch (error) {
+        return handleActionError(error, 'editPilotTimeAction');
+    }
 }
 
 function timeToMS(time: string): number {
