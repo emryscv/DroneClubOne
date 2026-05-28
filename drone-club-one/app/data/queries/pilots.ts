@@ -56,8 +56,7 @@ export async function insertPilot(pilotData: PilotTableType) {
 
 export async function updatePilot(pilotData: PilotTableType) {
     console.log("Updating pilot data in database", pilotData);
-    try {
-        const data = await sql<PilotTableType[]>`UPDATE pilots
+    const data = await sql<PilotTableType[]>`UPDATE pilots
         SET 
             firstname = ${pilotData.firstname},
             middlename = ${pilotData.middlename},
@@ -66,7 +65,4 @@ export async function updatePilot(pilotData: PilotTableType) {
             status = ${pilotData.status},
             pictureurl = COALESCE(${pilotData.pictureurl}, pictureurl)
         WHERE id = ${pilotData.id};`;
-    } catch (error) {
-        console.error("Error updating a pilot's profile", error); //notify this in frontend
-    }
 }

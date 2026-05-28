@@ -34,10 +34,17 @@ export default function AddRaceModal({ isOpen, onClose, refreshRaces }: AddRaceM
 
     try {
       const submittedFormData = new FormData(event.currentTarget);
-      await addRaceAction(submittedFormData);
-      await refreshRaces();
-      alert("Race added successfully!");
-      handleOnClose();
+      const result = await addRaceAction(submittedFormData);
+
+      if (result === 'duplicate') {
+        alert("A race with this title and date already exists.");
+      } else if (result === 'error') {
+        alert("Unable to add race right now. Check server logs for details.");
+      } else {
+        await refreshRaces();
+        alert("Race added successfully!");
+        handleOnClose();
+      }
     } catch (error) {
       console.error("Error adding race:", error);
       alert("Unable to add race right now. Check server logs for details.");

@@ -55,10 +55,17 @@ export default function EditRaceModal({ isOpen, races, onClose, refreshRaces }: 
 
     try {
       const submittedFormData = new FormData(event.currentTarget);
-      await editRaceAction(submittedFormData);
-      await refreshRaces();
-      alert("Race information updated successfully!");
-      handleOnClose();
+      const result = await editRaceAction(submittedFormData);
+
+      if (result === 'duplicate') {
+        alert("A race with this title and date already exists.");
+      } else if (result === 'error') {
+        alert("Unable to update race right now. Check server logs for details.");
+      } else {
+        await refreshRaces();
+        alert("Race updated successfully!");
+        handleOnClose();
+      }
     } catch (error) {
       console.error("Error updating race information:", error);
       alert("Unable to update race information right now. Check server logs for details.");

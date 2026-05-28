@@ -28,17 +28,24 @@ export default function AddPilotModal({ isOpen, onClose, refreshPilots }: AddPil
   }
 
   const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
-    
+
     console.log("Submitting pilot form with data:", event);
     event.preventDefault();
     setIsSubmitting(true);
 
     try {
       const submittedFormData = new FormData(event.currentTarget);
-      await addPilotAction(submittedFormData);
-      await refreshPilots();
-      alert("Pilot added successfully!");
-      handleOnClose();
+      const result = await addPilotAction(submittedFormData);
+      
+      if (result === 'duplicate') {
+        alert("Pilot with this nickname already exists.");
+      } else if (result === 'error') {
+        alert("Unable to add pilot right now. Check server logs for details.");
+      } else {
+        await refreshPilots();
+        alert("Pilot added successfully!");
+        handleOnClose();
+      }
     } catch (error) {
       console.error("Error adding pilot:", error);
       alert("Unable to add pilot right now. Check server logs for details.");

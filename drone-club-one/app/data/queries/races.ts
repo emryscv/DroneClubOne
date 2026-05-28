@@ -60,34 +60,6 @@ export async function getRaces(year: number) {
     }
 }
 
-export async function insertRace(raceData: RaceTableType) {
-    console.log(raceData);
-    try {
-        const data = await sql<RaceTableType[]>`
-            INSERT INTO races (title, date, location, bannerurl)
-            VALUES (${raceData.title}, ${raceData.date}, ${raceData.location}, ${raceData.bannerurl});`;
-    } catch (error) {
-        console.error("Error inserting a new race", error); //notify this in frontend
-    }
-}
-
-export async function updateRace(raceData: RaceTableType) {
-    console.log(raceData);
-
-    try {
-        const data = await sql<RaceTableType[]>`
-        UPDATE races
-        SET 
-            title = ${raceData.title},
-            date = ${raceData.date},
-            location = ${raceData.location},
-            bannerurl = COALESCE(${raceData.bannerurl}, bannerurl)
-        WHERE id = ${raceData.id};`;
-    } catch (error) {
-        console.error("Error updating a race", error); //notify this in frontend
-    }
-}
-
 export async function getRaceNamesAndIDs() {
     try {
         const data = await sql<{ id: number, title: string }[]>`
@@ -111,4 +83,26 @@ export async function getLocations() {
         console.error("Error fetching all possible locations", error);
         return [];
     }
+}
+
+export async function insertRace(raceData: RaceTableType) {
+    console.log(raceData);
+
+    const data = await sql<RaceTableType[]>`
+        INSERT INTO races (title, date, location, bannerurl)
+        VALUES (${raceData.title}, ${raceData.date}, ${raceData.location}, ${raceData.bannerurl});`;
+}
+
+
+export async function updateRace(raceData: RaceTableType) {
+    console.log(raceData);
+
+    const data = await sql<RaceTableType[]>`
+        UPDATE races
+        SET 
+            title = ${raceData.title},
+            date = ${raceData.date},
+            location = ${raceData.location},
+            bannerurl = COALESCE(${raceData.bannerurl}, bannerurl)
+        WHERE id = ${raceData.id};`;
 }

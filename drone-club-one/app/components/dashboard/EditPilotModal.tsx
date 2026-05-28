@@ -4,7 +4,6 @@ import { PilotTableType } from "@/app/data/types";
 import { X } from "lucide-react";
 import { useState } from "react";
 import UploadPicture from "./UploadPicture";
-import Image from "next/image";
 
 interface EditPilotModalProps {
   isOpen: boolean;
@@ -62,10 +61,17 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
 
     try {
       const submittedFormData = new FormData(event.currentTarget);
-      await editPilotAction(submittedFormData);
-      await refreshPilots();
-      alert("Pilot information updated successfully!");
-      handleOnClose();
+      const result = await editPilotAction(submittedFormData);
+
+      if (result === 'duplicate') {
+        alert("Pilot with this nickname already exists.");
+      } else if (result === 'error') {
+        alert("Unable to update pilot information right now. Check server logs for details.");
+      } else {
+        await refreshPilots();
+        alert("Pilot information updated successfully!");
+        handleOnClose();
+      }
     } catch (error) {
       console.error("Error updating pilot information:", error);
       alert("Unable to update pilot information right now. Check server logs for details.");
@@ -73,7 +79,6 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
       setIsSubmitting(false);
     }
   }
-
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

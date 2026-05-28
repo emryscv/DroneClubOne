@@ -9,6 +9,26 @@ import { insertPilot, updatePilot } from './queries/pilots';
 import { insertRace, updateRace } from './queries/races';
 import { addTimeToRace, updatePilotTime, updatePositions } from './queries/pilotRace';
 
+export type PilotActionResult = 'success' | 'duplicate' | 'error';
+
+type PgErrorWithCode = {
+    code?: string;
+};
+
+function isUniqueConstraintError(error: unknown): error is PgErrorWithCode {
+    return typeof error === 'object' && error !== null && 'code' in error && (error as PgErrorWithCode).code === '23505';
+}
+
+function handlePilotActionError(error: unknown, actionName: 'addPilotAction' | 'editPilotAction' | 'addRaceAction' | 'editRaceAction'): PilotActionResult {
+    console.error(`Error in ${actionName}:`, error);
+
+    if (isUniqueConstraintError(error)) {
+        return 'duplicate';
+    }
+
+    return 'error';
+}
+
 
 export async function authenticate(
     prevState: string | undefined,
@@ -35,7 +55,7 @@ export async function signOutAction() {
     await signOut({ redirectTo: '/' });
 }
 
-export async function addPilotAction(formData: FormData) {
+export async function addPilotAction(formData: FormData): Promise<PilotActionResult> {
     const image: File | null = formData.get('image') as File | null;
     const nickname = formData.get('nickname') as string;
     const firstname = formData.get('firstName') as string;
@@ -44,29 +64,36 @@ export async function addPilotAction(formData: FormData) {
 
     console.log("Add Pilot Form Data", image, nickname, firstname, middlename, lastname);
 
-    let blob;
-    if (image && image.size > 0) {
-        blob = await put(image.name, image, {
-            access: 'public' /* or 'public' */,
-            addRandomSuffix: true,
-        });
-        revalidatePath('/');
+    try {
+        let blob;
+        if (image && image.size > 0) {
+            blob = await put(image.name, image, {
+                access: 'public' /* or 'public' */,
+                addRandomSuffix: true,
+            });
+            revalidatePath('/');
+        }
+
+        const pilotData: PilotTableType = {
+            id: -1, // This will be set by the database
+            nickname,
+            firstname,
+            middlename,
+            lastname,
+            status: 'active',
+            pictureurl: blob ? blob.url : null,
+        };
+
+        await insertPilot(pilotData);
+
+        return 'success';
+    } catch (error) {
+        return handlePilotActionError(error, 'addPilotAction');
     }
 
-    const pilotData: PilotTableType = {
-        id: -1, // This will be set by the database
-        nickname,
-        firstname,
-        middlename,
-        lastname,
-        status: 'active',
-        pictureurl: blob ? blob.url : null,
-    };
-
-    await insertPilot(pilotData);
 }
 
-export async function editPilotAction(formData: FormData) {
+export async function editPilotAction(formData: FormData): Promise<PilotActionResult> {
     const pilotId = parseInt(formData.get('pilotId') as string);
     const image: File | null = formData.get('image') as File | null;
     const nickname = formData.get('nickname') as string;
@@ -77,28 +104,34 @@ export async function editPilotAction(formData: FormData) {
 
     console.log("Edit Pilot Form Data", { pilotId, image, nickname, firstname, middlename, lastname, status });
 
-    let blob;
-    if (image && image.size > 0) {
-        blob = await put(image.name, image, {
-            access: 'public' /* or 'public' */,
-            addRandomSuffix: true,
-        });
-        revalidatePath('/');
+    try {
+        let blob;
+        if (image && image.size > 0) {
+            blob = await put(image.name, image, {
+                access: 'public' /* or 'public' */,
+                addRandomSuffix: true,
+            });
+            revalidatePath('/');
+        }
+
+        const pilotData: PilotTableType = {
+            id: pilotId, // This will be set by the database
+            nickname,
+            firstname,
+            middlename,
+            lastname,
+            status: status as 'active' | 'inactive',
+            pictureurl: blob ? blob.url : null,
+        };
+
+        console.log("Updating pilot data", pilotData);
+
+        await updatePilot(pilotData);
+
+        return 'success';
+    } catch (error) {
+        return handlePilotActionError(error, 'editPilotAction');
     }
-
-    const pilotData: PilotTableType = {
-        id: pilotId, // This will be set by the database
-        nickname,
-        firstname,
-        middlename,
-        lastname,
-        status: status as 'active' | 'inactive',
-        pictureurl: blob ? blob.url : null,
-    };
-
-    console.log("Updating pilot data", pilotData);
-
-    await updatePilot(pilotData);
 }
 
 export async function addRaceAction(formData: FormData) {
@@ -108,26 +141,33 @@ export async function addRaceAction(formData: FormData) {
     const location = formData.get('location') as string;
 
     console.log("Add Race Form Data", { banner, title, date, location });
-    let blob;
-    if (banner && banner.size > 0) {
-        blob = await put(banner.name, banner, {
-            access: 'public' /* or 'public' */,
-            addRandomSuffix: true,
-        });
-        revalidatePath('/');
+
+    try {
+        let blob;
+        if (banner && banner.size > 0) {
+            blob = await put(banner.name, banner, {
+                access: 'public' /* or 'public' */,
+                addRandomSuffix: true,
+            });
+            revalidatePath('/');
+        }
+
+        const raceData: RaceTableType = {
+            id: -1, // This will be set by the database
+            title,
+            date,
+            location,
+            bannerurl: blob ? blob.url : null,
+            isupcoming: true, // This will be calculated based on the date
+            pilotscount: -1, // This will be updated when pilots
+        };
+
+        await insertRace(raceData);
+
+        return 'success';
+    } catch (error) {
+        return handlePilotActionError(error, 'addRaceAction');
     }
-
-    const raceData: RaceTableType = {
-        id: -1, // This will be set by the database
-        title,
-        date,
-        location,
-        bannerurl: blob ? blob.url : null,
-        isupcoming: true, // This will be calculated based on the date
-        pilotscount: -1, // This will be updated when pilots
-    };
-
-    await insertRace(raceData);
 }
 
 export async function editRaceAction(formData: FormData) {
@@ -138,26 +178,33 @@ export async function editRaceAction(formData: FormData) {
     const location = formData.get('location') as string;
 
     console.log("Edit Race Form Data", { raceId, banner, title, date, location });
-    let blob;
-    if (banner && banner.size > 0) {
-        blob = await put(banner.name, banner, {
-            access: 'public' /* or 'public' */,
-            addRandomSuffix: true,
-        });
-        revalidatePath('/');
+
+    try {
+        let blob;
+        if (banner && banner.size > 0) {
+            blob = await put(banner.name, banner, {
+                access: 'public' /* or 'public' */,
+                addRandomSuffix: true,
+            });
+            revalidatePath('/');
+        }
+
+        const raceData: RaceTableType = {
+            id: raceId, // This will be set by the database
+            title,
+            date,
+            location,
+            bannerurl: blob ? blob.url : null,
+            isupcoming: true, // This will be calculated based on the date
+            pilotscount: -1, // This will be updated when pilots
+        };
+
+        await updateRace(raceData);
+
+        return 'success';
+    } catch (error) {
+        return handlePilotActionError(error, 'editRaceAction');
     }
-
-    const raceData: RaceTableType = {
-        id: raceId, // This will be set by the database
-        title,
-        date,
-        location,
-        bannerurl: blob ? blob.url : null,
-        isupcoming: true, // This will be calculated based on the date
-        pilotscount: -1, // This will be updated when pilots
-    };
-
-    await updateRace(raceData);
 }
 
 export async function addPilotTimeAction(formData: FormData) {
