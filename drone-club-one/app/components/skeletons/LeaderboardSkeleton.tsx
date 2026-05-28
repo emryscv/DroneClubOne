@@ -14,7 +14,17 @@ export default function LeaderboardSkeleton() {
                 </tr>
             </thead>
             <tbody aria-hidden="true" className="invisible">
-                <TableRow data={{ id: 1, position: 1, nickname: "nick", firstname: "Jhon", middlename: "Michael", lastname: "Doe", time: 0.4000, crashes: 1 } as LeaderbaordEntryType} />
+                <TableRow data={{
+                    id: 1,
+                    position: 1,
+                    nickname: "nick",
+                    firstname: "Jhon",
+                    middlename: "Michael",
+                    lastname: "Doe",
+                    pictureurl: null,
+                    time: "0:40.0",
+                    crashes: 1
+                } as LeaderbaordEntryType} />
             </tbody>
         </table>
 
