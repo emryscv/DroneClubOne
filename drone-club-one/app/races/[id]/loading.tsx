@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function Loading() {
     return (
         <>
-            <div className="mb-8">
+            <div className="mb-8 pt-22">
                 <TitleBorder>Loading ...</TitleBorder>
                 <p className="text-muted-foreground mt-4">Loading ...</p>
             </div>

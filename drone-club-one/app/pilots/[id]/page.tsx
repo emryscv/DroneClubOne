@@ -9,7 +9,7 @@ export default async function Pilot({ params }: { params: { id: number } }) {
     const { id } = await params;
 
     return (
-        <div className="grid md:grid-cols-3 gap-8 mb-12 mt-10">
+        <div className="grid md:grid-cols-3 gap-8 mb-12 pt-32">
             <Suspense fallback={<PilotCardSkeleton />}>
                 <PilotCardServer pilotId={id} />
             </Suspense>

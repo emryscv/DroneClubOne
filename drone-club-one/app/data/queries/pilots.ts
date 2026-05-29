@@ -6,6 +6,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getPilot(pilotId: number) {
     try {
+        throw new Error("Simulated error for testing error handling in getPilot");
         const data = await sql<PilotTableType[]>`
         SELECT 
             id, 
@@ -20,12 +21,13 @@ export async function getPilot(pilotId: number) {
         return data[0];
     } catch (error) {
         console.error("Error fetching pilot's metadata by ID", error);
-        return {} as any;
+        throw error;
     }
 }
 
 export async function getPilots() {
     try {
+        throw new Error("Simulated error for testing error handling in getPilots");
         const data = await sql<PilotTableType[]>`
         SELECT 
             id, 
@@ -42,7 +44,7 @@ export async function getPilots() {
     }
     catch (error) {
         console.error("Error fetching pilots' metadata", error);
-        return [];
+        throw error;
     }
 }
 

@@ -10,6 +10,8 @@ import { signOutAction } from "../data/actions";
 import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
 import Image from "next/image";
+import ErrorPage from "../error";
+import { refresh } from "next/cache";
 
 export default function Dashboard() {
     const [pilots, setPilots] = useState<PilotTableType[]>([]);
@@ -18,15 +20,21 @@ export default function Dashboard() {
     const [showAddRace, setShowAddRace] = useState(false);
     const [showEditPilot, setShowEditPilot] = useState(false);
     const [showEditRace, setShowEditRace] = useState(false);
+
     const [isPendingPilot, setIsPendingPilot] = useState(false);
     const [isPendingRace, setIsPendingRace] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
 
     const refreshPilots = async () => {
         fetch("/api/refreshPilots")
             .then((res) => res.json())
             .then((data) => setPilots(data))
             .then(() => setIsPendingPilot(false))
-            .catch((error) => console.error("Error refreshing pilots:", error)); //check this
+            .catch((error) => {
+                setError(error);
+                setIsPendingPilot(false);
+            });
     }
 
     const refreshRaces = async () => {
@@ -34,7 +42,10 @@ export default function Dashboard() {
             .then((res) => res.json())
             .then((data) => setRaces(data))
             .then(() => setIsPendingRace(false))
-            .catch((error) => console.error("Error refreshing races:", error)); //check this
+            .catch((error) => {
+                setError(error);
+                setIsPendingRace(false);
+            });
     }
 
     useEffect(() => {
@@ -44,8 +55,12 @@ export default function Dashboard() {
         refreshRaces()
     }, []);
 
+    if (error) {
+        return <ErrorPage error={error} unstable_retry={refresh} />;
+    }
+
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-22">
             <div className="mb-8 flex items-center justify-between">
                 <TitleBorder>Admin Dashboard</TitleBorder>
                 <form

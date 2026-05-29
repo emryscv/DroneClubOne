@@ -10,7 +10,7 @@ export default async function Race({ params }: { params: { id: number } }) {
 
   return (
     <>
-      <div className="mb-8">
+      <div className="mb-8 pt-22">
         <TitleBorder>{raceData.title}</TitleBorder>
 
         <div className="flex flex-wrap gap-6 text-muted-foreground mb-6 mt-4">

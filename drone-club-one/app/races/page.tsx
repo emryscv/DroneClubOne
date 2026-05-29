@@ -7,6 +7,8 @@ import { getLocations, getRaces } from "../data/queries/races";
 import { RaceTableType } from "../data/types";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import ErrorPage from "../error";
+import { refresh } from "next/cache";
 
 export default function Races() {
     const [racesData, setRacesData] = useState<RaceTableType[]>([]);
@@ -20,15 +22,21 @@ export default function Races() {
     const [selectedYear, setSelectedYear] = useState(2026);
 
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
         setIsLoading(true);
         getRaces(selectedYear).then((data) => {
             setRacesData(data);
             setIsLoading(false);
+        }).catch((error) => {
+            setError(error);
+            setIsLoading(false);
         });
         getLocations().then((data) => {
             setLocations(data);
+        }).catch((error) => {
+            setError(error);
         });
     }, []);
 
@@ -49,9 +57,13 @@ export default function Races() {
         setFilteredRaces(filteredRaces);
     }, [searchQuery, selectedLocation, selectedStatus, racesData]);
 
+    if(error){
+        return <ErrorPage error={error} unstable_retry={refresh}/>;
+    }
+
     return (
         <>
-            <div className="mb-8">
+            <div className="mb-8 pt-22">
                 <TitleBorder>Races</TitleBorder>
                 <p className="text-muted-foreground mt-4">All past and upcoming drone racing events</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-6 w-full gap-6">
@@ -127,5 +139,6 @@ export default function Races() {
                     No races found
                 </div>
             )}
+
         </>);
 }

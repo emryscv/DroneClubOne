@@ -7,16 +7,24 @@ import { useEffect, useState } from "react";
 import { PilotTableType } from "../data/types";
 import Image from "next/image";
 import Link from "next/link";
+import ErrorPage from "../error";
+import { refresh } from "next/cache";
 
 export default function Pilots() {
     const [pilotsList, setPilotsList] = useState<PilotTableType[]>([]);
     const [filteredPilots, setFilteredPilots] = useState<PilotTableType[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
+    
     useEffect(() => {
         setIsLoading(true);
         getPilots().then((data) => {
             setPilotsList(data);
+            setIsLoading(false);
+        }).catch((error) => {
+            setError(error);
             setIsLoading(false);
         });
     }, [])
@@ -36,8 +44,12 @@ export default function Pilots() {
         }
     }, [searchQuery, pilotsList]);
 
+    if(error){
+        return <ErrorPage error={error} unstable_retry={refresh}/>;
+    }
+    
     return <>
-        <div className="mb-8">
+        <div className="mb-8 pt-22">
             <TitleBorder>Pilots</TitleBorder>
             <p className="text-muted-foreground mt-4">All registered pilots</p>
 

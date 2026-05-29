@@ -6,6 +6,7 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getLatestRace() {
     try {
+        //throw new Error("Simulated error for testing error handling in getLatestRace");
         const data = await sql<RaceTableType[]>`
             SELECT *
             FROM races
@@ -15,12 +16,13 @@ export async function getLatestRace() {
         return data[0];
     } catch (error) {
         console.error("Error fetching latest race", error);
-        return {} as any;
+        throw error;
     }
 }
 
 export async function getRace(raceId: number) {
     try {
+        //throw new Error("Simulated error for testing error handling in getLatestRace");
         const data = await sql<RaceTableType[]>`
         SELECT 
             id, 
@@ -33,13 +35,13 @@ export async function getRace(raceId: number) {
         return data[0];
     } catch (error) {
         console.error("Error fetching race by ID", error);
-        return {} as any;
+        throw error;
     }
 }
 
 export async function getRaces(year: number) {
-    try {
-        const data = await sql<RaceTableType[]>`
+    //throw new Error("Simulated error for testing error handling in getRaces");
+    const data = await sql<RaceTableType[]>`
             SELECT 
                 id, 
                 title, 
@@ -53,11 +55,7 @@ export async function getRaces(year: number) {
         WHERE EXTRACT(YEAR FROM date) = ${year}
         GROUP BY r.id
         ORDER BY date DESC;`;
-        return data;
-    } catch (error) {
-        console.error("Error fetching all races", error);
-        return [];
-    }
+    return data;
 }
 
 export async function getRaceNamesAndIDs() {
@@ -81,7 +79,7 @@ export async function getLocations() {
         return data.map((row) => row.location);
     } catch (error) {
         console.error("Error fetching all possible locations", error);
-        return [];
+        throw error
     }
 }
 
