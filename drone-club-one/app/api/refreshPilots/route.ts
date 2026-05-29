@@ -4,9 +4,16 @@ export async function GET() {
     try {
         console.log("Refreshing pilots...");
         const data = await getPilots();
-        return Response.json(data);
+        return Response.json(data, { status: 200 });
     }
     catch (error) {
-        return Response.json({ error: "Error refreshing races" }, { status: 500 });
+        console.error("Error refreshing pilots:", error);
+        return Response.json(
+            {
+                error: "Error refreshing pilots",
+                details: error instanceof Error ? error.message : "Unknown error"
+            },
+            { status: 500 }
+        );
     }
 }

@@ -1,6 +1,7 @@
 "use server";
 import postgres from 'postgres';
 import { RaceTableType } from '../types';
+import { th } from 'zod/locales';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -60,6 +61,7 @@ export async function getRaces(year: number) {
 
 export async function getRaceNamesAndIDs() {
     try {
+        //throw new Error("Simulated error for testing error handling in getRaceNamesAndIDs");
         const data = await sql<{ id: number, title: string }[]>`
         SELECT 
             id, 
@@ -68,7 +70,7 @@ export async function getRaceNamesAndIDs() {
         return data;
     } catch (error) {
         console.error("Error fetching races' names and IDs", error);
-        return [];
+        throw error;
     }
 }
 

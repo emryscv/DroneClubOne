@@ -11,7 +11,6 @@ import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
 import Image from "next/image";
 import ErrorPage from "../error";
-import { refresh } from "next/cache";
 
 export default function Dashboard() {
     const [pilots, setPilots] = useState<PilotTableType[]>([]);
@@ -27,36 +26,54 @@ export default function Dashboard() {
 
 
     const refreshPilots = async () => {
-        fetch("/api/refreshPilots")
-            .then((res) => res.json())
-            .then((data) => setPilots(data))
-            .then(() => setIsPendingPilot(false))
-            .catch((error) => {
-                setError(error);
-                setIsPendingPilot(false);
-            });
+        setIsPendingPilot(true);
+        try {
+            const res = await fetch("/api/refreshPilots");
+
+            if (!res.ok) {
+                const body = await res.json().catch(() => null);
+                throw new Error(body?.error ?? "Error refreshing pilots");
+            }
+
+            const data = await res.json();
+            setPilots(data);
+        }
+        catch (error) {
+            setError(error instanceof Error ? error : new Error("Error refreshing pilots"));
+        }
+        finally {
+            setIsPendingPilot(false);
+        }
     }
 
     const refreshRaces = async () => {
-        fetch("/api/refreshRaces")
-            .then((res) => res.json())
-            .then((data) => setRaces(data))
-            .then(() => setIsPendingRace(false))
-            .catch((error) => {
-                setError(error);
-                setIsPendingRace(false);
-            });
+        setIsPendingRace(true);
+        try {
+            const res = await fetch("/api/refreshRaces");
+
+            if (!res.ok) {
+                const body = await res.json().catch(() => null);
+                throw new Error(body?.error ?? "Error refreshing races");
+            }
+
+            const data = await res.json();
+            setRaces(data);
+        }
+        catch (error) {
+            setError(error instanceof Error ? error : new Error("Error refreshing races"));
+        }
+        finally {
+            setIsPendingRace(false);
+        }
     }
 
     useEffect(() => {
-        setIsPendingPilot(true);
-        setIsPendingRace(true);
         refreshPilots()
         refreshRaces()
     }, []);
 
     if (error) {
-        return <ErrorPage error={error} unstable_retry={refresh} />;
+        return <ErrorPage error={error} unstable_retry={() => window.location.reload()} />;
     }
 
     return (
