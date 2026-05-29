@@ -7,6 +7,7 @@ import { Edit, Plus, Save, Trophy, X } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { tr } from "zod/locales";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
     const [selectedRace, setSelectedRace] = useState("");
@@ -18,7 +19,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
     const [isPendingAddEntry, setIsPendingAddEntry] = useState(false);
     const [isPendingEditEntry, setIsPendingEditEntry] = useState(false);
 
-    const [isPending, startTransition] = useTransition();
+    const [isPending, setIsPending] = useState(false);
 
     const handleCancelEdit = () => {
         setEditingIndex(null);
@@ -27,10 +28,15 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
     const refreshLeaderboard = async () => {
         setLeaderboard([]); // Clear current leaderboard to show loading stat
-        startTransition(async () => {
+        try {
+            setIsPending(true);
             const data = await getTimesForRace(Number(selectedRace));
             setLeaderboard(data);
-        });
+        } catch (error) {
+            toast.error("Unable to load leaderboard. Check server logs for details.");
+        }finally {
+            setIsPending(false);
+        }
     }
 
     const handleSubmitAddEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {

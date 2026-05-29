@@ -28,12 +28,13 @@ export async function getRacesForPilot(pilotId: number) {
         return formattedData;
     } catch (error) {
         console.error("Error fetching races for a pilot", error);
-        return [];
+        throw error;
     }
 }
 
 export async function getTimesForRace(raceId: number) {
     try {
+        throw new Error("Not implemented yet");
         const data = await sql<LeaderbaordTimeMSEntryType[]>`
         SELECT
             p.id, 
@@ -59,16 +60,12 @@ export async function getTimesForRace(raceId: number) {
         return formattedData;
     } catch (error) {
         console.error("Error fetching times for a race", error);
-        return [];
+        throw error;
     }
 }
 
 export async function updatePilotTime(pilotId: number, raceId: number, time: number, crashes: number) {
-    try {
-        await sql`UPDATE pilot_race SET time = ${time}, crashes = ${crashes} WHERE pilotid = ${pilotId} AND raceid = ${raceId};`;
-    } catch (error) {
-        console.error("Error updating pilot's time", error); //notify this in frontend
-    }
+    await sql`UPDATE pilot_race SET time = ${time}, crashes = ${crashes} WHERE pilotid = ${pilotId} AND raceid = ${raceId};`;
 }
 
 export async function addTimeToRace(pilotId: number, raceId: number, time: number, crashes: number) {
@@ -76,22 +73,18 @@ export async function addTimeToRace(pilotId: number, raceId: number, time: numbe
 }
 
 export async function updatePositions(raceId: number) {
-    try {
-        await sql`
-    UPDATE pilot_race SET position = newPosition
-    FROM (
-        SELECT 
-            pilotid, 
-            time, 
-            crashes,
-            RANK() OVER (ORDER BY time ASC, crashes ASC) AS newPosition
-        FROM pilot_race
-        WHERE raceid = ${raceId}
-    ) AS ranked
-    WHERE pilot_race.pilotid = ranked.pilotid AND pilot_race.raceid = ${raceId};`;
-    } catch (error) {
-        console.error("Error updating positions of a race", error); //notify this in frontend
-    }
+    await sql`
+        UPDATE pilot_race SET position = newPosition
+        FROM (
+            SELECT 
+                pilotid, 
+                time, 
+                crashes,
+                RANK() OVER (ORDER BY time ASC, crashes ASC) AS newPosition
+            FROM pilot_race
+            WHERE raceid = ${raceId}
+        ) AS ranked
+        WHERE pilot_race.pilotid = ranked.pilotid AND pilot_race.raceid = ${raceId};`;
 }
 
 function msToTime(time: number): string {
