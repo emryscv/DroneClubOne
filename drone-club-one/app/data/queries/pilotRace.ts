@@ -34,7 +34,6 @@ export async function getRacesForPilot(pilotId: number) {
 
 export async function getTimesForRace(raceId: number) {
     try {
-        throw new Error("Not implemented yet");
         const data = await sql<LeaderbaordTimeMSEntryType[]>`
         SELECT
             p.id, 

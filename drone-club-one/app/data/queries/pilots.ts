@@ -6,7 +6,6 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getPilot(pilotId: number) {
     try {
-        //throw new Error("Simulated error for testing error handling in getPilot");
         const data = await sql<PilotTableType[]>`
         SELECT 
             id, 
@@ -27,7 +26,6 @@ export async function getPilot(pilotId: number) {
 
 export async function getPilots() {
     try {
-        //throw new Error("Simulated error for testing error handling in getPilots");
         const data = await sql<PilotTableType[]>`
         SELECT 
             id, 

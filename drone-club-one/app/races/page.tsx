@@ -58,7 +58,7 @@ export default function Races() {
     }, [searchQuery, selectedLocation, selectedStatus, racesData]);
 
     if(error){
-        return <ErrorPage error={error} unstable_retry={refresh}/>;
+        return <ErrorPage error={error} unstable_retry={() => window.location.reload()}/>;
     }
 
     return (

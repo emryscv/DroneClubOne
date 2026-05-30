@@ -7,7 +7,6 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getLatestRace() {
     try {
-        //throw new Error("Simulated error for testing error handling in getLatestRace");
         const data = await sql<RaceTableType[]>`
             SELECT *
             FROM races
@@ -23,7 +22,6 @@ export async function getLatestRace() {
 
 export async function getRace(raceId: number) {
     try {
-        //throw new Error("Simulated error for testing error handling in getLatestRace");
         const data = await sql<RaceTableType[]>`
         SELECT 
             id, 
@@ -41,7 +39,6 @@ export async function getRace(raceId: number) {
 }
 
 export async function getRaces(year: number) {
-    //throw new Error("Simulated error for testing error handling in getRaces");
     const data = await sql<RaceTableType[]>`
             SELECT 
                 id, 
@@ -61,7 +58,6 @@ export async function getRaces(year: number) {
 
 export async function getRaceNamesAndIDs() {
     try {
-        //throw new Error("Simulated error for testing error handling in getRaceNamesAndIDs");
         const data = await sql<{ id: number, title: string }[]>`
         SELECT 
             id, 
