@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import UploadPicture from "./UploadPicture";
+import { set } from "zod";
 
 interface EditPilotModalProps {
   isOpen: boolean;
@@ -14,7 +15,8 @@ interface EditPilotModalProps {
 }
 
 export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots }: EditPilotModalProps) {
-  const [selectedPilot, setSelectedPilot] = useState("");
+  const [selectedPilotId, setSelectedPilotId] = useState(0);
+  const [selectedPilotName, setSelectedPilotName] = useState("");
   const [formData, setFormData] = useState({
     nickname: "",
     firstName: "",
@@ -28,10 +30,11 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
 
   if (!isOpen) return null;
 
-  const handlePilotSelect = (pilotId: string) => {
-    const pilot = pilots.find(p => p.id === Number(pilotId));
+  const handlePilotSelect = (pilotsName: string) => {
+    setSelectedPilotName(pilotsName);
+    const pilot = pilots.find(p => p.nickname === pilotsName.split(" ")[0]);
     if (pilot) {
-      setSelectedPilot(pilotId);
+      setSelectedPilotId(pilot.id);
       setFormData({
         nickname: pilot.nickname,
         firstName: pilot.firstname,
@@ -42,13 +45,14 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
       });
       setPreviewUrl(pilot.pictureurl);
     } else {
-      setSelectedPilot("");
+      setSelectedPilotId(0);
       setFormData({ nickname: "", firstName: "", middleName: null, lastName: "", status: "active", picture: null });
     }
   };
 
   const handleOnClose = () => {
-    setSelectedPilot("");
+    setSelectedPilotId(0);
+    setSelectedPilotName("");
     setFormData({ nickname: "", firstName: "", middleName: null, lastName: "", status: "active", picture: null });
     setPreviewUrl(null);
     onClose();
@@ -97,22 +101,27 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
           <div>
             <label htmlFor="pilotId" className="block mb-2 text-sm">Select Pilot</label>
-            <select
-              id="pilotId"
-              name="pilotId"
+
+            <input type="hidden" name="pilotId" value={selectedPilotId} />
+            <input
+              list="pilots"
+              name="pilot"
+              id="pilot"
               required
-              value={selectedPilot}
+              value={selectedPilotName}
               onChange={(e) => handlePilotSelect(e.target.value)}
               className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+            />
+            <datalist
+              id="pilots"
             >
-              <option value="">Choose a pilot...</option>
               {pilots.map(pilot => (
-                <option key={pilot.id} value={pilot.id}>{`${pilot.nickname} (${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`}</option>
+                <option key={pilot.id} value={`${pilot.nickname} (${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`} />
               ))}
-            </select>
+            </datalist>
           </div>
 
-          {selectedPilot && (
+          {selectedPilotId > 0 && (
             <>
               <UploadPicture isProfilePicture onFileChange={(file) => setFormData({ ...formData, picture: file })} defaultPreviewUrl={previewUrl} />
 
@@ -190,7 +199,7 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              disabled={!selectedPilot || isSubmitting}
+              disabled={!selectedPilotId || isSubmitting}
               className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Updating..." : "Update Pilot"}
