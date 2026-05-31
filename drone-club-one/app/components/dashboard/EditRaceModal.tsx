@@ -110,7 +110,7 @@ export default function EditRaceModal({ isOpen, races, onClose, refreshRaces }: 
 
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
           <div>
-            <label htmlFor="raceId" className="block mb-2 text-sm">Select Race</label>
+            <label htmlFor="race" className="block mb-2 text-sm">Select Race</label>
 
             <input type="hidden" name="raceId" id="raceId" value={selectedRaceId} />
             <input

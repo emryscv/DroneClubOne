@@ -1,43 +1,20 @@
 "use client";
-
-import { addPilotTimeAction, editPilotTimeAction } from "@/app/data/actions";
-import { getTimesForRace } from "@/app/data/queries/pilotRace";
-import { LeaderbaordEntryType, PilotTableType } from "@/app/data/types";
-import { Edit, Plus, Save, Trophy, X } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
+import { addPilotTimeAction } from "@/app/data/actions";
+import { Plus, X, Save } from "lucide-react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
-import { tr } from "zod/locales";
+import { PilotTableType } from "@/app/data/types";
+import TimeManagementLeaderboard from "./TimeManagementLeaderboard";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
-    const [selectedRace, setSelectedRace] = useState("");
+    const [selectedRaceId, setSelectedRaceId] = useState(0);
+    const [selectedRaceName, setSelectedRaceName] = useState("");
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
+
     const [showAddEntry, setShowAddEntry] = useState(false);
-    const [newEntry, setNewEntry] = useState({ pilotId: "", time: "", crashes: "0" });
-    const [leaderboard, setLeaderboard] = useState<LeaderbaordEntryType[]>([]);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
-    const [editEntry, setEditEntry] = useState({ time: "", crashes: "" });
+    const [newEntry, setNewEntry] = useState({ pilotId: "", time: "", crashes: "0", fullName: "" });
     const [isPendingAddEntry, setIsPendingAddEntry] = useState(false);
-    const [isPendingEditEntry, setIsPendingEditEntry] = useState(false);
-
-    const [isPending, setIsPending] = useState(false);
-
-    const handleCancelEdit = () => {
-        setEditingIndex(null);
-        setEditEntry({ time: "", crashes: "" });
-    }
-
-    const refreshLeaderboard = async () => {
-        setLeaderboard([]); // Clear current leaderboard to show loading stat
-        try {
-            setIsPending(true);
-            const data = await getTimesForRace(Number(selectedRace));
-            setLeaderboard(data);
-        } catch (error) {
-            toast.error("Unable to load leaderboard. Check server logs for details.");
-        }finally {
-            setIsPending(false);
-        }
-    }
 
     const handleSubmitAddEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
         console.log("Submitting pilot' time form with data:", event);
@@ -52,7 +29,10 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
             } else if (result === 'error') {
                 toast.error("Unable to add pilot time right now. Check server logs for details.");
             } else {
-                await refreshLeaderboard();
+                setNewEntry({ pilotId: "", time: "", crashes: "0", fullName: "" });
+                setShowAddEntry(false);
+                setRefreshTrigger(prev => prev + 1);
+                toast.success("Pilot time added successfully!");
             }
         } catch (error) {
             console.error("Error adding pilot time:", error);
@@ -62,56 +42,50 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
         }
     }
 
-
-    const handleSubmitEditEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
-        console.log("Submitting pilot' time form with edit data:", event);
-        event.preventDefault();
-        setIsPendingEditEntry(true);
-        try {
-            const submittedFormData = new FormData(event.currentTarget);
-            const result = await editPilotTimeAction(submittedFormData);
-
-            if (result === 'error') {
-                toast.error("Unable to edit pilot time right now. Check server logs for details.");
-            } else {
-                await refreshLeaderboard();
-            }
-        } catch (error) {
-            console.error("Error editing pilot time:", error);
-            toast.error("Unable to edit pilot time right now. Check server logs for details.");
-        } finally {
-            setIsPendingEditEntry(false);
-            setEditingIndex(null);
+    const handleSelectPilot: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setNewEntry({ ...newEntry, fullName: e.target.value });
+        console.log("Selected pilot name:", e.target.value);
+        const pilot = pilots.find(p => p.nickname === e.target.value.split(" ")[0]);
+        if (pilot) {
+            setNewEntry({ ...newEntry, pilotId: pilot.id.toString() });
         }
     }
-
     useEffect(() => {
-        if (selectedRace) {
-            refreshLeaderboard();
+        if (selectedRaceName !== "") {
+            const race = races.find(p => p.title === selectedRaceName);
+            if (race) {
+                setSelectedRaceId(race.id);
+            }
         }
-    }, [selectedRace]);
+    }, [selectedRaceName]);
 
     return (
         <div >
             <h2 className="text-2xl mb-6">Race Time Management</h2>
 
             <div className="bg-card border border-border rounded-lg p-6 mb-6">
-                <label htmlFor="raceId" className="block mb-2">Select Race</label>
-                <select
-                    id="raceId"
-                    name="raceId"
-                    value={selectedRace || ""}
-                    onChange={(e) => setSelectedRace(e.target.value)}
+                <label htmlFor="race" className="block mb-2">Select Race</label>
+
+                <input type="hidden" name="raceId" id="raceId" value={selectedRaceId} />
+                <input
+                    list="races"
+                    name="race"
+                    id="race"
+                    required
+                    placeholder="Search for a race"
+                    value={selectedRaceName}
+                    onChange={(e) => setSelectedRaceName(e.target.value)}
                     className="w-full max-w-md px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
-                >
-                    <option value="">Choose a race...</option>
+
+                />
+                <datalist id="races">
                     {races.map(race => (
-                        <option key={race.id} value={race.id}>{race.title}</option>
+                        <option key={race.id} value={race.title} />
                     ))}
-                </select>
+                </datalist>
             </div>
 
-            {selectedRace && (
+            {selectedRaceId && (
                 <div className="bg-card border border-border rounded-lg overflow-hidden">
                     <div className="flex items-center justify-between p-4 bg-secondary border-b border-border">
                         <h3 className="text-xl">Leaderboard</h3>
@@ -135,24 +109,28 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                 type="hidden"
                                 id="raceId"
                                 name="raceId"
-                                value={selectedRace}
+                                value={selectedRaceId}
                             />
                             <div>
                                 <label htmlFor="pilotId" className="block mb-2 text-sm">Pilot</label>
-                                <select
-                                    value={newEntry.pilotId}
-                                    id="pilotId"
-                                    name="pilotId"
-                                    onChange={(e) => setNewEntry({ ...newEntry, pilotId: e.target.value })}
-                                    className="w-full px-3 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+
+                                <input type="hidden" name="pilotId" id="pilotId" value={newEntry.pilotId} />
+                                <input
+                                    list="pilots"
+                                    name="pilot"
+                                    id="pilot"
+                                    required
+                                    placeholder="Search for a Pilot"
+                                    onChange={handleSelectPilot}
+                                    className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+                                />
+                                <datalist
+                                    id="pilots"
                                 >
-                                    <option value="">Select pilot...</option>
                                     {pilots.map(pilot => (
-                                        <option key={pilot.id} value={pilot.id}>
-                                            {`${pilot.nickname} (${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`}
-                                        </option>
+                                        <option key={pilot.id} value={`${pilot.nickname} (${pilot.firstname}${pilot.middlename ? " " + pilot.middlename : ""} ${pilot.lastname})`} />
                                     ))}
-                                </select>
+                                </datalist>
                             </div>
                             <div>
                                 <label htmlFor="time" className="block mb-2 text-sm">Time</label>
@@ -197,7 +175,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                     type="reset"
                                     onClick={() => {
                                         setShowAddEntry(false);
-                                        setNewEntry({ pilotId: "", time: "", crashes: "0" });
+                                        setNewEntry({ pilotId: "", time: "", crashes: "0", fullName: "" });
                                     }}
                                     className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors"
                                 >
@@ -207,134 +185,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                         </form>
                     )}
 
-                    <table className="w-full">
-                        <thead>
-                            <tr className="bg-secondary border-b border-border">
-                                <th className="p-4 text-muted-foreground tracking-wide">POS</th>
-                                <th className="p-4 text-muted-foreground tracking-wide text-left">PILOT</th>
-                                <th className="p-4 text-muted-foreground tracking-wide">TIME</th>
-                                <th className="p-4 text-muted-foreground tracking-wide">CRASHES</th>
-                                <th className="p-4 text-muted-foreground tracking-wide">ACTIONS</th>
-                            </tr>
-                        </thead>
-
-                        {leaderboard.length !== 0 && (
-                            <tbody
-                                className="p-4 border-b border-border last:border-b-0"
-                            >
-                                {leaderboard.map((entry, index) => {
-                                    return editingIndex === index ? (
-                                        <tr key={index}>
-                                            <td className="p-4 col-span-5">
-                                                <form
-                                                    onSubmit={handleSubmitEditEntry}
-                                                    id={`edit-form-${index}`}
-                                                >
-                                                    <input type="hidden" id="pilotId" name="pilotId" value={entry.id} />
-                                                    <input type="hidden" id="raceId" name="raceId" value={selectedRace} />
-                                                </form>
-                                                <div className="flex items-center justify-center gap-2 whitespace-nowrap">
-                                                    <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
-                                                    {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <span className="font-bold">{`${entry.nickname} `}</span>
-                                                <span className="text-muted-foreground">{`(${entry.firstname}${entry.middlename ? " " + entry.middlename : ""} ${entry.lastname})`}</span>
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="flex justify-center">
-                                                    <input
-                                                        form={`edit-form-${index}`}
-                                                        type="text"
-                                                        id="time"
-                                                        name="time"
-                                                        inputMode="decimal"
-                                                        pattern="^([0-9]+:)?[0-5]?[0-9]\.[0-9]{3}$"
-                                                        title="Use m:ss.SSS or mm:ss.SSS"
-                                                        value={editEntry.time}
-                                                        onChange={(e) => setEditEntry({ ...editEntry, time: e.target.value })}
-                                                        className="h-8 px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent font-mono"
-                                                    />
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="p-4 flex justify-center">
-                                                    <input
-                                                        form={`edit-form-${index}`}
-                                                        type="number"
-                                                        id="crashes"
-                                                        name="crashes"
-                                                        min="0"
-                                                        value={editEntry.crashes}
-                                                        onChange={(e) => setEditEntry({ ...editEntry, crashes: e.target.value })}
-                                                        className="h-8 px-2 py-1 bg-input-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-accent"
-                                                    />
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="flex items-center justify-center gap-2 whitespace-nowrap">
-                                                    <button
-                                                        form={`edit-form-${index}`}
-                                                        type="submit"
-                                                        className="px-3 py-1 bg-accent text-accent-foreground rounded hover:opacity-90 transition-opacity"
-                                                    >
-                                                        {
-                                                            isPendingEditEntry ?
-                                                                <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={24} height={24} className="opacity-50 mx-auto animate-spin" />
-                                                                :
-                                                                <Save className="w-4 h-6" />
-                                                        }
-                                                    </button>
-                                                    <button
-                                                        onClick={handleCancelEdit}
-                                                        className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors"
-                                                    >
-                                                        <X className="w-4 h-6" />
-                                                    </button>
-                                                </div>
-
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        <tr key={index}>
-                                            <td className="p-4 flex items-center justify-center gap-2">
-                                                <span className={index === 0 ? "text-accent" : ""}>{index + 1}</span>
-                                                {index === 0 && <Trophy className="w-4 h-4 text-accent" />}
-                                            </td>
-                                            <td className="p-4">
-                                                <span className="font-bold">{`${entry.nickname} `}</span>
-                                                <span className="text-muted-foreground">{`(${entry.firstname}${entry.middlename ? " " + entry.middlename : ""} ${entry.lastname})`}</span>
-                                            </td>
-                                            <td className="p-4 text-center font-mono">{entry.time}</td>
-                                            <td className="p-4 text-center">{entry.crashes}</td>
-                                            <td className="p-4 flex justify-center">
-                                                <button
-                                                    onClick={() => {
-                                                        setEditEntry({
-                                                            time: entry.time.toString(),
-                                                            crashes: entry.crashes.toString()
-                                                        }); setEditingIndex(index)
-                                                    }}
-                                                    className="px-3 py-1 bg-secondary text-foreground rounded hover:bg-muted transition-colors flex items-center gap-2 cursor-pointer"
-                                                >
-                                                    <Edit className="w-4 h-4" />
-                                                    Edit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    )
-                                }
-                                )}
-                            </tbody>
-                        )}
-                    </table>
-                    {!isPending && leaderboard.length === 0 && (
-                        <div className="p-8 text-center text-muted-foreground">
-                            No entries yet. Add the first entry above.
-                        </div>
-                    )}
-                    {isPending && <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={48} height={48} className="opacity-50 mx-auto my-16 animate-spin" />}
+                    <TimeManagementLeaderboard selectedRaceId={selectedRaceId} refreshTrigger={refreshTrigger} />
                 </div>
             )
             }
