@@ -85,7 +85,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                 </datalist>
             </div>
 
-            {selectedRaceId && (
+            {selectedRaceId > 0 && (
                 <div className="bg-card border border-border rounded-lg overflow-hidden">
                     <div className="flex items-center justify-between p-4 bg-secondary border-b border-border">
                         <h3 className="text-xl">Leaderboard</h3>
@@ -187,8 +187,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
 
                     <TimeManagementLeaderboard selectedRaceId={selectedRaceId} refreshTrigger={refreshTrigger} />
                 </div>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 }
