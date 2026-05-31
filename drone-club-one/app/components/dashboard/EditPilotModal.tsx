@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import UploadPicture from "./UploadPicture";
-import { set } from "zod";
 
 interface EditPilotModalProps {
   isOpen: boolean;
@@ -102,12 +101,13 @@ export default function EditPilotModal({ isOpen, pilots, onClose, refreshPilots 
           <div>
             <label htmlFor="pilotId" className="block mb-2 text-sm">Select Pilot</label>
 
-            <input type="hidden" name="pilotId" value={selectedPilotId} />
+            <input type="hidden" name="pilotId" id="pilotId" value={selectedPilotId} />
             <input
               list="pilots"
               name="pilot"
               id="pilot"
               required
+              placeholder="Search for a Pilot"
               value={selectedPilotName}
               onChange={(e) => handlePilotSelect(e.target.value)}
               className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"

@@ -5,6 +5,8 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import UploadPicture from "./UploadPicture";
+import { set } from "zod";
+import { ca } from "zod/locales";
 
 interface EditRaceModalProps {
   isOpen: boolean;
@@ -15,7 +17,10 @@ interface EditRaceModalProps {
 
 
 export default function EditRaceModal({ isOpen, races, onClose, refreshRaces }: EditRaceModalProps) {
-  const [selectedRace, setSelectedRace] = useState(-1);
+  const [selectedRaceId, setSelectedRaceId] = useState(0);
+  const [selectedRaceName, setSelectedRaceName] = useState("");
+  const [formIsDirty, setFormIsDirty] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     date: "",
@@ -26,31 +31,46 @@ export default function EditRaceModal({ isOpen, races, onClose, refreshRaces }: 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (selectedRace !== -1) {
-      getRace(selectedRace).then((race) => {
-        setFormData({
-          name: race.title,
-          date: new Date(race.date).toISOString().split('T')[0], // Format date for input type="date"
-          location: race.location,
-          picture: null,
+    if (selectedRaceName !== "") {
+      const race = races.find(p => p.title === selectedRaceName);
+      console.log("Selected race name:", selectedRaceName, race);
+      if (race) {
+        console.log("Setting selected race ID to:", race.id);
+        setSelectedRaceId(race.id);
+        getRace(race.id).then((race) => {
+          setFormData({
+            name: race.title,
+            date: new Date(race.date).toISOString().split('T')[0], // Format date for input type="date"
+            location: race.location,
+            picture: null,
+          });
+          setPreviewUrl(race.bannerurl);
+          setFormIsDirty(true);
+        }).catch((error) => {
+          toast.error("Error fetching race details. Check server logs for more info.");
         });
-        setPreviewUrl(race.bannerurl);
-      });
+      } else if (formIsDirty) {
+        setSelectedRaceId(0);
+        setFormData({ name: "", date: "", location: "", picture: null });
+        setPreviewUrl(null);
+        setFormIsDirty(false);
+      }
     }
-  }, [selectedRace]);
-
-  if (!isOpen) return null;
+  }, [selectedRaceName]);
 
   const handleOnClose = () => {
-    setSelectedRace(-1);
+    setSelectedRaceId(-1);
     setFormData({ name: "", date: "", location: "", picture: null });
     setPreviewUrl(null);
+    setFormIsDirty(false);
     onClose();
   }
 
+  if (!isOpen) return null;
+
   const handleSubmit: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
 
-    console.log("Submitting pilot form with data:", event);
+    console.log("Submitting race form with data:", event);
     event.preventDefault();
     setIsSubmitting(true);
 
@@ -91,22 +111,27 @@ export default function EditRaceModal({ isOpen, races, onClose, refreshRaces }: 
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-4">
           <div>
             <label htmlFor="raceId" className="block mb-2 text-sm">Select Race</label>
-            <select
+
+            <input type="hidden" name="raceId" id="raceId" value={selectedRaceId} />
+            <input
+              list="races"
+              name="race"
+              id="race"
               required
-              id="raceId"
-              name="raceId"
-              value={selectedRace}
-              onChange={(e) => setSelectedRace(Number(e.target.value))}
+              placeholder="Search for a race"
+              value={selectedRaceName}
+              onChange={(e) => setSelectedRaceName(e.target.value)}
               className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
-            >
-              <option value={-1}>Choose a race...</option>
+
+            />
+            <datalist id="races">
               {races.map(race => (
-                <option key={race.id} value={race.id}>{race.title}</option>
+                <option key={race.id} value={race.title} />
               ))}
-            </select>
+            </datalist>
           </div>
 
-          {selectedRace !== -1 && (
+          {selectedRaceId !== 0 && (
             <>
               <UploadPicture onFileChange={(file) => setFormData({ ...formData, picture: file })} defaultPreviewUrl={previewUrl} />
 
@@ -154,7 +179,7 @@ export default function EditRaceModal({ isOpen, races, onClose, refreshRaces }: 
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              disabled={selectedRace === -1 || isSubmitting}
+              disabled={selectedRaceId === -1 || isSubmitting}
               className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Updating..." : "Update Race"}
