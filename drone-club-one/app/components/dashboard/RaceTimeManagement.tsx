@@ -1,25 +1,21 @@
 "use client";
 import { addPilotTimeAction } from "@/app/data/actions";
-import { Plus, X, Save, Play, Flag, RotateCcw } from "lucide-react";
+import { Plus, X, Save} from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { PilotTableType } from "@/app/data/types";
 import TimeManagementLeaderboard from "./TimeManagementLeaderboard";
-import { ca } from "zod/locales";
-import { set } from "zod";
-import { stat } from "fs";
+import ChangeStatusButton from "./ChangeStatusButton";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
     const [selectedRaceId, setSelectedRaceId] = useState(0);
-    const [selectedRaceStatus, setSelectedRaceStatus] = useState<"UPCOMING" | "NEXT" | "CURRENT" | "COMPLETED" | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const [showAddEntry, setShowAddEntry] = useState(false);
     const [newEntry, setNewEntry] = useState({ pilotId: "", time: "", crashes: "0", fullName: "" });
     const [isPendingAddEntry, setIsPendingAddEntry] = useState(false);
-    const [isPendingGetStatus, setIsPendingGetStatus] = useState(false);
-
+    
 
     const handleSubmitAddEntry: React.SubmitEventHandler<HTMLFormElement> = async (event) => {
         console.log("Submitting pilot' time form with data:", event);
@@ -61,22 +57,6 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
             const race = races.find(p => p.title === e.target.value);
             if (race) {
                 setSelectedRaceId(race.id);
-                setIsPendingGetStatus(true);
-                try {
-                    const res = await fetch(`/api/raceStatus?raceId=${race.id}`);
-
-                    if (!res.ok) {
-                        const body = await res.json().catch(() => null);
-                        throw new Error(body?.error ?? "Error refreshing race status");
-                    }
-
-                    const data = await res.json();
-                    console.log("Fetched race status:", data);
-                    setSelectedRaceStatus(data.status);
-                    setIsPendingGetStatus(false);
-                } catch (error) {
-                    toast.error("Unable to fetch race status right now. Check server logs for details.");
-                }
             }
         }
     }
@@ -105,35 +85,8 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                         ))}
                     </datalist>
                 </div>
-                {selectedRaceStatus && (
-                    <button
-                        className={`shrink-0 flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-md  ${isPendingGetStatus || selectedRaceStatus === "UPCOMING" ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-90 transition-opacity"}`}
-                        disabled={isPendingGetStatus || selectedRaceStatus === "UPCOMING"}
-                    >
-                        {isPendingGetStatus &&
-                            <Image src="/Spinner-Gradient-1.png" alt="Loading..." width={24} height={24} className="opacity-50 mx-auto animate-spin" />
-                        }
-                        {(selectedRaceStatus == "NEXT" || selectedRaceStatus == "UPCOMING") &&
-                            <>
-                                <Play className="w-4 h-4" />
-                                Start Race
-                            </>
-                        }
-                        {selectedRaceStatus == "CURRENT" &&
-                            <>
-                                <Flag className="w-4 h-4" />
-                                Finish Race
-                            </>
-                        }
-                        {selectedRaceStatus == "COMPLETED" &&
-                            <>
-                                <RotateCcw className="w-4 h-4" />
-                                Reopen Race
-                            </>
-                        }
-                    </button>
-                )}
 
+                <ChangeStatusButton raceId={selectedRaceId} />
             </div>
 
             {selectedRaceId > 0 && (
