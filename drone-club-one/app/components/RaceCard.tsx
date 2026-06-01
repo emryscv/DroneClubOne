@@ -1,5 +1,5 @@
 "use client";
-import { MapPin, Users } from "lucide-react";
+import { Calendar, MapPin, Users } from "lucide-react";
 import { RaceTableType } from "../data/types";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -65,7 +65,16 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
                 {race.status}
             </span>
 
-            <div className="space-y-1 text-sm text-muted-foreground">
+            <div className="flex justify-between text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>{raceDate.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        timeZone: 'UTC'
+                    })}</span>
+                </div>
                 <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
                     <span>{race.location}</span>
