@@ -10,7 +10,7 @@ export default async function Home() {
   return (
     <>
       <div className="mb-8 pt-22">
-        <TitleBorder>Current Race Leaderboard</TitleBorder>
+        <TitleBorder>{`${raceData.status === "CURRENT" ? "Current" : "Latest"} Race Leaderboard`}</TitleBorder>
         <p className="text-muted-foreground mt-4">{raceData.title}</p>
       </div>
 

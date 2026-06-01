@@ -10,7 +10,7 @@ export async function getLatestRace() {
         const data = await sql<RaceTableType[]>`
             SELECT *
             FROM races
-            WHERE date <= CURRENT_DATE
+            WHERE status IN ('CURRENT', 'COMPLETED')
             ORDER BY date DESC
             LIMIT 1;`;
         return data[0];
