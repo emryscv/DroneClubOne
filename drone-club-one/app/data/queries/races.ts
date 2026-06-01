@@ -46,9 +46,11 @@ export async function getRace(raceId: number) {
             title, 
             date, 
             location,
-            bannerurl
+            bannerurl,
+            status
         FROM races
-        WHERE id = ${raceId};`;
+        WHERE id = ${raceId}
+        ORDER BY date ASC;`;
         return data[0];
     } catch (error) {
         console.error("Error fetching race by ID", error);
@@ -73,13 +75,13 @@ export async function getRaceStatus(raceId: number) {
 export async function getRaces(year: number) {
     //fix status here
     const data = await sql<RaceTableType[]>`
-            SELECT 
-                id, 
-                title, 
-                date, 
+        SELECT 
+            id, 
+            title, 
+            date, 
             location,
             bannerurl,
-            date > CURRENT_DATE AS isupcoming, 
+            status,
             count(pr.pilotid) AS pilotscount
         FROM races r
         LEFT JOIN pilot_race pr ON r.id = pr.raceid
@@ -118,8 +120,8 @@ export async function insertRace(raceData: RaceTableType) {
     console.log(raceData);
 
     const data = await sql<RaceTableType[]>`
-        INSERT INTO races (title, date, location, bannerurl)
-        VALUES (${raceData.title}, ${raceData.date}, ${raceData.location}, ${raceData.bannerurl});`;
+        INSERT INTO races (title, date, location, bannerurl, status)
+        VALUES (${raceData.title}, ${raceData.date}, ${raceData.location}, ${raceData.bannerurl}, ${raceData.status});`;
 }
 
 

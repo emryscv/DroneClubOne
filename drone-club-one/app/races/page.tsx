@@ -50,15 +50,15 @@ export default function Races() {
         }
         if (selectedStatus !== "") {
             filteredRaces = filteredRaces.filter((race) =>
-            (race.isupcoming && selectedStatus === "upcoming" ||
-                !race.isupcoming && selectedStatus === "Completed"));
+                race.status.toLowerCase() === selectedStatus.toLowerCase()
+            );
         }
 
         setFilteredRaces(filteredRaces);
     }, [searchQuery, selectedLocation, selectedStatus, racesData]);
 
-    if(error){
-        return <ErrorPage error={error} unstable_retry={() => window.location.reload()}/>;
+    if (error) {
+        return <ErrorPage error={error} unstable_retry={() => window.location.reload()} />;
     }
 
     return (

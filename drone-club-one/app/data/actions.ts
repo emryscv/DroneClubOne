@@ -158,7 +158,7 @@ export async function addRaceAction(formData: FormData) {
             date,
             location,
             bannerurl: blob ? blob.url : null,
-            isupcoming: true, // This will be calculated based on the date
+            status: "UPCOMING",
             pilotscount: -1, // This will be updated when pilots
         };
 
@@ -195,7 +195,7 @@ export async function editRaceAction(formData: FormData) {
             date,
             location,
             bannerurl: blob ? blob.url : null,
-            isupcoming: true, // This will be calculated based on the date
+            status: "UPCOMING", // This will be calculated based on the date
             pilotscount: -1, // This will be updated when pilots
         };
 

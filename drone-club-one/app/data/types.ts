@@ -3,9 +3,9 @@ export type RaceTableType = {
     title: string,
     date: string,
     location: string,
+    status: "UPCOMING" | "NEXT" | "CURRENT" | "COMPLETED",
     bannerurl: string | null,
-    isupcoming: boolean,
-    pilotscount: number 
+    pilotscount: number
 }
 
 export type LeaderbaordTimeMSEntryType = {

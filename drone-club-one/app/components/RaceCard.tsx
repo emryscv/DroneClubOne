@@ -5,39 +5,28 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 export default function RaceCard({ race }: { race: RaceTableType }) {
-    //   TODO - addd active status  
-    //   const getStatusColor = (status: string) => {
-    //     switch (status) {
-    //       case "active":
-    //         return "text-accent";
-    //       case "completed":
-    //         return "text-muted-foreground";
-    //       case "upcoming":
-    //         return "text-foreground";
-    //       default:
-    //         return "text-foreground";
-    //     }
-    //   };
+    const getStatusBadge = (status: string) => {
+        switch (status) {
+            case "CURRENT":
+                return "bg-accent text-accent-foreground";
+            case "COMPLETED":
+                return "bg-secondary text-muted-foreground";
+            case "UPCOMING":
+                return "bg-secondary text-black border-2 border-border";
+            case "NEXT":
+                return "bg-black text-white";
+            default:
+                return "bg-secondarytext-white";
+        }
+    };
 
-    //   const getStatusBadge = (status: string) => {
-    //     switch (status) {
-    //       case "active":
-    //         return "bg-accent text-accent-foreground";
-    //       case "completed":
-    //         return "bg-muted text-muted-foreground";
-    //       case "upcoming":
-    //         return "bg-secondary text-foreground";
-    //       default:
-    //         return "bg-secondary text-foreground";
-    //     }
-    //   };
     const router = useRouter();
     const raceDate = new Date(race.date);
 
     return <div
         key={race.id}
-        onClick={() => { if (!race.isupcoming) router.push(`/races/${race.id}`) }}
-        className={`bg-card border border-border rounded-lg overflow-hidden ${race.isupcoming ? "opacity-70 cursor-default" : "hover:border-accent transition-colors cursor-pointer"}`}
+        onClick={() => { if (race.status !== "UPCOMING" && race.status !== "NEXT") router.push(`/races/${race.id}`) }}
+        className={`bg-card border border-border rounded-lg overflow-hidden ${race.status === "UPCOMING" || race.status === "NEXT" ? "opacity-70 cursor-default" : "hover:border-accent transition-colors cursor-pointer"}`}
     >
         {race.bannerurl && (
             <Image
@@ -66,14 +55,14 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
         )}
 
         <div className="p-4">
-            <div className="flex items-start justify-between mb-3">
+            <div className={`flex items-start justify-between mb-3 ${race.status === "CURRENT" ? "text-accent" : ""}`}>
                 <h3>
                     {race.title}
                 </h3>
             </div>
 
-            <span className={`inline-block px-2 py-1 rounded-full text-xs uppercase tracking-wide mb-3 ${race.isupcoming ? "bg-secondary text-foreground" : "bg-secondary text-muted-foreground"}`}>
-                {race.isupcoming ? "upcoming" : "completed"}
+            <span className={`inline-block px-2 py-1 rounded-full text-xs uppercase tracking-wide mb-3 ${getStatusBadge(race.status)}`}>
+                {race.status}
             </span>
 
             <div className="space-y-1 text-sm text-muted-foreground">
@@ -81,7 +70,7 @@ export default function RaceCard({ race }: { race: RaceTableType }) {
                     <MapPin className="w-4 h-4" />
                     <span>{race.location}</span>
                 </div>
-                {!race.isupcoming && (
+                {race.status !== "UPCOMING" && race.status !== "NEXT" && (
                     <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
                         <span>{race.pilotscount} pilots</span>
