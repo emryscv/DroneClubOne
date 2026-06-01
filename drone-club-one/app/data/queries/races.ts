@@ -26,7 +26,7 @@ export async function getNextRace(raceId: number) {
             SELECT
                 id
             FROM races
-            WHERE date >= (SELECT date FROM races WHERE id = ${raceId}) 
+            WHERE date > (SELECT date FROM races WHERE id = ${raceId}) 
             ORDER BY date ASC
             LIMIT 1;`;
         return data[0];
