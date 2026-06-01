@@ -1,7 +1,16 @@
 import { getRaceStatus } from "@/app/data/queries/races";
 
-export async function GET({params}: { params: { raceId: number } }) {
-    const { raceId } = await params;
+export async function GET(request: Request) {
+    const { searchParams } = new URL(request.url);
+    const raceId = Number(searchParams.get("raceId"));
+
+    if (!raceId) {
+        return Response.json(
+            { error: "Missing or invalid raceId" },
+            { status: 400 }
+        );
+    }
+
     try {
         console.log("Refreshing race status...");
         const data = await getRaceStatus(raceId);
