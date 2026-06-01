@@ -117,3 +117,12 @@ export async function updateRace(raceData: RaceTableType) {
             bannerurl = COALESCE(${raceData.bannerurl}, bannerurl)
         WHERE id = ${raceData.id};`;
 }
+
+export async function changeStatus(raceId: number, newStatus: "UPCOMING" | "NEXT" | "CURRENT" | "COMPLETED") {
+    console.log(`Changing status of race with ID ${raceId} to ${newStatus}`);
+
+    const data = await sql<RaceTableType[]>`
+        UPDATE races
+        SET status = ${newStatus}
+        WHERE id = ${raceId};`;
+}

@@ -6,7 +6,7 @@ import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { PilotTableType, RaceTableType } from './types';
 import { insertPilot, updatePilot } from './queries/pilots';
-import { insertRace, updateRace } from './queries/races';
+import { changeStatus, insertRace, updateRace } from './queries/races';
 import { addTimeToRace, updatePilotTime, updatePositions } from './queries/pilotRace';
 
 export type PilotActionResult = 'success' | 'duplicate' | 'error';
@@ -19,13 +19,12 @@ function isUniqueConstraintError(error: unknown): error is PgErrorWithCode {
     return typeof error === 'object' && error !== null && 'code' in error && (error as PgErrorWithCode).code === '23505';
 }
 
-function handleActionError(error: unknown, actionName: 'addPilotAction' | 'editPilotAction' | 'addRaceAction' | 'editRaceAction' | 'addPilotTimeAction' | 'editPilotTimeAction'): PilotActionResult {
+function handleActionError(error: unknown, actionName: string): PilotActionResult {
     console.error(`Error in ${actionName}:`, error);
 
     if (isUniqueConstraintError(error)) {
         return 'duplicate';
     }
-    throw new Error(`Error in ${actionName}: ${error instanceof Error ? error.message : String(error)}`);
     return 'error';
 }
 
@@ -242,4 +241,15 @@ export async function editPilotTimeAction(formData: FormData) {
 function timeToMS(time: string): number {
     const [minutes, seconds, milliseconds] = time.split(/[:.]/).map(Number);
     return minutes * 60000 + seconds * 1000 + milliseconds;
+}
+
+export async function changeRaceStatusAction(raceId: number, prevStatus: "UPCOMING" | "NEXT" | "CURRENT" | "COMPLETED") {
+    console.log(`Changing status of race with ID ${raceId} from ${prevStatus}`);
+    try {
+        const newStatus = prevStatus === "NEXT" ? "CURRENT" : prevStatus === "CURRENT" ? "COMPLETED" : prevStatus === "COMPLETED" ? "CURRENT" : prevStatus;
+        await changeStatus(raceId, newStatus);
+        return 'success';
+    } catch (error) {
+        return handleActionError(error, 'changeRaceStatusAction');
+    }
 }

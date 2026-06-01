@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Flag, Play, RotateCcw } from "lucide-react";
+import { changeRaceStatusAction } from "@/app/data/actions";
 
 export default function ChangeStatusButton({ raceId }: { raceId: number }) {
     const [selectedRaceStatus, setSelectedRaceStatus] = useState<"UPCOMING" | "NEXT" | "CURRENT" | "COMPLETED" | null>(null);
     const [isPendingGetStatus, setIsPendingGetStatus] = useState(false);
 
     useEffect(() => {
+        if (raceId == 0) return;
         const fetchRaceStatus = async () => {
             setIsPendingGetStatus(true);
             try {
@@ -29,8 +31,25 @@ export default function ChangeStatusButton({ raceId }: { raceId: number }) {
         fetchRaceStatus();
     }, [raceId]);
 
+    const handleChangeStatus = async () => {
+        try {
+            const res = await changeRaceStatusAction(raceId, selectedRaceStatus!);
+
+            if (res === 'error') {
+                toast.error("Unable to change race status right now. Check server logs for details.");
+            } else {
+                const newStatus = selectedRaceStatus === "NEXT" ? "CURRENT" : selectedRaceStatus === "CURRENT" ? "COMPLETED" : selectedRaceStatus === "COMPLETED" ? "CURRENT" : selectedRaceStatus;
+                setSelectedRaceStatus(newStatus);
+                toast.success("Race status changed successfully!");
+            }
+        } catch (error) {
+            toast.error("Unable to change race status right now. Check server logs for details.");
+        }
+    }
+
     return <>{selectedRaceStatus && (
         <button
+            onClick={handleChangeStatus}
             className={`shrink-0 flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-md  ${isPendingGetStatus || selectedRaceStatus === "UPCOMING" ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:opacity-90 transition-opacity"}`}
             disabled={isPendingGetStatus || selectedRaceStatus === "UPCOMING"}
         >
