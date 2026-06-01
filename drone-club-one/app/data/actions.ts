@@ -6,7 +6,7 @@ import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
 import { PilotTableType, RaceTableType } from './types';
 import { insertPilot, updatePilot } from './queries/pilots';
-import { changeStatus, insertRace, updateRace } from './queries/races';
+import { changeStatus, getNextRace, insertRace, updateRace } from './queries/races';
 import { addTimeToRace, updatePilotTime, updatePositions } from './queries/pilotRace';
 
 export type PilotActionResult = 'success' | 'duplicate' | 'error';
@@ -248,6 +248,14 @@ export async function changeRaceStatusAction(raceId: number, prevStatus: "UPCOMI
     try {
         const newStatus = prevStatus === "NEXT" ? "CURRENT" : prevStatus === "CURRENT" ? "COMPLETED" : prevStatus === "COMPLETED" ? "CURRENT" : prevStatus;
         await changeStatus(raceId, newStatus);
+
+        if (newStatus === "COMPLETED") {
+            const data = await getNextRace(raceId);
+            if (data) {
+                await changeStatus(data.id, "NEXT");
+            }
+        }
+
         return 'success';
     } catch (error) {
         return handleActionError(error, 'changeRaceStatusAction');

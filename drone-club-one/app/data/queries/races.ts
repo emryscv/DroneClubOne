@@ -20,6 +20,24 @@ export async function getLatestRace() {
     }
 }
 
+export async function getNextRace(raceId: number) {
+    try { //we are assuming at most one race per day
+        const data = await sql<{id :number}[]>`
+            SELECT
+                id
+            FROM races
+            WHERE date >= (SELECT date FROM races WHERE id = ${raceId}) 
+            ORDER BY date ASC
+            LIMIT 1;`;
+        return data[0];
+    }
+    catch (error) {
+        console.error("Error fetching next race", error);
+        throw error;
+    }
+}
+
+
 export async function getRace(raceId: number) {
     try {
         const data = await sql<RaceTableType[]>`
