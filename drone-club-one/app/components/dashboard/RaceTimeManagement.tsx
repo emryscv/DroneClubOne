@@ -1,7 +1,7 @@
 "use client";
 import { addPilotTimeAction } from "@/app/data/actions";
 import { Plus, X, Save } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { PilotTableType } from "@/app/data/types";
@@ -9,7 +9,6 @@ import TimeManagementLeaderboard from "./TimeManagementLeaderboard";
 
 export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTableType[], races: { id: number, title: string }[] }) {
     const [selectedRaceId, setSelectedRaceId] = useState(0);
-    const [selectedRaceName, setSelectedRaceName] = useState("");
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const [showAddEntry, setShowAddEntry] = useState(false);
@@ -50,14 +49,16 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
             setNewEntry({ ...newEntry, pilotId: pilot.id.toString() });
         }
     }
-    useEffect(() => {
-        if (selectedRaceName !== "") {
-            const race = races.find(p => p.title === selectedRaceName);
+
+    const handleSelectRace: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+        if (e.target.value !== "") {
+            const race = races.find(p => p.title === e.target.value);
             if (race) {
                 setSelectedRaceId(race.id);
+                
             }
         }
-    }, [selectedRaceName]);
+    }
 
     return (
         <div >
@@ -66,15 +67,13 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
             <div className="bg-card border border-border rounded-lg p-6 mb-6">
                 <label htmlFor="race" className="block mb-2">Select Race</label>
 
-                <input type="hidden" name="raceId" id="raceId" value={selectedRaceId} />
                 <input
                     list="races"
                     name="race"
                     id="race"
                     required
                     placeholder="Search for a race"
-                    value={selectedRaceName}
-                    onChange={(e) => setSelectedRaceName(e.target.value)}
+                    onChange={handleSelectRace}
                     className="w-full max-w-md px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
 
                 />
@@ -83,6 +82,8 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                         <option key={race.id} value={race.title} />
                     ))}
                 </datalist>
+
+
             </div>
 
             {selectedRaceId > 0 && (
@@ -98,6 +99,7 @@ export default function RaceTimeManagement({ pilots, races }: { pilots: PilotTab
                                 Add Entry
                             </button>
                         )}
+
                     </div>
 
                     {showAddEntry && (
