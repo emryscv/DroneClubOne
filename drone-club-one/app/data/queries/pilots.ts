@@ -1,11 +1,12 @@
 "use server";
 import postgres from 'postgres';
-import { PilotTableType, RaceHistoryEntryType } from '../types';
+import { PilotTableType } from '../types';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function getPilot(pilotId: number) {
-    const data = await sql<PilotTableType[]>`
+    try {
+        const data = await sql<PilotTableType[]>`
         SELECT 
             id, 
             firstname, 
@@ -16,11 +17,16 @@ export async function getPilot(pilotId: number) {
             pictureurl
         FROM pilots 
         WHERE id = ${pilotId};`;
-    return data[0];
+        return data[0];
+    } catch (error) {
+        console.error("Error fetching pilot's metadata by ID", error);
+        throw error;
+    }
 }
 
 export async function getPilots() {
-    const data = await sql<PilotTableType[]>`
+    try {
+        const data = await sql<PilotTableType[]>`
         SELECT 
             id, 
             firstname, 
@@ -32,41 +38,31 @@ export async function getPilots() {
         FROM pilots 
         ORDER BY id;`
 
-    return data;
+        return data;
+    }
+    catch (error) {
+        console.error("Error fetching pilots' metadata", error);
+        throw error;
+    }
 }
 
-export async function getRacesForPilot(pilotId: number) {
-    const data = await sql<RaceHistoryEntryType[]>`
-        SELECT
-            pr.raceid,
-            r.title,
-            r.date,
-            position,
-            time,
-            crashes
-        FROM pilots p
-        JOIN pilot_race pr ON p.id = pr.pilotid
-        JOIN races r ON pr.raceid = r.id
-        WHERE p.id = ${pilotId};
-    `;
-    return data;
-}
-
-export async function insertPilot(formData: FormData) {
-    console.log(formData);
-    const pilot = {
-        firstname: formData.get("firstname") as string,
-        middlename: formData.get("middlename") as string,
-        lastname: formData.get("lastname") as string,
-        nickname: formData.get("nickname") as string,
-    };
+export async function insertPilot(pilotData: PilotTableType) {
+    console.log("Inserting pilot data into database", pilotData);
 
     const data = await sql<PilotTableType[]>`
-        INSERT INTO pilots (firstname, middlename, lastname, nickname)
-        VALUES (${pilot.firstname}, ${pilot.middlename}, ${pilot.lastname}, ${pilot.nickname});`;
+            INSERT INTO pilots (firstname, middlename, lastname, nickname, status, pictureurl)
+            VALUES (${pilotData.firstname}, ${pilotData.middlename}, ${pilotData.lastname}, ${pilotData.nickname}, ${pilotData.status}, ${pilotData.pictureurl});`;
 }
 
-export async function uploadAvatar(pilotId: number, fileUrl: string) {
-    const data = await sql<PilotTableType[]>`
-        UPDATE pilots SET picture = ${fileUrl} WHERE id = ${pilotId};`;
+export async function updatePilot(pilotData: PilotTableType) {
+    console.log("Updating pilot data in database", pilotData);
+    const data = await sql<PilotTableType[]>`UPDATE pilots
+        SET 
+            firstname = ${pilotData.firstname},
+            middlename = ${pilotData.middlename},
+            lastname = ${pilotData.lastname},
+            nickname = ${pilotData.nickname},
+            status = ${pilotData.status},
+            pictureurl = COALESCE(${pilotData.pictureurl}, pictureurl)
+        WHERE id = ${pilotData.id};`;
 }

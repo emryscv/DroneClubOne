@@ -1,25 +1,26 @@
 import Leaderboard from "@/app/components/Leaderboard";
 import TitleBorder from "@/app/components/TitleBorder";
-import { getTimesForRace, getRace } from "@/app/data/queries/races";
-import { Calendar, Clock, MapPin, Trophy } from "lucide-react";
+import { getRace } from "@/app/data/queries/races";
+import { Calendar, MapPin } from "lucide-react";
 
 export default async function Race({ params }: { params: { id: number } }) {
   const { id } = await params;
   const raceData = await getRace(id);
-  const leaderboard = await getTimesForRace(id);
+  const raceDate = new Date(raceData.date);
 
   return (
     <>
-      <div className="mb-8">
+      <div className="mb-8 pt-22">
         <TitleBorder>{raceData.title}</TitleBorder>
 
         <div className="flex flex-wrap gap-6 text-muted-foreground mb-6 mt-4">
           <div className="flex items-center gap-2">
             <Calendar className="w-5 h-5" />
-            <span>{new Date(raceData.date).toLocaleDateString('en-US', {
+            <span>{raceDate.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
-              day: 'numeric'
+              day: 'numeric',
+              timeZone: 'UTC'
             })}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -29,7 +30,7 @@ export default async function Race({ params }: { params: { id: number } }) {
         </div>
       </div>
 
-      <Leaderboard leaderboard={leaderboard} />
+      <Leaderboard raceId={id} />
     </>
   );
 }

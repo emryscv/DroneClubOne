@@ -1,21 +1,20 @@
-import { getTimesForRace, getLatestRace } from "./data/queries/races";
+import { getLatestRace } from "../data/queries/races";
 import Link from "next/link";
-import Leaderboard from "./components/Leaderboard";
-import TitleBorder from "./components/TitleBorder";
+import Leaderboard from "../components/Leaderboard";
+import TitleBorder from "../components/TitleBorder";
 
 
 export default async function Home() {
   const raceData = await getLatestRace();
-  const leaderboard = await getTimesForRace(raceData.id);
-
+     
   return (
     <>
-      <div className="mb-8">
-        <TitleBorder>Current Race Leaderboard</TitleBorder>
+      <div className="mb-8 pt-22">
+        <TitleBorder>{`${raceData.status === "CURRENT" ? "Current" : "Latest"} Race Leaderboard`}</TitleBorder>
         <p className="text-muted-foreground mt-4">{raceData.title}</p>
       </div>
 
-      <Leaderboard leaderboard={leaderboard} />
+      <Leaderboard raceId={raceData.id} />
 
       <div className="mt-8 text-center">
         <Link

@@ -1,7 +1,12 @@
+import { Suspense } from "react";
+import { getTimesForRace } from "../data/queries/pilotRace";
 import { LeaderbaordEntryType } from "../data/types";
 import TableRow from "./TableRow";
+import LeaderboardSkeleton from "./skeletons/LeaderboardSkeleton";
 
-export default function Leaderboard({ leaderboard }: { leaderboard: LeaderbaordEntryType[] }) {
+async function LeaderboardContent({ raceId }: { raceId: number }) {
+    const leaderboard = await getTimesForRace(raceId);
+
     return <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="w-full">
             <thead>
@@ -19,4 +24,12 @@ export default function Leaderboard({ leaderboard }: { leaderboard: LeaderbaordE
             </tbody>
         </table>
     </div>
+}
+
+export default function Leaderboard({ raceId }: { raceId: number }) {
+    return (
+        <Suspense fallback={<LeaderboardSkeleton />}>
+            <LeaderboardContent raceId={raceId} />
+        </Suspense>
+    );
 }
