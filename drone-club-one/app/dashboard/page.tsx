@@ -1,5 +1,5 @@
 "use client"
-import { Edit, LogOut, Plus } from "lucide-react";
+import { Edit, LockKeyhole, LogOut, Plus } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
 import { useEffect, useState } from "react";
 import AddPilotModal from "../components/dashboard/AddPilotModal";
@@ -80,16 +80,25 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-22">
             <div className="mb-8 flex items-center justify-between">
                 <TitleBorder>Admin Dashboard</TitleBorder>
-                <form
-                    action={signOutAction}
-                >
-                    < button
-                        className="flex items-center gap-2 px-4 py-2 bg-destructive text-white rounded-md hover:opacity-90 transition-opacity cursor-pointer"
+
+                <div className="flex gap-4">
+                    <button
+                        className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-md hover:opacity-80 transition-opacity cursor-pointer"
                     >
-                        <LogOut className="w-4 h-4" />
-                        Logout
+                        <LockKeyhole className="w-4 h-4" />
+                        Change Password
                     </button>
-                </form >
+                    <form
+                        action={signOutAction}
+                    >
+                        < button
+                            className="flex items-center gap-2 px-4 py-2 bg-destructive text-white rounded-md hover:opacity-80 transition-opacity cursor-pointer"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Logout
+                        </button>
+                    </form >
+                </div>
             </div>
 
             <div className="mb-12">
