@@ -11,6 +11,7 @@ import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
 import Image from "next/image";
 import ErrorPage from "../error";
+import ChangePasswordModal from "../components/dashboard/ChangePasswordModal";
 
 export default function Dashboard() {
     const [pilots, setPilots] = useState<PilotTableType[]>([]);
@@ -19,6 +20,7 @@ export default function Dashboard() {
     const [showAddRace, setShowAddRace] = useState(false);
     const [showEditPilot, setShowEditPilot] = useState(false);
     const [showEditRace, setShowEditRace] = useState(false);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
     const [isPendingPilot, setIsPendingPilot] = useState(false);
     const [isPendingRace, setIsPendingRace] = useState(false);
@@ -84,6 +86,7 @@ export default function Dashboard() {
                 <div className="flex gap-4">
                     <button
                         className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-md hover:opacity-80 transition-opacity cursor-pointer"
+                        onClick={() => setShowChangePasswordModal(true)}
                     >
                         <LockKeyhole className="w-4 h-4" />
                         Change Password
@@ -176,6 +179,7 @@ export default function Dashboard() {
             <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} refreshRaces={refreshRaces} />
             <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} pilots={pilots} refreshPilots={refreshPilots} />
             <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} races={races} refreshRaces={refreshRaces} />
+            <ChangePasswordModal isOpen={showChangePasswordModal} onClose={() => setShowChangePasswordModal(false)} />
         </div>
     );
 }
