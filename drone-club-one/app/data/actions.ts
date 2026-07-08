@@ -4,12 +4,23 @@ import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import { put } from '@vercel/blob';
 import { revalidatePath } from 'next/cache';
+import bcrypt from 'bcrypt';
 import { PilotTableType, RaceTableType } from './types';
 import { insertPilot, updatePilot } from './queries/pilots';
 import { changeStatus, getNextRace, insertRace, updateRace } from './queries/races';
 import { addTimeToRace, updatePilotTime, updatePositions } from './queries/pilotRace';
+import { auth } from '@/auth';
+import { getAdminPasswordHashByEmail, updateAdminPasswordByEmail } from './queries/admins';
 
 export type PilotActionResult = 'success' | 'duplicate' | 'error';
+export type ChangePasswordActionResult =
+    | 'success'
+    | 'unauthorized'
+    | 'invalid_old_password'
+    | 'mismatch'
+    | 'weak_password'
+    | 'same_password'
+    | 'error';
 
 type PgErrorWithCode = {
     code?: string;
@@ -263,5 +274,32 @@ export async function changeRaceStatusAction(raceId: number, prevStatus: "UPCOMI
         return 'success';
     } catch (error) {
         return handleActionError(error, 'changeRaceStatusAction');
+    }
+}
+
+export async function changePasswordAction(oldPassword: string, newPassword: string) {
+    const session = await auth();
+    const email = session?.user?.email;
+
+    if (!email) {
+        return 'unauthorized';
+    }
+
+    try {
+        const currentHash = await getAdminPasswordHashByEmail(email);
+
+        const oldPasswordMatches = await bcrypt.compare(oldPassword, currentHash);
+
+        if (!oldPasswordMatches) {
+            return 'invalid_old_password';
+        }
+
+        const newHash = await bcrypt.hash(newPassword, 12);
+        await updateAdminPasswordByEmail(email, newHash);
+
+        return 'success';
+    } catch (error) {
+        console.error('Error changing admin password', error);
+        return 'error';
     }
 }

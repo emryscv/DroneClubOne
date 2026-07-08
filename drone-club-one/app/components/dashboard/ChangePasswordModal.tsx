@@ -1,7 +1,7 @@
 'use client';
-//import { changePasswordAction } from "@/app/data/actions";
+import { changePasswordAction } from "@/app/data/actions";
 import { X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 interface ChangePasswordModalProps {
@@ -16,8 +16,12 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
         confirmPassword: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [invalidOldPassword, setInvalidOldPassword] = useState(false);
 
     if (!isOpen) return null;
+
+    const passwordsMismatch = formData.newPassword !== formData.confirmPassword;
+    const passwordsSameAsOld = formData.newPassword && formData.oldPassword && formData.oldPassword === formData.newPassword;
 
     const handleOnClose = () => {
         setFormData({ oldPassword: "", newPassword: "", confirmPassword: "" });
@@ -30,25 +34,30 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
         event.preventDefault();
         setIsSubmitting(true);
 
-        // try {
-        //   const submittedFormData = new FormData(event.currentTarget);
-        //   const result = await addPilotAction(submittedFormData);
+        try {
+            const result = await changePasswordAction(formData.oldPassword, formData.newPassword);
 
-        //   if (result === 'duplicate') {
-        //     toast.error("Pilot with this nickname already exists.");
-        //   } else if (result === 'error') {
-        //     toast.error("Unable to add pilot right now. Check server logs for details.");
-        //   } else {
-        //     await refreshPilots();
-        //     toast.success("Pilot added successfully!");
-        //     handleOnClose();
-        //   }
-        // } catch (error) {
-        //   console.error("Error adding pilot:", error);
-        //   toast.error("Unable to add pilot right now. Check server logs for details.");
-        // } finally {
-        //   setIsSubmitting(false);
-        // }
+            if (result === 'invalid_old_password') {
+                setInvalidOldPassword(true);
+                toast.error("Old password is incorrect.");
+            } else {
+                setInvalidOldPassword(false);
+                
+                if (result === 'error') {
+                    toast.error("Unable to change password right now. Check server logs for details.");
+                } else if (result === 'unauthorized') {
+                    toast.error("You are not authorized to change the password.");
+                } else {
+                    toast.success("Password changed successfully!");
+                    handleOnClose();
+                }
+            }
+        } catch (error) {
+            console.error("Error changing password:", error);
+            toast.error("Unable to change password right now. Check server logs for details.");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -80,7 +89,9 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                         />
                     </div>
                     <div>
-                        <label htmlFor="newPassword" className="block mb-2 text-sm">New Password</label>
+                        <label htmlFor="newPassword" className="block mb-2 text-sm">New Password {passwordsSameAsOld && (
+                            <span> (<span className="text-red-500">Password same as old</span>)</span>
+                        )}</label>
                         <input
                             type="password"
                             id="newPassword"
@@ -88,13 +99,13 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                             required
                             value={formData.newPassword}
                             onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                            className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+                            className={`w-full px-4 py-2 bg-input-background border ${passwordsSameAsOld ? "border-red-500" : "border-border"}  rounded-md focus:outline-none focus:ring-2 focus:ring-accent`}
                             placeholder="New Password"
                         />
                     </div>
                     <div>
                         <label htmlFor="confirmPassword" className="block mb-2 text-sm">
-                            Confirm Password {formData.newPassword !== formData.confirmPassword && (
+                            Confirm Password {passwordsMismatch && (
                                 <span> (<span className="text-red-500">Passwords do not match</span>)</span>
                             )}
                         </label>
@@ -105,7 +116,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                             required
                             value={formData.confirmPassword}
                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                            className={`w-full px-4 py-2 bg-input-background border ${formData.newPassword !== formData.confirmPassword ? "border-red-500" : "border-border"} rounded-md focus:outline-none focus:ring-2 focus:ring-accent`}
+                            className={`w-full px-4 py-2 bg-input-background border ${passwordsMismatch ? "border-red-500" : "border-border"} rounded-md focus:outline-none focus:ring-2 focus:ring-accent`}
                             placeholder="Confirm Password"
                         />
                     </div>
@@ -115,7 +126,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                     <div className="flex gap-3 pt-4">
                         <button
                             type="submit"
-                            disabled={isSubmitting || !formData.oldPassword || !formData.newPassword || !formData.confirmPassword || formData.newPassword !== formData.confirmPassword}
+                            disabled={isSubmitting || !formData.oldPassword || !formData.newPassword || !formData.confirmPassword || formData.newPassword !== formData.confirmPassword || formData.oldPassword === formData.newPassword}
                             className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md  hover:opacity-80 transition-opacity cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {isSubmitting ? "Changing..." : "Change Password"}
