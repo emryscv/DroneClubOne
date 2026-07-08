@@ -1,7 +1,7 @@
 'use client';
 //import { changePasswordAction } from "@/app/data/actions";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface ChangePasswordModalProps {
@@ -93,7 +93,11 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                         />
                     </div>
                     <div>
-                        <label htmlFor="confirmPassword" className="block mb-2 text-sm">Confirm Password</label>
+                        <label htmlFor="confirmPassword" className="block mb-2 text-sm">
+                            Confirm Password {formData.newPassword !== formData.confirmPassword && (
+                                <span> (<span className="text-red-500">Passwords do not match</span>)</span>
+                            )}
+                        </label>
                         <input
                             type="password"
                             id="confirmPassword"
@@ -101,7 +105,7 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                             required
                             value={formData.confirmPassword}
                             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                            className="w-full px-4 py-2 bg-input-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent"
+                            className={`w-full px-4 py-2 bg-input-background border ${formData.newPassword !== formData.confirmPassword ? "border-red-500" : "border-border"} rounded-md focus:outline-none focus:ring-2 focus:ring-accent`}
                             placeholder="Confirm Password"
                         />
                     </div>
@@ -111,15 +115,15 @@ export default function ChangePasswordModal({ isOpen, onClose }: ChangePasswordM
                     <div className="flex gap-3 pt-4">
                         <button
                             type="submit"
-                            disabled={isSubmitting}
-                            className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:opacity-90 transition-opacity"
+                            disabled={isSubmitting || !formData.oldPassword || !formData.newPassword || !formData.confirmPassword || formData.newPassword !== formData.confirmPassword}
+                            className="flex-1 px-4 py-2 bg-accent text-accent-foreground rounded-md  hover:opacity-80 transition-opacity cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {isSubmitting ? "Changing..." : "Change Password"}
                         </button>
                         <button
                             type="button"
                             onClick={handleOnClose}
-                            className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors"
+                            className="flex-1 px-4 py-2 bg-secondary text-foreground rounded-md hover:bg-muted transition-colors cursor-pointer hover:opacity-80"
                         >
                             Cancel
                         </button>
