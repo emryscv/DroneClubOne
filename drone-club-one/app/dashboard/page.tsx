@@ -1,5 +1,5 @@
 "use client"
-import { Edit, LogOut, Plus } from "lucide-react";
+import { Edit, LockKeyhole, LogOut, Plus } from "lucide-react";
 import TitleBorder from "../components/TitleBorder";
 import { useEffect, useState } from "react";
 import AddPilotModal from "../components/dashboard/AddPilotModal";
@@ -11,6 +11,7 @@ import RaceTimeManagement from "../components/dashboard/RaceTimeManagement";
 import { PilotTableType } from "../data/types";
 import Image from "next/image";
 import ErrorPage from "../error";
+import ChangePasswordModal from "../components/dashboard/ChangePasswordModal";
 
 export default function Dashboard() {
     const [pilots, setPilots] = useState<PilotTableType[]>([]);
@@ -19,6 +20,7 @@ export default function Dashboard() {
     const [showAddRace, setShowAddRace] = useState(false);
     const [showEditPilot, setShowEditPilot] = useState(false);
     const [showEditRace, setShowEditRace] = useState(false);
+    const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
     const [isPendingPilot, setIsPendingPilot] = useState(false);
     const [isPendingRace, setIsPendingRace] = useState(false);
@@ -80,16 +82,26 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-22">
             <div className="mb-8 flex items-center justify-between">
                 <TitleBorder>Admin Dashboard</TitleBorder>
-                <form
-                    action={signOutAction}
-                >
-                    < button
-                        className="flex items-center gap-2 px-4 py-2 bg-destructive text-white rounded-md hover:opacity-90 transition-opacity cursor-pointer"
+
+                <div className="flex gap-4">
+                    <button
+                        className="flex items-center gap-2 px-4 py-2 bg-secondary text-foreground rounded-md hover:opacity-80 transition-opacity cursor-pointer"
+                        onClick={() => setShowChangePasswordModal(true)}
                     >
-                        <LogOut className="w-4 h-4" />
-                        Logout
+                        <LockKeyhole className="w-4 h-4" />
+                        Change Password
                     </button>
-                </form >
+                    <form
+                        action={signOutAction}
+                    >
+                        < button
+                            className="flex items-center gap-2 px-4 py-2 bg-destructive text-white rounded-md hover:opacity-80 transition-opacity cursor-pointer"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            Logout
+                        </button>
+                    </form >
+                </div>
             </div>
 
             <div className="mb-12">
@@ -167,6 +179,7 @@ export default function Dashboard() {
             <AddRaceModal isOpen={showAddRace} onClose={() => setShowAddRace(false)} refreshRaces={refreshRaces} />
             <EditPilotModal isOpen={showEditPilot} onClose={() => setShowEditPilot(false)} pilots={pilots} refreshPilots={refreshPilots} />
             <EditRaceModal isOpen={showEditRace} onClose={() => setShowEditRace(false)} races={races} refreshRaces={refreshRaces} />
+            <ChangePasswordModal isOpen={showChangePasswordModal} onClose={() => setShowChangePasswordModal(false)} />
         </div>
     );
 }
